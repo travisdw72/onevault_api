@@ -1,56 +1,62 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 QUICK DATABASE BACKUP
 ====================
-Simple wrapper for creating database backups before testing/development work.
+Simple wrapper for quick backups before testing/development
 
-USAGE:
-    python scripts/quick_backup.py                    # Backup main database
-    python scripts/quick_backup.py --env dev          # Backup dev database  
-    python scripts/quick_backup.py --all              # Backup all databases
+Usage:
+    python scripts/quick_backup.py
+    python scripts/quick_backup.py --env one_vault_dev
 """
 
-import subprocess
 import sys
+import os
 from pathlib import Path
 
+# Add the scripts directory to Python path
+script_dir = Path(__file__).parent
+sys.path.insert(0, str(script_dir))
+
+from database_backup import DatabaseBackup
+
 def main():
-    script_dir = Path(__file__).parent
-    backup_script = script_dir / "database_backup.py"
+    print("=== QUICK DATABASE BACKUP ===")
+    print()
     
-    print("🚀 QUICK DATABASE BACKUP")
-    print("=" * 50)
+    # Create backup tool instance
+    backup_tool = DatabaseBackup()
     
-    # Simple argument handling
-    if "--all" in sys.argv:
-        env = "all"
-    elif "--env" in sys.argv:
-        env_index = sys.argv.index("--env") + 1
-        if env_index < len(sys.argv):
-            env = sys.argv[env_index]
-        else:
-            env = "one_vault"
+    # Check if PostgreSQL is available
+    if not backup_tool.pg_available:
+        print("ERROR: PostgreSQL not found!")
+        print("Please install PostgreSQL and add it to your PATH")
+        print("Download from: https://www.postgresql.org/download/")
+        print()
+        print("After installation, you may need to:")
+        print("1. Add PostgreSQL bin directory to your PATH")
+        print("2. Restart your terminal/command prompt")
+        return False
+    
+    # Get environment argument if provided
+    env_name = sys.argv[1] if len(sys.argv) > 1 else "one_vault"
+    
+    print(f"Creating quick backup of: {env_name}")
+    print("This will take a few moments...")
+    print()
+    
+    # Create the backup
+    success = backup_tool.create_backup(env_name, "full")
+    
+    if success:
+        print("BACKUP COMPLETED SUCCESSFULLY!")
+        print("You can now safely proceed with your testing/development")
+        return True
     else:
-        env = "one_vault"  # Default to main database
-    
-    # Run the backup
-    try:
-        print(f"📦 Creating backup for: {env}")
-        
-        cmd = ["python", str(backup_script), "--env", env]
-        result = subprocess.run(cmd, check=True)
-        
-        print("\n✅ Backup completed successfully!")
-        print("💡 You can now safely create your testing branch:")
-        print("   git checkout -b testing/database-validation")
-        
-    except subprocess.CalledProcessError:
-        print("\n❌ Backup failed!")
-        print("🚨 Do NOT proceed with testing until backup is successful")
-        sys.exit(1)
-    except Exception as e:
-        print(f"\n❌ Error: {e}")
-        sys.exit(1)
+        print("BACKUP FAILED!")
+        print("Please check the logs for details")
+        return False
 
 if __name__ == "__main__":
-    main() 
+    success = main()
+    sys.exit(0 if success else 1) 

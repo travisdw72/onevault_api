@@ -13,6 +13,7 @@ FEATURES:
 - Retention policy (auto-cleanup old backups)
 - Logging and error handling
 - Pre-backup validation
+- Windows compatibility
 """
 
 import os
@@ -41,6 +42,9 @@ class DatabaseBackup:
         
         # Load configuration
         self.config = self.load_config()
+        
+        # Check PostgreSQL availability
+        self.pg_available = self.check_postgresql()
     
     def setup_logging(self):
         """Setup logging for backup operations"""
@@ -49,15 +53,40 @@ class DatabaseBackup:
         
         log_file = log_dir / f"backup_{datetime.datetime.now().strftime('%Y%m%d')}.log"
         
+        # Use UTF-8 encoding for log files
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s',
             handlers=[
-                logging.FileHandler(log_file),
+                logging.FileHandler(log_file, encoding='utf-8'),
                 logging.StreamHandler(sys.stdout)
             ]
         )
         self.logger = logging.getLogger(__name__)
+    
+    def check_postgresql(self):
+        """Check if PostgreSQL tools are available"""
+        try:
+            # Try to find psql
+            result = subprocess.run(
+                ["psql", "--version"], 
+                capture_output=True, 
+                text=True,
+                timeout=10
+            )
+            if result.returncode == 0:
+                self.logger.info(f"PostgreSQL found: {result.stdout.strip()}")
+                return True
+            else:
+                self.logger.error("PostgreSQL psql command not found in PATH")
+                return False
+        except FileNotFoundError:
+            self.logger.error("PostgreSQL not found. Please install PostgreSQL or add it to PATH")
+            self.logger.info("Download from: https://www.postgresql.org/download/")
+            return False
+        except Exception as e:
+            self.logger.error(f"Error checking PostgreSQL: {e}")
+            return False
     
     def load_config(self):
         """Load backup configuration"""
@@ -96,14 +125,14 @@ class DatabaseBackup:
         
         if self.config_file.exists():
             try:
-                with open(self.config_file, 'r') as f:
+                with open(self.config_file, 'r', encoding='utf-8') as f:
                     return json.load(f)
             except Exception as e:
                 self.logger.warning(f"Could not load config file: {e}")
                 self.logger.info("Using default configuration")
                 
         # Create default config file
-        with open(self.config_file, 'w') as f:
+        with open(self.config_file, 'w', encoding='utf-8') as f:
             json.dump(default_config, f, indent=2)
         
         return default_config
@@ -126,6 +155,10 @@ class DatabaseBackup:
     
     def validate_database_connection(self, env_config):
         """Validate database connection before backup"""
+        if not self.pg_available:
+            self.logger.error("PostgreSQL not available - cannot validate connection")
+            return False
+            
         try:
             cmd = [
                 "psql",
@@ -144,28 +177,32 @@ class DatabaseBackup:
             )
             
             if result.returncode == 0:
-                self.logger.info(f"✅ Database connection validated: {env_config['database']}")
+                self.logger.info(f"Database connection validated: {env_config['database']}")
                 return True
             else:
-                self.logger.error(f"❌ Database connection failed: {result.stderr}")
+                self.logger.error(f"Database connection failed: {result.stderr}")
                 return False
                 
         except subprocess.TimeoutExpired:
-            self.logger.error("❌ Database connection timeout")
+            self.logger.error("Database connection timeout")
             return False
         except Exception as e:
-            self.logger.error(f"❌ Database validation error: {e}")
+            self.logger.error(f"Database validation error: {e}")
             return False
     
     def create_backup(self, env_name, backup_type="full"):
         """Create database backup"""
+        if not self.pg_available:
+            self.logger.error("PostgreSQL not available - cannot create backup")
+            return False
+            
         if env_name not in self.config["environments"]:
-            self.logger.error(f"❌ Environment '{env_name}' not found in configuration")
+            self.logger.error(f"Environment '{env_name}' not found in configuration")
             return False
             
         env_config = self.config["environments"][env_name]
         
-        self.logger.info(f"🚀 Starting backup for {env_name} ({env_config['description']})")
+        self.logger.info(f"Starting backup for {env_name} ({env_config['description']})")
         
         # Validate connection
         if not self.validate_database_connection(env_config):
@@ -197,7 +234,7 @@ class DatabaseBackup:
         cmd.extend(["-f", str(backup_path)])
         
         try:
-            self.logger.info(f"📦 Creating backup: {filename}")
+            self.logger.info(f"Creating backup: {filename}")
             
             result = subprocess.run(
                 cmd,
@@ -211,9 +248,9 @@ class DatabaseBackup:
                 file_size = backup_path.stat().st_size
                 size_mb = file_size / (1024 * 1024)
                 
-                self.logger.info(f"✅ Backup completed successfully")
-                self.logger.info(f"📁 File: {backup_path}")
-                self.logger.info(f"📊 Size: {size_mb:.2f} MB")
+                self.logger.info(f"Backup completed successfully")
+                self.logger.info(f"File: {backup_path}")
+                self.logger.info(f"Size: {size_mb:.2f} MB")
                 
                 # Compress if needed and not already compressed
                 if (self.config["backup_settings"]["compress"] and 
@@ -223,14 +260,14 @@ class DatabaseBackup:
                 
                 return True
             else:
-                self.logger.error(f"❌ Backup failed: {result.stderr}")
+                self.logger.error(f"Backup failed: {result.stderr}")
                 return False
                 
         except subprocess.TimeoutExpired:
-            self.logger.error("❌ Backup timeout - process took too long")
+            self.logger.error("Backup timeout - process took too long")
             return False
         except Exception as e:
-            self.logger.error(f"❌ Backup error: {e}")
+            self.logger.error(f"Backup error: {e}")
             return False
     
     def compress_backup(self, backup_path):
@@ -245,17 +282,17 @@ class DatabaseBackup:
             # Remove original file
             backup_path.unlink()
             
-            self.logger.info(f"🗜️ Backup compressed: {compressed_path.name}")
+            self.logger.info(f"Backup compressed: {compressed_path.name}")
             
         except Exception as e:
-            self.logger.error(f"❌ Compression failed: {e}")
+            self.logger.error(f"Compression failed: {e}")
     
     def cleanup_old_backups(self, env_name=None):
         """Remove old backups based on retention policy"""
         retention_days = self.config["backup_settings"]["retention_days"]
         cutoff_date = datetime.datetime.now() - datetime.timedelta(days=retention_days)
         
-        self.logger.info(f"🧹 Cleaning up backups older than {retention_days} days")
+        self.logger.info(f"Cleaning up backups older than {retention_days} days")
         
         deleted_count = 0
         for backup_file in self.backup_dir.glob("*.backup*"):
@@ -269,19 +306,19 @@ class DatabaseBackup:
             if file_time < cutoff_date:
                 try:
                     backup_file.unlink()
-                    self.logger.info(f"🗑️ Deleted old backup: {backup_file.name}")
+                    self.logger.info(f"Deleted old backup: {backup_file.name}")
                     deleted_count += 1
                 except Exception as e:
-                    self.logger.error(f"❌ Could not delete {backup_file.name}: {e}")
+                    self.logger.error(f"Could not delete {backup_file.name}: {e}")
         
         if deleted_count > 0:
-            self.logger.info(f"✅ Cleaned up {deleted_count} old backup files")
+            self.logger.info(f"Cleaned up {deleted_count} old backup files")
         else:
-            self.logger.info("✅ No old backups to clean up")
+            self.logger.info("No old backups to clean up")
     
     def backup_all_environments(self):
         """Backup all configured environments"""
-        self.logger.info("🚀 Starting backup of all environments")
+        self.logger.info("Starting backup of all environments")
         
         success_count = 0
         total_count = len(self.config["environments"])
@@ -290,7 +327,7 @@ class DatabaseBackup:
             if self.create_backup(env_name):
                 success_count += 1
                 
-        self.logger.info(f"📊 Backup Summary: {success_count}/{total_count} successful")
+        self.logger.info(f"Backup Summary: {success_count}/{total_count} successful")
         
         # Cleanup old backups
         self.cleanup_old_backups()
@@ -299,7 +336,7 @@ class DatabaseBackup:
     
     def list_backups(self, env_name=None):
         """List available backups"""
-        self.logger.info("📋 Available backups:")
+        self.logger.info("Available backups:")
         
         backup_files = []
         for backup_file in sorted(self.backup_dir.glob("*.backup*")):
@@ -317,7 +354,7 @@ class DatabaseBackup:
             }
             backup_files.append(backup_info)
             
-            print(f"  📁 {backup_info['name']}")
+            print(f"  File: {backup_info['name']}")
             print(f"     Size: {backup_info['size_mb']} MB")
             print(f"     Created: {backup_info['created']}")
             print()
@@ -331,10 +368,19 @@ def main():
     parser.add_argument("--cleanup", action="store_true", help="Cleanup old backups only")
     parser.add_argument("--type", choices=["full", "schema", "data"], default="full", 
                        help="Backup type")
+    parser.add_argument("--check", action="store_true", help="Check PostgreSQL installation")
     
     args = parser.parse_args()
     
     backup_tool = DatabaseBackup()
+    
+    if args.check:
+        if backup_tool.pg_available:
+            print("PostgreSQL is available and ready for backups!")
+        else:
+            print("PostgreSQL is NOT available. Please install PostgreSQL.")
+            print("Download from: https://www.postgresql.org/download/")
+        return
     
     if args.list:
         backup_tool.list_backups(args.env if args.env != "all" else None)
@@ -350,10 +396,10 @@ def main():
         success = backup_tool.create_backup(args.env, args.type)
     
     if success:
-        print("\n🎉 Backup operation completed successfully!")
+        print("\nBackup operation completed successfully!")
         sys.exit(0)
     else:
-        print("\n❌ Backup operation failed!")
+        print("\nBackup operation failed!")
         sys.exit(1)
 
 if __name__ == "__main__":

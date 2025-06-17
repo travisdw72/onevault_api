@@ -1,0 +1,32 @@
+{
+  "environments": {
+    "one_vault": {
+      "host": "localhost",
+      "port": "5432",
+      "database": "one_vault",
+      "username": "postgres",
+      "description": "Main production database"
+    },
+    "one_vault_dev": {
+      "host": "localhost",
+      "port": "5432",
+      "database": "one_vault_dev",
+      "username": "postgres",
+      "description": "Development database"
+    },
+    "one_vault_testing": {
+      "host": "localhost",
+      "port": "5432",
+      "database": "one_vault_testing",
+      "username": "postgres",
+      "description": "Testing database"
+    }
+  },
+  "backup_settings": {
+    "compress": true,
+    "retention_days": 30,
+    "include_data": true,
+    "include_schema": true,
+    "custom_format": true
+  }
+}
