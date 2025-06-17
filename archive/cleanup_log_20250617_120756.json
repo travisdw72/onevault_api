@@ -1,0 +1,294 @@
+{
+  "cleanup_session": {
+    "start_time": "20250617_120756",
+    "total_operations": 35,
+    "dry_run": true
+  },
+  "operations": [
+    {
+      "timestamp": "2025-06-17T12:07:56.049229",
+      "type": "MOVE",
+      "source": "database_investigation_20250615_163438.json",
+      "destination": "archive/investigations/database_investigation_20250615_163438.json",
+      "reason": "Large investigation file cluttering root directory",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.050233",
+      "type": "MOVE",
+      "source": "database_investigation_20250615_164352.json",
+      "destination": "archive/investigations/database_investigation_20250615_164352.json",
+      "reason": "Large investigation file cluttering root directory",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.050233",
+      "type": "MOVE",
+      "source": "database_investigation_20250615_165206.json",
+      "destination": "archive/investigations/database_investigation_20250615_165206.json",
+      "reason": "Large investigation file cluttering root directory",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.050829",
+      "type": "MOVE",
+      "source": "database_investigation_20250615_165406.json",
+      "destination": "archive/investigations/database_investigation_20250615_165406.json",
+      "reason": "Large investigation file cluttering root directory",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.050829",
+      "type": "MOVE",
+      "source": "database_investigation_20250615_165752.json",
+      "destination": "archive/investigations/database_investigation_20250615_165752.json",
+      "reason": "Large investigation file cluttering root directory",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.050829",
+      "type": "MOVE",
+      "source": "database_investigation_20250616_203842.json",
+      "destination": "archive/investigations/database_investigation_20250616_203842.json",
+      "reason": "Large investigation file cluttering root directory",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.051833",
+      "type": "MOVE",
+      "source": "mock_data_generator.py",
+      "destination": "archive/experiments/mock_data_generator.py",
+      "reason": "Experimental/testing script better organized in archive",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.051833",
+      "type": "MOVE",
+      "source": "run_all_analysis.py",
+      "destination": "archive/experiments/run_all_analysis.py",
+      "reason": "Experimental/testing script better organized in archive",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.052834",
+      "type": "MOVE",
+      "source": "function_test_runner.py",
+      "destination": "archive/experiments/function_test_runner.py",
+      "reason": "Experimental/testing script better organized in archive",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.053834",
+      "type": "MOVE",
+      "source": "check_one_barn_structure.py",
+      "destination": "archive/experiments/check_one_barn_structure.py",
+      "reason": "Experimental/testing script better organized in archive",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.053834",
+      "type": "MOVE",
+      "source": "check_raw_staging_structure.py",
+      "destination": "archive/experiments/check_raw_staging_structure.py",
+      "reason": "Experimental/testing script better organized in archive",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.053834",
+      "type": "MOVE",
+      "source": "one_barn_api_credentials_20250616_140112.json",
+      "destination": "archive/experiments/one_barn_api_credentials_20250616_140112.json",
+      "reason": "One Barn experimental files - keep for reference but archive",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.054876",
+      "type": "MOVE",
+      "source": "one_barn_connection_example.js",
+      "destination": "archive/experiments/one_barn_connection_example.js",
+      "reason": "One Barn experimental files - keep for reference but archive",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.054876",
+      "type": "MOVE",
+      "source": "one_barn_platform.env",
+      "destination": "archive/experiments/one_barn_platform.env",
+      "reason": "One Barn experimental files - keep for reference but archive",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.055834",
+      "type": "MOVE",
+      "source": "complete_rbac_demo_results_20250616_130051.json",
+      "destination": "archive/test_results/complete_rbac_demo_results_20250616_130051.json",
+      "reason": "Test result files cluttering root - archive for reference",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.055834",
+      "type": "MOVE",
+      "source": "quick_rbac_setup_results_20250616_124418.json",
+      "destination": "archive/test_results/quick_rbac_setup_results_20250616_124418.json",
+      "reason": "Test result files cluttering root - archive for reference",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.055834",
+      "type": "MOVE",
+      "source": "quick_rbac_setup_results_20250616_124949.json",
+      "destination": "archive/test_results/quick_rbac_setup_results_20250616_124949.json",
+      "reason": "Test result files cluttering root - archive for reference",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.055834",
+      "type": "MOVE",
+      "source": "sox_assessment_interpretation.md",
+      "destination": "archive/test_results/sox_assessment_interpretation.md",
+      "reason": "Test result files cluttering root - archive for reference",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.056837",
+      "type": "MOVE",
+      "source": "working_rbac_demo_results_20250616_130912.json",
+      "destination": "archive/test_results/working_rbac_demo_results_20250616_130912.json",
+      "reason": "Test result files cluttering root - archive for reference",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.056837",
+      "type": "MOVE",
+      "source": "OneVault_Business_Plan.md",
+      "destination": "docs/business/OneVault_Business_Plan.md",
+      "reason": "Business documentation organized in docs folder",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.056837",
+      "type": "MOVE",
+      "source": "DEVELOPMENT_ROADMAP_PHASE_BY_PHASE.md",
+      "destination": "docs/business/DEVELOPMENT_ROADMAP_PHASE_BY_PHASE.md",
+      "reason": "Business documentation organized in docs folder",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.058342",
+      "type": "MOVE",
+      "source": "Customer_Configuration_Examples.md",
+      "destination": "docs/business/Customer_Configuration_Examples.md",
+      "reason": "Business documentation organized in docs folder",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.058342",
+      "type": "MOVE",
+      "source": "AI_IMPLEMENTATION_PROMPT.md",
+      "destination": "docs/technical/AI_IMPLEMENTATION_PROMPT.md",
+      "reason": "Technical documentation organized in docs folder",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.058856",
+      "type": "MOVE",
+      "source": "CONFIG_CONSTANTS_IMPLEMENTATION.md",
+      "destination": "docs/technical/CONFIG_CONSTANTS_IMPLEMENTATION.md",
+      "reason": "Technical documentation organized in docs folder",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.059391",
+      "type": "MOVE",
+      "source": "TYPESCRIPT_CONFIG_GUIDE.md",
+      "destination": "docs/technical/TYPESCRIPT_CONFIG_GUIDE.md",
+      "reason": "Technical documentation organized in docs folder",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.059391",
+      "type": "MOVE",
+      "source": "TYPESCRIPT_CONFIG_INTEGRATION_SUMMARY.md",
+      "destination": "docs/technical/TYPESCRIPT_CONFIG_INTEGRATION_SUMMARY.md",
+      "reason": "Technical documentation organized in docs folder",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.059391",
+      "type": "MOVE",
+      "source": "GETTING_STARTED.md",
+      "destination": "docs/configuration/GETTING_STARTED.md",
+      "reason": "Configuration documentation organized in docs folder",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.060397",
+      "type": "MOVE",
+      "source": "OneVault_Folder_Structure.md",
+      "destination": "docs/configuration/OneVault_Folder_Structure.md",
+      "reason": "Configuration documentation organized in docs folder",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.060397",
+      "type": "MOVE",
+      "source": "OneVault_Complete_Folder_Structure.md",
+      "destination": "docs/configuration/OneVault_Complete_Folder_Structure.md",
+      "reason": "Configuration documentation organized in docs folder",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.060397",
+      "type": "MOVE",
+      "source": "database\\.git",
+      "destination": "archive/mysterious_db_git_folder",
+      "reason": "Unknown .git folder inside database directory - needs investigation",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.061397",
+      "type": "MOVE",
+      "source": "database\\legacy_scripts\\testing_validation",
+      "destination": "database\\testing",
+      "reason": "Move testing scripts to cleaner location for easy access",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.062399",
+      "type": "MOVE",
+      "source": "database\\test_script_completeness.py",
+      "destination": "archive/experiments/database_test_script_completeness.py",
+      "reason": "Database utility script - archive to reduce clutter",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.062399",
+      "type": "MOVE",
+      "source": "database\\test_auto_detection.py",
+      "destination": "archive/experiments/database_test_auto_detection.py",
+      "reason": "Database utility script - archive to reduce clutter",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.062399",
+      "type": "MOVE",
+      "source": "database\\organize_database_scripts.py",
+      "destination": "archive/experiments/database_organize_database_scripts.py",
+      "reason": "Database utility script - archive to reduce clutter",
+      "executed": false
+    },
+    {
+      "timestamp": "2025-06-17T12:07:56.063397",
+      "type": "MOVE",
+      "source": "Raw and Staging Layer",
+      "destination": "archive/experiments/raw_and_staging_layer",
+      "reason": "Folder with spaces in name - archive and investigate contents later",
+      "executed": false
+    }
+  ],
+  "undo_instructions": [
+    "To undo these operations, run the reverse of each MOVE operation",
+    "For safety, this was logged but you can manually review each operation",
+    "Original locations are preserved in the 'source' field"
+  ]
+}
