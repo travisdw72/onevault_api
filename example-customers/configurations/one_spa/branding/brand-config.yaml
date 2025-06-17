@@ -1,0 +1,382 @@
+# OneVault White Label Branding Configuration
+# Customer: Luxe Wellness Spa
+# Brand Theme: Luxury Spa & Wellness
+
+# Primary Brand Identity
+brand:
+  name: "Luxe Wellness"
+  tagline: "Elevate Your Wellness Journey"
+  legal_name: "Luxe Wellness Enterprises LLC"
+  
+  # Brand Voice & Tone
+  voice:
+    primary: "sophisticated"
+    secondary: "nurturing" 
+    tone: "professional_yet_warm"
+    personality: ["luxury", "wellness", "tranquil", "expert", "caring"]
+
+# Color Palette
+colors:
+  # Primary Colors
+  primary:
+    main: "#2D5AA0"           # Deep Blue
+    light: "#4A7BC8"          # Light Blue
+    dark: "#1E3A6F"           # Dark Blue
+    contrast: "#FFFFFF"       # White text on primary
+    
+  # Secondary Colors
+  secondary:
+    main: "#F4F7FA"           # Light Gray/Blue
+    light: "#FFFFFF"          # Pure White
+    dark: "#E1E8ED"           # Darker Gray
+    contrast: "#2D5AA0"       # Primary blue text
+    
+  # Accent Colors
+  accent:
+    main: "#E8B931"           # Gold
+    light: "#F2D073"          # Light Gold
+    dark: "#D4A017"           # Dark Gold
+    contrast: "#1E3A6F"       # Dark blue text
+    
+  # Status Colors
+  status:
+    success: "#10B981"        # Green
+    warning: "#F59E0B"        # Amber
+    error: "#EF4444"          # Red
+    info: "#3B82F6"           # Blue
+    
+  # Neutral Colors
+  neutral:
+    50: "#F9FAFB"
+    100: "#F3F4F6"
+    200: "#E5E7EB"
+    300: "#D1D5DB"
+    400: "#9CA3AF"
+    500: "#6B7280"
+    600: "#4B5563"
+    700: "#374151"
+    800: "#1F2937"
+    900: "#111827"
+
+# Typography
+typography:
+  # Font Families
+  fonts:
+    primary: "Montserrat"     # Headings and primary text
+    secondary: "Open Sans"    # Body text and secondary
+    mono: "JetBrains Mono"    # Code and technical
+    
+  # Font Weights
+  weights:
+    light: 300
+    regular: 400
+    medium: 500
+    semibold: 600
+    bold: 700
+    
+  # Font Sizes (rem units)
+  sizes:
+    xs: "0.75rem"     # 12px
+    sm: "0.875rem"    # 14px
+    base: "1rem"      # 16px
+    lg: "1.125rem"    # 18px
+    xl: "1.25rem"     # 20px
+    "2xl": "1.5rem"   # 24px
+    "3xl": "1.875rem" # 30px
+    "4xl": "2.25rem"  # 36px
+    "5xl": "3rem"     # 48px
+    
+  # Line Heights
+  line_heights:
+    tight: 1.25
+    normal: 1.5
+    relaxed: 1.75
+    loose: 2
+
+# Logo & Imagery
+logos:
+  # Main Logo
+  primary:
+    light_background: "/branding/logos/luxe-logo-dark.svg"
+    dark_background: "/branding/logos/luxe-logo-light.svg"
+    horizontal: "/branding/logos/luxe-logo-horizontal.svg"
+    vertical: "/branding/logos/luxe-logo-vertical.svg"
+    icon_only: "/branding/logos/luxe-icon.svg"
+    
+  # Favicon
+  favicon:
+    ico: "/branding/favicons/favicon.ico"
+    png_16: "/branding/favicons/favicon-16x16.png"
+    png_32: "/branding/favicons/favicon-32x32.png"
+    apple_touch: "/branding/favicons/apple-touch-icon.png"
+    
+  # App Icons
+  app_icons:
+    android_192: "/branding/app-icons/android-192x192.png"
+    android_512: "/branding/app-icons/android-512x512.png"
+    ios_180: "/branding/app-icons/ios-180x180.png"
+    
+  # Usage Guidelines
+  logo_usage:
+    minimum_size: "32px"
+    clear_space: "logo_height * 0.5"
+    do_not_modify: true
+    maintain_proportions: true
+
+# UI Components Styling
+components:
+  # Buttons
+  buttons:
+    primary:
+      background: "#2D5AA0"
+      text: "#FFFFFF"
+      border: "#2D5AA0"
+      hover_background: "#1E3A6F"
+      hover_border: "#1E3A6F"
+      
+    secondary:
+      background: "transparent"
+      text: "#2D5AA0"
+      border: "#2D5AA0"
+      hover_background: "#F4F7FA"
+      hover_border: "#2D5AA0"
+      
+    accent:
+      background: "#E8B931"
+      text: "#1E3A6F"
+      border: "#E8B931"
+      hover_background: "#D4A017"
+      hover_border: "#D4A017"
+      
+  # Forms
+  forms:
+    input_border: "#D1D5DB"
+    input_focus_border: "#2D5AA0"
+    input_background: "#FFFFFF"
+    label_color: "#374151"
+    placeholder_color: "#9CA3AF"
+    
+  # Navigation
+  navigation:
+    background: "#FFFFFF"
+    text: "#374151"
+    active_text: "#2D5AA0"
+    active_background: "#F4F7FA"
+    border: "#E5E7EB"
+    
+  # Cards
+  cards:
+    background: "#FFFFFF"
+    border: "#E5E7EB"
+    shadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)"
+    hover_shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+
+# Application Themes
+themes:
+  # Light Theme (Default)
+  light:
+    background: "#FFFFFF"
+    surface: "#F9FAFB"
+    surface_secondary: "#F3F4F6"
+    text_primary: "#111827"
+    text_secondary: "#6B7280"
+    border: "#E5E7EB"
+    shadow: "rgba(0, 0, 0, 0.1)"
+    
+  # Dark Theme (Optional)
+  dark:
+    enabled: false  # Not yet implemented
+    background: "#111827"
+    surface: "#1F2937"
+    surface_secondary: "#374151"
+    text_primary: "#F9FAFB"
+    text_secondary: "#D1D5DB"
+    border: "#4B5563"
+    shadow: "rgba(0, 0, 0, 0.3)"
+
+# Custom Styling
+custom_css:
+  # Custom CSS Variables
+  css_variables: |
+    :root {
+      --luxe-gradient-primary: linear-gradient(135deg, #2D5AA0 0%, #4A7BC8 100%);
+      --luxe-gradient-accent: linear-gradient(135deg, #E8B931 0%, #F2D073 100%);
+      --luxe-border-radius: 8px;
+      --luxe-border-radius-lg: 12px;
+      --luxe-transition: all 0.2s ease-in-out;
+      --luxe-shadow-sm: 0 1px 2px 0 rgba(45, 90, 160, 0.05);
+      --luxe-shadow-md: 0 4px 6px -1px rgba(45, 90, 160, 0.1);
+      --luxe-shadow-lg: 0 10px 15px -3px rgba(45, 90, 160, 0.1);
+    }
+    
+  # Custom Component Styles
+  additional_styles: |
+    .luxe-card {
+      background: linear-gradient(145deg, #ffffff 0%, #f9fafb 100%);
+      border: 1px solid var(--luxe-primary-100);
+      border-radius: var(--luxe-border-radius-lg);
+      box-shadow: var(--luxe-shadow-md);
+      transition: var(--luxe-transition);
+    }
+    
+    .luxe-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--luxe-shadow-lg);
+    }
+    
+    .luxe-button-gradient {
+      background: var(--luxe-gradient-primary);
+      border: none;
+      color: white;
+      transition: var(--luxe-transition);
+    }
+    
+    .luxe-button-gradient:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--luxe-shadow-md);
+    }
+
+# Email & Communication Styling
+communication:
+  # Email Templates
+  email:
+    header_background: "#2D5AA0"
+    header_text: "#FFFFFF"
+    body_background: "#F9FAFB"
+    body_text: "#374151"
+    link_color: "#2D5AA0"
+    footer_background: "#F3F4F6"
+    footer_text: "#6B7280"
+    
+  # SMS Branding
+  sms:
+    sender_name: "LuxeWellness"
+    signature: "- Luxe Wellness"
+    
+  # Push Notifications
+  push_notifications:
+    icon: "/branding/app-icons/notification-icon.png"
+    accent_color: "#2D5AA0"
+
+# Print Materials
+print:
+  # Business Cards
+  business_cards:
+    primary_color: "#2D5AA0"
+    accent_color: "#E8B931"
+    text_color: "#1F2937"
+    
+  # Letterhead
+  letterhead:
+    header_height: "2in"
+    footer_height: "1in"
+    logo_position: "top_left"
+    
+  # Certificates
+  certificates:
+    border_color: "#E8B931"
+    seal_color: "#2D5AA0"
+    text_color: "#1F2937"
+
+# Mobile App Styling
+mobile:
+  # Status Bar
+  status_bar:
+    style: "dark"  # dark text on light background
+    background_color: "#FFFFFF"
+    
+  # Splash Screen
+  splash_screen:
+    background_color: "#2D5AA0"
+    logo: "/branding/mobile/splash-logo.png"
+    
+  # Tab Bar
+  tab_bar:
+    background: "#FFFFFF"
+    active_color: "#2D5AA0"
+    inactive_color: "#9CA3AF"
+    border_color: "#E5E7EB"
+
+# Marketing Materials
+marketing:
+  # Website
+  website:
+    hero_background: "linear-gradient(135deg, #2D5AA0 0%, #4A7BC8 100%)"
+    section_backgrounds: ["#FFFFFF", "#F9FAFB"]
+    call_to_action_color: "#E8B931"
+    
+  # Social Media
+  social_media:
+    profile_picture: "/branding/social/profile-picture.png"
+    cover_photo: "/branding/social/cover-photo.png"
+    post_template: "/branding/social/post-template.png"
+    
+  # Advertising
+  advertising:
+    primary_colors: ["#2D5AA0", "#E8B931"]
+    fonts: ["Montserrat", "Open Sans"]
+    logo_usage: "horizontal_preferred"
+
+# Brand Guidelines Compliance
+compliance:
+  # Required Elements
+  required_elements:
+    - "logo_placement"
+    - "color_consistency"
+    - "typography_hierarchy"
+    - "spacing_standards"
+    
+  # Prohibited Actions
+  prohibited:
+    - "logo_modification"
+    - "unauthorized_color_combinations"
+    - "competing_brand_association"
+    - "low_resolution_logo_usage"
+    
+  # Quality Standards
+  quality_standards:
+    minimum_logo_size: "32px"
+    maximum_logo_width: "300px"
+    color_accuracy_tolerance: "5%"
+    typography_consistency: "required"
+
+# Implementation Settings
+implementation:
+  # CSS Framework Integration
+  css_framework: "tailwind"
+  css_prefix: "luxe-"
+  
+  # Asset Management
+  assets:
+    cdn_enabled: true
+    optimization_enabled: true
+    format_preferences: ["svg", "webp", "png"]
+    
+  # Performance
+  performance:
+    lazy_loading: true
+    image_optimization: true
+    font_preloading: true
+
+# Metadata
+metadata:
+  created_by: "brand_team"
+  created_at: "2024-01-15T10:30:00Z"
+  updated_by: "sarah.johnson@luxewellness.com"
+  updated_at: "2024-01-20T13:45:18Z"
+  version: "1.1"
+  brand_guidelines_version: "2024.1"
+  
+# Review & Approval
+review:
+  brand_approved: true
+  approved_by: "Sarah Johnson, Brand Director"
+  approval_date: "2024-01-18"
+  next_review: "2024-07-18"
+  
+# Usage Analytics
+analytics:
+  track_brand_consistency: true
+  color_usage_monitoring: true
+  logo_placement_analysis: true
+  user_preference_tracking: true 

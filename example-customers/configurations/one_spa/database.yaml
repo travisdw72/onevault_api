@@ -1,0 +1,351 @@
+# OneVault Database Configuration
+# Customer: Luxe Wellness Spa
+# Database Instance: one_spa_db
+# Created: 2024-01-15
+
+# Primary Database Configuration
+primary_database:
+  customer_id: "one_spa"
+  database_name: "one_spa_db"
+  
+  # Connection Details
+  connection:
+    host: "spa-db-primary.onevault-prod.internal"
+    port: 5432
+    database: "one_spa_db"
+    username: "spa_app_user"
+    password_secret: "vault://secrets/customers/one_spa/db_password"
+    ssl_mode: "require"
+    ssl_cert: "/certs/one_spa/client.crt"
+    ssl_key: "/certs/one_spa/client.key"
+    ssl_ca: "/certs/ca.crt"
+    
+  # Connection Pool Settings
+  connection_pool:
+    min_connections: 5
+    max_connections: 100
+    idle_timeout: 300
+    max_lifetime: 3600
+    health_check_interval: 30
+    
+  # High Availability
+  high_availability:
+    enabled: true
+    read_replicas:
+      - host: "spa-db-replica-1.onevault-prod.internal"
+        port: 5432
+        lag_tolerance_ms: 1000
+        weight: 50
+      - host: "spa-db-replica-2.onevault-prod.internal"
+        port: 5432
+        lag_tolerance_ms: 1000
+        weight: 50
+    
+    failover:
+      auto_failover: true
+      failover_timeout: 30
+      health_check_interval: 10
+
+# Backup Configuration
+backup:
+  # Automated Backups
+  automated:
+    enabled: true
+    frequency: "daily"
+    retention_period: "2555_days"  # 7 years for HIPAA compliance
+    backup_window: "02:00-04:00"
+    timezone: "America/Los_Angeles"
+    
+  # Point-in-Time Recovery
+  point_in_time_recovery:
+    enabled: true
+    retention_period: "30_days"
+    wal_archive_enabled: true
+    
+  # Cross-Region Backup
+  cross_region:
+    enabled: true
+    target_region: "us-west-2"
+    retention_period: "2555_days"
+    encryption_enabled: true
+    
+  # Backup Verification
+  verification:
+    enabled: true
+    frequency: "weekly"
+    test_restore: true
+    notification_on_failure: true
+
+# Security Configuration
+security:
+  # Encryption
+  encryption:
+    at_rest:
+      enabled: true
+      algorithm: "AES-256"
+      key_management: "AWS_KMS"
+      key_id: "arn:aws:kms:us-east-1:123456789:key/spa-db-key"
+      key_rotation: true
+      rotation_frequency: "annual"
+      
+    in_transit:
+      enabled: true
+      tls_version: "1.3"
+      cipher_suites: ["TLS_AES_256_GCM_SHA384", "TLS_CHACHA20_POLY1305_SHA256"]
+      
+  # Network Security
+  network:
+    vpc_id: "vpc-spa123456"
+    subnet_group: "spa-db-subnet-group"
+    security_groups: ["sg-spa-db-12345"]
+    publicly_accessible: false
+    
+  # Access Control
+  access_control:
+    # Database Users
+    users:
+      - username: "spa_app_user"
+        role: "application"
+        permissions: ["SELECT", "INSERT", "UPDATE", "DELETE"]
+        schemas: ["auth", "business", "spa_wellness", "audit"]
+        
+      - username: "spa_readonly_user"
+        role: "reporting"
+        permissions: ["SELECT"]
+        schemas: ["business", "spa_wellness"]
+        
+      - username: "spa_backup_user"
+        role: "backup"
+        permissions: ["SELECT"]
+        schemas: ["ALL"]
+        
+      - username: "spa_admin_user"
+        role: "admin"
+        permissions: ["ALL"]
+        schemas: ["ALL"]
+        mfa_required: true
+        
+    # IP Allowlist
+    ip_allowlist:
+      - ip: "10.0.1.0/24"
+        description: "SPA Application Servers"
+      - ip: "10.0.2.0/24"
+        description: "SPA Admin Network"
+      - ip: "203.0.113.100/32"
+        description: "SPA Office Static IP"
+
+# Performance Configuration
+performance:
+  # Instance Specifications
+  instance:
+    class: "db.r6g.2xlarge"
+    vcpus: 8
+    memory_gb: 64
+    storage_type: "gp3"
+    storage_size_gb: 1000
+    iops: 12000
+    throughput_mbps: 500
+    
+  # Performance Monitoring
+  monitoring:
+    enabled: true
+    enhanced_monitoring: true
+    monitoring_interval: 60
+    
+    # Performance Insights
+    performance_insights:
+      enabled: true
+      retention_period: 7
+      
+    # CloudWatch Metrics
+    cloudwatch:
+      enabled: true
+      detailed_monitoring: true
+      custom_metrics: true
+      
+  # Optimization
+  optimization:
+    auto_vacuum: true
+    auto_analyze: true
+    shared_preload_libraries: ["pg_stat_statements", "pg_audit"]
+    
+    # Configuration Tuning
+    postgresql_config:
+      shared_buffers: "16GB"
+      effective_cache_size: "48GB"
+      maintenance_work_mem: "2GB"
+      checkpoint_completion_target: 0.9
+      wal_buffers: "16MB"
+      default_statistics_target: 100
+      random_page_cost: 1.1
+
+# Schema Configuration
+schemas:
+  # Core Schemas (Data Vault 2.0)
+  core_schemas:
+    - name: "auth"
+      description: "Authentication and authorization"
+      owner: "spa_app_user"
+      
+    - name: "business"
+      description: "Core business entities"
+      owner: "spa_app_user"
+      
+    - name: "audit"
+      description: "Audit trails and compliance"
+      owner: "spa_app_user"
+      
+    - name: "util"
+      description: "Utility functions and procedures"
+      owner: "spa_app_user"
+      
+  # Industry-Specific Schemas
+  industry_schemas:
+    - name: "spa_wellness"
+      description: "Spa and wellness specific data"
+      owner: "spa_app_user"
+      hipaa_compliant: true
+      
+    - name: "franchise"
+      description: "Franchise management data"
+      owner: "spa_app_user"
+      
+  # Reference Schemas
+  reference_schemas:
+    - name: "ref"
+      description: "Reference data and lookups"
+      owner: "spa_app_user"
+
+# Compliance Configuration
+compliance:
+  # HIPAA Compliance
+  hipaa:
+    enabled: true
+    audit_logging: true
+    data_encryption: true
+    access_logging: true
+    backup_encryption: true
+    retention_period: "2555_days"  # 7 years
+    
+  # Data Retention
+  data_retention:
+    phi_data: "2555_days"  # 7 years
+    business_data: "2555_days"  # 7 years for business continuity
+    audit_logs: "2555_days"  # 7 years
+    
+  # Audit Requirements
+  audit:
+    audit_extension: "pgaudit"
+    audit_log_level: "all"
+    audit_log_statement: "all"
+    audit_log_connections: true
+    audit_log_disconnections: true
+
+# Maintenance Configuration
+maintenance:
+  # Maintenance Windows
+  maintenance_window:
+    day: "sunday"
+    start_time: "02:00"
+    duration_hours: 4
+    timezone: "America/Los_Angeles"
+    
+  # Auto Minor Version Upgrade
+  auto_minor_version_upgrade: true
+  
+  # Patching
+  patch_management:
+    auto_patch: false  # Manual control for compliance
+    notification_required: true
+    approval_required: true
+
+# Data Migration
+migration:
+  # Source System (if applicable)
+  source_system:
+    type: "legacy_migration_completed"
+    completion_date: "2024-01-30"
+    
+  # Migration Settings
+  settings:
+    batch_size: 1000
+    parallel_workers: 4
+    validation_enabled: true
+    rollback_enabled: true
+
+# Monitoring & Alerting
+monitoring:
+  # Database Health Alerts
+  alerts:
+    - name: "High CPU Usage"
+      threshold: 80
+      duration_minutes: 5
+      notification: ["sarah@luxewellness.com", "ops@onevault.com"]
+      
+    - name: "Low Storage Space"
+      threshold: 85
+      notification: ["ops@onevault.com"]
+      
+    - name: "Connection Pool Exhaustion"
+      threshold: 90
+      notification: ["ops@onevault.com", "dev@onevault.com"]
+      
+    - name: "Replication Lag"
+      threshold: 5000  # milliseconds
+      notification: ["ops@onevault.com"]
+      
+    - name: "Failed Login Attempts"
+      threshold: 10
+      duration_minutes: 5
+      notification: ["security@onevault.com", "sarah@luxewellness.com"]
+      
+  # Custom Metrics
+  custom_metrics:
+    - name: "spa_member_count"
+      query: "SELECT COUNT(*) FROM spa_wellness.member_h"
+      frequency: "hourly"
+      
+    - name: "daily_appointments"
+      query: "SELECT COUNT(*) FROM spa_wellness.appointment_details_s WHERE DATE(load_date) = CURRENT_DATE"
+      frequency: "hourly"
+
+# Disaster Recovery
+disaster_recovery:
+  # Recovery Time Objectives
+  rto_minutes: 60  # 1 hour
+  rpo_minutes: 15  # 15 minutes
+  
+  # DR Site
+  dr_site:
+    region: "us-west-2"
+    instance_class: "db.r6g.2xlarge"
+    automated_failover: false  # Manual for compliance control
+    
+  # Testing
+  dr_testing:
+    frequency: "quarterly"
+    last_test: "2024-01-15"
+    next_test: "2024-04-15"
+    test_duration_hours: 4
+
+# Metadata
+metadata:
+  created_by: "database_team"
+  created_at: "2024-01-15T10:30:00Z"
+  updated_by: "ops@onevault.com"
+  updated_at: "2024-01-20T09:22:11Z"
+  version: "1.2"
+  schema_version: "2024.1"
+  
+# Environment Information
+environment:
+  name: "production"
+  region: "us-east-1"
+  availability_zones: ["us-east-1a", "us-east-1b", "us-east-1c"]
+  
+# Cost Optimization
+cost_optimization:
+  reserved_instances: true
+  savings_plan: "3_year_partial_upfront"
+  scheduled_scaling: false  # Consistent performance required
+  storage_optimization: true 

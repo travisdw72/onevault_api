@@ -1,0 +1,17 @@
+{
+  "setup_timestamp": "2025-06-16T13:00:51.459160",
+  "database": "one_vault_demo_barn",
+  "tenants_created": [
+    {
+      "tenant_name": "RBAC_DEMO_CORP_20250616_130051",
+      "admin_email": "admin@rbac-demo.local",
+      "admin_password": "RBACDemo123!@#",
+      "status": "created"
+    }
+  ],
+  "users_created": [],
+  "roles_created": [],
+  "errors": [
+    "Setup failed: 'NoneType' object is not subscriptable"
+  ]
+}

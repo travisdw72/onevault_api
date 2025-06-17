@@ -1,0 +1,17 @@
+{
+  "setup_timestamp": "2025-06-16T13:09:12.581721",
+  "database": "one_vault_demo_barn",
+  "users_created": [],
+  "roles_created": [],
+  "errors": [
+    "Failed to create role Demo Manager: null value in column \"tenant_hk\" of relation \"role_h\" violates not-null constraint\nDETAIL:  Failing row contains (\\x327fc4c6b16b662e5c7830305c7830305c7830305c7830305c7830305c7830..., DEMO_MANAGER_20250616_130912, null, 2025-06-16 13:09:12.582401-07, RBAC_DEMO).\n",
+    "Failed to create role Demo Employee: current transaction is aborted, commands ignored until end of transaction block\n",
+    "Failed to create role Demo Viewer: current transaction is aborted, commands ignored until end of transaction block\n",
+    "Failed to create role Demo Client: current transaction is aborted, commands ignored until end of transaction block\n",
+    "Failed to create user demo-manager-20250616_130912@rbac.local: current transaction is aborted, commands ignored until end of transaction block\n",
+    "Failed to create user demo-employee-20250616_130912@rbac.local: current transaction is aborted, commands ignored until end of transaction block\n",
+    "Failed to create user demo-viewer-20250616_130912@rbac.local: current transaction is aborted, commands ignored until end of transaction block\n",
+    "Failed to create user demo-client-20250616_130912@rbac.local: current transaction is aborted, commands ignored until end of transaction block\n",
+    "Setup failed: current transaction is aborted, commands ignored until end of transaction block\n"
+  ]
+}

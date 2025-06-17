@@ -1,0 +1,111 @@
+# OneVault Customer Configuration
+# Customer: Luxe Wellness Spa Franchise
+# Industry: Spa & Wellness
+# Created: 2024-01-15
+# Last Updated: 2024-01-20
+
+customer:
+  id: "one_spa"
+  name: "Luxe Wellness Spa"
+  legal_name: "Luxe Wellness Enterprises LLC"
+  business_type: "franchise"
+  industry: "spa_wellness"
+  
+  # Contact Information
+  contact:
+    primary_contact: "Sarah Johnson"
+    email: "sarah@luxewellness.com"
+    phone: "+1-555-123-4567"
+    address:
+      street: "123 Wellness Boulevard"
+      city: "Beverly Hills"
+      state: "CA"
+      zip: "90210"
+      country: "US"
+  
+  # Billing Information
+  billing:
+    plan: "enterprise_premium"
+    monthly_fee: 4999.00
+    per_location_fee: 299.00
+    currency: "USD"
+    billing_cycle: "monthly"
+    payment_method: "ach"
+    tax_id: "12-3456789"
+  
+  # Service Configuration
+  service:
+    subdomain: "luxewellness"
+    custom_domain: "app.luxewellness.com"
+    timezone: "America/Los_Angeles"
+    locale: "en_US"
+    date_format: "MM/DD/YYYY"
+    time_format: "12h"
+    currency_symbol: "$"
+  
+  # Support & Success
+  support:
+    tier: "premium"
+    dedicated_csm: true
+    csm_name: "Jennifer Martinez"
+    csm_email: "jennifer.martinez@onevault.com"
+    onboarding_status: "completed"
+    go_live_date: "2024-02-01"
+  
+  # Compliance Requirements
+  compliance:
+    hipaa_required: true
+    state_regulations: ["CA_CCPA", "CA_HEALTH_PRIVACY"]
+    industry_certifications: ["ISPA", "CIDESCO"]
+    data_residency: "US"
+    audit_frequency: "quarterly"
+  
+  # Technical Configuration
+  technical:
+    api_rate_limit: 10000  # requests per hour
+    storage_quota_gb: 500
+    backup_retention_days: 2555  # 7 years for HIPAA
+    ssl_certificate: "wildcard"
+    cdn_enabled: true
+    monitoring_tier: "premium"
+  
+  # White Label Configuration
+  branding:
+    enabled: true
+    logo_url: "/branding/luxe_logo.png"
+    primary_color: "#2D5AA0"
+    secondary_color: "#F4F7FA"
+    accent_color: "#E8B931"
+    font_family: "Montserrat"
+    favicon_url: "/branding/favicon.ico"
+    login_background: "/branding/spa_background.jpg"
+  
+  # Multi-Location Support
+  locations:
+    - id: "spa_001"
+      name: "Luxe Wellness Beverly Hills"
+      address: "123 Wellness Blvd, Beverly Hills, CA 90210"
+      status: "active"
+      manager: "Maria Rodriguez"
+      phone: "+1-555-123-4567"
+    - id: "spa_002"
+      name: "Luxe Wellness Malibu"
+      address: "456 Ocean View Dr, Malibu, CA 90265"
+      status: "active"
+      manager: "David Chen"
+      phone: "+1-555-987-6543"
+    - id: "spa_003"
+      name: "Luxe Wellness Manhattan Beach"
+      address: "789 Strand Blvd, Manhattan Beach, CA 90266"
+      status: "pending_setup"
+      manager: "Lisa Thompson"
+      phone: "+1-555-456-7890"
+
+# Metadata
+metadata:
+  created_by: "system"
+  created_at: "2024-01-15T10:30:00Z"
+  updated_by: "sarah.johnson@luxewellness.com"
+  updated_at: "2024-01-20T14:22:33Z"
+  version: "1.2"
+  schema_version: "2024.1" 

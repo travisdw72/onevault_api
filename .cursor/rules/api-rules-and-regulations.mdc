@@ -1,0 +1,853 @@
+---
+description: API Rules & Regulations for ELT Processing
+globs: 
+alwaysApply: false
+---
+# API Rules & Regulations for ELT Processing
+## Multi-Tenant Data Vault 2.0 SaaS Platform
+
+### Project Overview
+This document defines the mandatory API rules and regulations for Extract, Load, Transform (ELT) processing in our Multi-Tenant Business Optimization Platform. All API contracts must follow these standards to ensure data integrity, compliance, tenant isolation, and optimal performance within our Data Vault 2.0 architecture.
+
+---
+
+## 🏗️ **ELT ARCHITECTURE OVERVIEW**
+
+### Data Processing Flow (ELT - Extract, Load, Transform)
+```
+API Endpoints → Raw Layer → Staging Layer → Business Layer → Information Mart
+     ↓              ↓           ↓             ↓              ↓
+Extract         Load        Transform      Integrate      Serve
+```
+
+### Processing Layers
+```sql
+-- Layer 1: RAW (Extract & Load)
+raw.external_data_h/s     -- API integrations, system feeds, third-party data
+raw.user_input_h/s        -- Form submissions, user interactions, direct input
+raw.file_data_h/s         -- Document uploads, media files, attachments
+raw.sensor_data_h/s       -- IoT sensors, equipment monitoring, real-time streams
+
+-- Layer 2: STAGING (Transform & Validate)
+staging.user_input_validation_h/s    -- Real-time user input processing
+staging.user_behavior_analysis_h/s   -- Interaction pattern analysis
+staging.data_validation_h/s          -- External data quality assessment
+staging.business_rule_h/s             -- Domain-specific business logic
+staging.entity_resolution_h/s         -- Duplicate detection & matching
+staging.standardization_h/s           -- Data cleaning & formatting
+
+-- Layer 3: BUSINESS (Integrate & Structure)
+business.customer_h/s/l               -- Customer master data
+business.entity_h/s/l                 -- Business entity management
+business.asset_h/s/l                  -- Asset tracking and management
+business.transaction_h/s/l            -- Financial transaction processing
+
+-- Layer 4: INFOMART (Serve & Analyze)
+infomart.customer_summary_v           -- Customer analytics views
+infomart.financial_reporting_v        -- Financial reporting aggregations
+infomart.operational_metrics_v        -- Operational KPI dashboards
+```
+
+---
+
+## 📋 **MANDATORY API CONTRACT STANDARDS**
+
+### Universal API Contract Structure
+
+#### Required Headers for All API Requests
+```http
+Content-Type: application/json
+Authorization: Bearer {session_token}
+X-Tenant-ID: {tenant_hash_key}
+X-Request-ID: {unique_request_identifier}
+X-Source-System: {source_system_name}
+X-API-Version: v1
+User-Agent: {client_application_info}
+```
+
+#### Standard API Response Format
+```json
+{
+  "success": true,
+  "data": {
+    // Response payload
+  },
+  "meta": {
+    "requestId": "uuid-request-identifier",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "tenantId": "encrypted-tenant-hash",
+    "processingTimeMs": 125,
+    "apiVersion": "v1",
+    "recordsProcessed": 1,
+    "dataQualityScore": 98.5
+  },
+  "pagination": {
+    "page": 1,
+    "pageSize": 50,
+    "totalCount": 1250,
+    "totalPages": 25
+  },
+  "errors": [],
+  "warnings": []
+}
+```
+
+#### Error Response Format
+```json
+{
+  "success": false,
+  "data": null,
+  "meta": {
+    "requestId": "uuid-request-identifier",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "tenantId": "encrypted-tenant-hash",
+    "processingTimeMs": 45,
+    "apiVersion": "v1"
+  },
+  "errors": [
+    {
+      "code": "VALIDATION_ERROR",
+      "message": "Required field 'email' is missing",
+      "field": "email",
+      "severity": "ERROR"
+    }
+  ],
+  "warnings": []
+}
+```
+
+---
+
+## 🔄 **ELT PROCESSING RULES**
+
+### Phase 1: EXTRACT Rules
+
+#### Data Source Classification
+```yaml
+# API contract must specify data source type
+data_source_types:
+  external_api:
+    description: "Third-party APIs, system integrations, data feeds"
+    target_table: "raw.external_data_h/s"
+    processing_priority: "HIGH"
+    validation_required: true
+    
+  user_input:
+    description: "Form submissions, user interactions, direct input"
+    target_table: "raw.user_input_h/s"
+    processing_priority: "IMMEDIATE"
+    validation_required: true
+    
+  file_upload:
+    description: "Document uploads, media files, attachments"
+    target_table: "raw.file_data_h/s"
+    processing_priority: "MEDIUM"
+    validation_required: true
+    
+  sensor_data:
+    description: "IoT sensors, equipment monitoring, real-time streams"
+    target_table: "raw.sensor_data_h/s"
+    processing_priority: "IMMEDIATE"
+    validation_required: false
+```
+
+#### Mandatory Extract Metadata
+```sql
+-- Every API contract MUST capture this metadata
+CREATE TABLE raw.api_extract_metadata (
+    extract_hk BYTEA PRIMARY KEY,
+    tenant_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    
+    -- API Contract Information (REQUIRED)
+    api_endpoint VARCHAR(255) NOT NULL,
+    api_version VARCHAR(10) NOT NULL,
+    request_method VARCHAR(10) NOT NULL,        -- GET, POST, PUT, DELETE
+    source_system VARCHAR(100) NOT NULL,
+    
+    -- Request Tracking (REQUIRED)
+    request_id VARCHAR(255) NOT NULL,
+    session_token_hash BYTEA,
+    user_agent TEXT,
+    client_ip INET,
+    
+    -- Data Classification (REQUIRED)
+    data_source_type VARCHAR(50) NOT NULL,     -- external_api, user_input, file_upload, sensor_data
+    data_sensitivity VARCHAR(20) NOT NULL,     -- PUBLIC, INTERNAL, CONFIDENTIAL, RESTRICTED
+    contains_phi BOOLEAN DEFAULT false,
+    contains_pii BOOLEAN DEFAULT false,
+    
+    -- Processing Metadata (REQUIRED)
+    payload_size_bytes INTEGER,
+    expected_record_count INTEGER,
+    processing_priority VARCHAR(20) DEFAULT 'MEDIUM',
+    
+    record_source VARCHAR(100) NOT NULL
+);
+```
+
+### Phase 2: LOAD Rules
+
+#### Raw Data Loading Standards
+```sql
+-- Universal raw data loading function template
+CREATE OR REPLACE FUNCTION raw.load_api_data(
+    p_tenant_hk BYTEA,
+    p_api_endpoint VARCHAR(255),
+    p_source_system VARCHAR(100),
+    p_data_source_type VARCHAR(50),
+    p_raw_payload JSONB,
+    p_request_metadata JSONB
+) RETURNS TABLE (
+    extract_hk BYTEA,
+    records_loaded INTEGER,
+    data_quality_score DECIMAL(5,2),
+    processing_status VARCHAR(20),
+    validation_errors TEXT[]
+) AS $$
+DECLARE
+    v_extract_hk BYTEA;
+    v_extract_bk VARCHAR(255);
+    v_target_table VARCHAR(100);
+    v_quality_score DECIMAL(5,2);
+    v_validation_errors TEXT[] := ARRAY[]::TEXT[];
+BEGIN
+    -- Generate business key for this extraction
+    v_extract_bk := p_source_system || '_' || p_api_endpoint || '_' || 
+                    to_char(CURRENT_TIMESTAMP, 'YYYYMMDD_HH24MISS_US');
+    v_extract_hk := util.hash_binary(v_extract_bk);
+    
+    -- Determine target table based on data source type
+    v_target_table := CASE p_data_source_type
+        WHEN 'external_api' THEN 'raw.external_data_s'
+        WHEN 'user_input' THEN 'raw.user_input_s'
+        WHEN 'file_upload' THEN 'raw.file_data_s'
+        WHEN 'sensor_data' THEN 'raw.sensor_data_s'
+        ELSE NULL
+    END;
+    
+    IF v_target_table IS NULL THEN
+        RAISE EXCEPTION 'Invalid data_source_type: %', p_data_source_type;
+    END IF;
+    
+    -- Validate tenant isolation (CRITICAL)
+    IF p_tenant_hk IS NULL THEN
+        RAISE EXCEPTION 'Tenant isolation violation: tenant_hk cannot be NULL';
+    END IF;
+    
+    -- Perform data quality assessment
+    v_quality_score := raw.assess_data_quality(p_raw_payload, p_data_source_type);
+    
+    -- Load to appropriate raw table with full audit trail
+    -- Implementation would insert into the determined target table
+    
+    RETURN QUERY SELECT 
+        v_extract_hk,
+        jsonb_array_length(p_raw_payload->'records'),
+        v_quality_score,
+        'LOADED'::VARCHAR(20),
+        v_validation_errors;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+#### Load Validation Rules
+```sql
+-- Mandatory validation for all API loads
+CREATE OR REPLACE FUNCTION raw.validate_api_load(
+    p_tenant_hk BYTEA,
+    p_raw_payload JSONB,
+    p_data_source_type VARCHAR(50)
+) RETURNS TABLE (
+    validation_passed BOOLEAN,
+    validation_errors TEXT[],
+    data_quality_score DECIMAL(5,2)
+) AS $$
+DECLARE
+    v_errors TEXT[] := ARRAY[]::TEXT[];
+    v_score DECIMAL(5,2) := 100.0;
+BEGIN
+    -- 1. Tenant Isolation Validation (CRITICAL)
+    IF p_tenant_hk IS NULL THEN
+        v_errors := array_append(v_errors, 'CRITICAL: tenant_hk is required for tenant isolation');
+        v_score := 0;
+    END IF;
+    
+    -- 2. Payload Structure Validation
+    IF p_raw_payload IS NULL THEN
+        v_errors := array_append(v_errors, 'ERROR: raw_payload cannot be NULL');
+        v_score := v_score - 50;
+    END IF;
+    
+    IF NOT (p_raw_payload ? 'records') THEN
+        v_errors := array_append(v_errors, 'ERROR: payload must contain records array');
+        v_score := v_score - 30;
+    END IF;
+    
+    -- 3. Data Source Type Validation
+    IF p_data_source_type NOT IN ('external_api', 'user_input', 'file_upload', 'sensor_data') THEN
+        v_errors := array_append(v_errors, 'ERROR: invalid data_source_type');
+        v_score := v_score - 20;
+    END IF;
+    
+    -- 4. Record Count Validation
+    IF p_raw_payload ? 'records' THEN
+        IF jsonb_array_length(p_raw_payload->'records') = 0 THEN
+            v_errors := array_append(v_errors, 'WARNING: no records in payload');
+            v_score := v_score - 10;
+        END IF;
+        
+        IF jsonb_array_length(p_raw_payload->'records') > 10000 THEN
+            v_errors := array_append(v_errors, 'WARNING: large batch size may impact performance');
+            v_score := v_score - 5;
+        END IF;
+    END IF;
+    
+    RETURN QUERY SELECT 
+        (array_length(v_errors, 1) IS NULL OR NOT EXISTS(
+            SELECT 1 FROM unnest(v_errors) AS error 
+            WHERE error LIKE 'CRITICAL:%' OR error LIKE 'ERROR:%'
+        )),
+        v_errors,
+        GREATEST(v_score, 0.0);
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Phase 3: TRANSFORM Rules
+
+#### Staging Layer Processing Pipeline
+```sql
+-- Universal staging processing function
+CREATE OR REPLACE FUNCTION staging.process_raw_data(
+    p_tenant_hk BYTEA,
+    p_extract_hk BYTEA,
+    p_processing_stage VARCHAR(100)
+) RETURNS TABLE (
+    processing_result VARCHAR(20),
+    records_processed INTEGER,
+    records_passed INTEGER,
+    records_failed INTEGER,
+    quality_improvement DECIMAL(5,2)
+) AS $$
+DECLARE
+    v_processor_function VARCHAR(200);
+    v_result RECORD;
+BEGIN
+    -- Determine processing function based on stage
+    v_processor_function := CASE p_processing_stage
+        WHEN 'user_input_validation' THEN 'staging.validate_user_input'
+        WHEN 'data_validation' THEN 'staging.validate_external_data'
+        WHEN 'business_rules' THEN 'staging.apply_business_rules'
+        WHEN 'entity_resolution' THEN 'staging.resolve_entities'
+        WHEN 'standardization' THEN 'staging.standardize_data'
+        WHEN 'behavior_analysis' THEN 'staging.analyze_user_behavior'
+        ELSE NULL
+    END;
+    
+    IF v_processor_function IS NULL THEN
+        RAISE EXCEPTION 'Unknown processing stage: %', p_processing_stage;
+    END IF;
+    
+    -- Execute the appropriate processor (dynamic call would be implemented)
+    -- This is a simplified representation
+    
+    RETURN QUERY SELECT 
+        'COMPLETED'::VARCHAR(20),
+        100,  -- records_processed
+        95,   -- records_passed
+        5,    -- records_failed
+        15.5; -- quality_improvement
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+## 🔐 **SECURITY & COMPLIANCE REQUIREMENTS**
+
+### Tenant Isolation Enforcement
+```sql
+-- Every API operation MUST enforce tenant isolation
+CREATE OR REPLACE FUNCTION util.enforce_tenant_isolation(
+    p_tenant_hk BYTEA,
+    p_operation VARCHAR(50),
+    p_resource VARCHAR(100)
+) RETURNS BOOLEAN AS $$
+DECLARE
+    v_validation_result BOOLEAN := false;
+BEGIN
+    -- 1. Validate tenant exists and is active
+    SELECT EXISTS(
+        SELECT 1 FROM auth.tenant_h th
+        JOIN auth.tenant_profile_s tps ON th.tenant_hk = tps.tenant_hk
+        WHERE th.tenant_hk = p_tenant_hk
+        AND tps.is_active = true
+        AND tps.load_end_date IS NULL
+    ) INTO v_validation_result;
+    
+    IF NOT v_validation_result THEN
+        RAISE EXCEPTION 'Tenant isolation violation: invalid or inactive tenant %', 
+                        encode(p_tenant_hk, 'hex');
+    END IF;
+    
+    -- 2. Log the access for audit trail
+    INSERT INTO audit.api_access_log_s (
+        access_hk,
+        tenant_hk,
+        operation_type,
+        resource_accessed,
+        access_timestamp,
+        session_user,
+        load_date,
+        record_source
+    ) VALUES (
+        util.hash_binary(p_tenant_hk::text || p_operation || CURRENT_TIMESTAMP::text),
+        p_tenant_hk,
+        p_operation,
+        p_resource,
+        CURRENT_TIMESTAMP,
+        SESSION_USER,
+        util.current_load_date(),
+        util.get_record_source()
+    );
+    
+    RETURN true;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### HIPAA/GDPR Compliance Rules
+```sql
+-- PHI/PII detection and handling
+CREATE OR REPLACE FUNCTION util.classify_sensitive_data(
+    p_payload JSONB
+) RETURNS TABLE (
+    contains_phi BOOLEAN,
+    contains_pii BOOLEAN,
+    sensitivity_level VARCHAR(20),
+    required_protections TEXT[]
+) AS $$
+DECLARE
+    v_phi_indicators TEXT[] := ARRAY['ssn', 'medical_record', 'diagnosis', 'treatment'];
+    v_pii_indicators TEXT[] := ARRAY['email', 'phone', 'address', 'birth_date'];
+    v_contains_phi BOOLEAN := false;
+    v_contains_pii BOOLEAN := false;
+    v_field_name TEXT;
+    v_protections TEXT[] := ARRAY[]::TEXT[];
+BEGIN
+    -- Check for PHI indicators
+    FOR v_field_name IN SELECT jsonb_object_keys(p_payload)
+    LOOP
+        IF v_field_name = ANY(v_phi_indicators) THEN
+            v_contains_phi := true;
+        END IF;
+        
+        IF v_field_name = ANY(v_pii_indicators) THEN
+            v_contains_pii := true;
+        END IF;
+    END LOOP;
+    
+    -- Determine required protections
+    IF v_contains_phi THEN
+        v_protections := array_append(v_protections, 'HIPAA_ENCRYPTION');
+        v_protections := array_append(v_protections, 'ACCESS_LOGGING');
+        v_protections := array_append(v_protections, 'MINIMUM_NECESSARY');
+    END IF;
+    
+    IF v_contains_pii THEN
+        v_protections := array_append(v_protections, 'GDPR_CONSENT');
+        v_protections := array_append(v_protections, 'RIGHT_TO_ERASURE');
+    END IF;
+    
+    RETURN QUERY SELECT 
+        v_contains_phi,
+        v_contains_pii,
+        CASE 
+            WHEN v_contains_phi THEN 'RESTRICTED'
+            WHEN v_contains_pii THEN 'CONFIDENTIAL'
+            ELSE 'INTERNAL'
+        END,
+        v_protections;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+## 📊 **DATA QUALITY REQUIREMENTS**
+
+### Mandatory Quality Assessments
+```sql
+-- Every API load must include quality assessment
+CREATE OR REPLACE FUNCTION raw.assess_data_quality(
+    p_payload JSONB,
+    p_data_source_type VARCHAR(50)
+) RETURNS DECIMAL(5,2) AS $$
+DECLARE
+    v_score DECIMAL(5,2) := 100.0;
+    v_total_records INTEGER;
+    v_complete_records INTEGER;
+    v_valid_records INTEGER;
+BEGIN
+    -- Get record counts
+    v_total_records := jsonb_array_length(p_payload->'records');
+    
+    IF v_total_records = 0 THEN
+        RETURN 0.0;
+    END IF;
+    
+    -- Completeness check (required fields present)
+    SELECT COUNT(*) INTO v_complete_records
+    FROM jsonb_array_elements(p_payload->'records') AS record
+    WHERE record ? 'id' AND record ? 'timestamp';
+    
+    -- Validity check (data format validation)
+    SELECT COUNT(*) INTO v_valid_records
+    FROM jsonb_array_elements(p_payload->'records') AS record
+    WHERE record->>'timestamp' ~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}';
+    
+    -- Calculate quality score
+    v_score := v_score * (v_complete_records::DECIMAL / v_total_records);
+    v_score := v_score * (v_valid_records::DECIMAL / v_total_records);
+    
+    -- Source-specific quality adjustments
+    CASE p_data_source_type
+        WHEN 'user_input' THEN
+            -- User input typically has higher quality requirements
+            IF v_score < 95.0 THEN
+                v_score := v_score * 0.9;
+            END IF;
+        WHEN 'sensor_data' THEN
+            -- Sensor data may have acceptable quality at lower thresholds
+            IF v_score > 80.0 THEN
+                v_score := LEAST(v_score * 1.1, 100.0);
+            END IF;
+        ELSE
+            -- Standard processing
+    END CASE;
+    
+    RETURN ROUND(v_score, 2);
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Quality Thresholds by Data Type
+```yaml
+# Minimum quality requirements by data source type
+quality_thresholds:
+  user_input:
+    minimum_score: 95.0
+    blocking_threshold: 90.0  # Block processing below this score
+    warning_threshold: 95.0   # Generate warnings below this score
+    
+  external_api:
+    minimum_score: 85.0
+    blocking_threshold: 75.0
+    warning_threshold: 85.0
+    
+  file_upload:
+    minimum_score: 80.0
+    blocking_threshold: 70.0
+    warning_threshold: 80.0
+    
+  sensor_data:
+    minimum_score: 75.0
+    blocking_threshold: 60.0
+    warning_threshold: 75.0
+
+# Quality improvement targets
+quality_targets:
+  raw_to_staging_improvement: 10.0    # Minimum 10% improvement
+  staging_to_business_improvement: 5.0 # Minimum 5% improvement
+  overall_target_score: 98.0           # Target final quality score
+```
+
+---
+
+## ⚡ **PERFORMANCE REQUIREMENTS**
+
+### API Response Time Standards
+```yaml
+# Maximum response times by operation type
+response_time_sla:
+  real_time_operations:     # User input, critical updates
+    target_ms: 200
+    maximum_ms: 500
+    timeout_ms: 1000
+    
+  batch_operations:         # Bulk data processing
+    target_ms: 2000
+    maximum_ms: 5000
+    timeout_ms: 30000
+    
+  reporting_operations:     # Complex queries, analytics
+    target_ms: 5000
+    maximum_ms: 15000
+    timeout_ms: 60000
+    
+  file_operations:          # File uploads, large payloads
+    target_ms: 5000
+    maximum_ms: 30000
+    timeout_ms: 300000
+```
+
+### Batch Processing Limits
+```sql
+-- Enforce batch processing limits
+CREATE OR REPLACE FUNCTION util.validate_batch_size(
+    p_operation_type VARCHAR(50),
+    p_record_count INTEGER
+) RETURNS TABLE (
+    is_valid BOOLEAN,
+    recommended_batch_size INTEGER,
+    processing_strategy VARCHAR(50)
+) AS $$
+DECLARE
+    v_max_batch_size INTEGER;
+    v_strategy VARCHAR(50);
+BEGIN
+    -- Set limits based on operation type
+    CASE p_operation_type
+        WHEN 'user_input' THEN
+            v_max_batch_size := 100;
+            v_strategy := 'IMMEDIATE';
+        WHEN 'external_api' THEN
+            v_max_batch_size := 1000;
+            v_strategy := 'BATCH';
+        WHEN 'file_upload' THEN
+            v_max_batch_size := 50;
+            v_strategy := 'ASYNC';
+        WHEN 'sensor_data' THEN
+            v_max_batch_size := 10000;
+            v_strategy := 'STREAMING';
+        ELSE
+            v_max_batch_size := 500;
+            v_strategy := 'BATCH';
+    END CASE;
+    
+    RETURN QUERY SELECT 
+        p_record_count <= v_max_batch_size,
+        v_max_batch_size,
+        v_strategy;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+## 🚨 **ERROR HANDLING STANDARDS**
+
+### Universal Error Response Format
+```sql
+-- Standardized error handling for all API operations
+CREATE OR REPLACE FUNCTION api.handle_processing_error(
+    p_error_code VARCHAR(50),
+    p_error_message TEXT,
+    p_tenant_hk BYTEA,
+    p_request_context JSONB
+) RETURNS JSONB AS $$
+DECLARE
+    v_error_response JSONB;
+    v_error_id BYTEA;
+BEGIN
+    -- Generate unique error ID for tracking
+    v_error_id := util.hash_binary(p_error_code || p_error_message || CURRENT_TIMESTAMP::text);
+    
+    -- Log error for audit and debugging
+    INSERT INTO audit.api_error_log_s (
+        error_hk,
+        tenant_hk,
+        error_code,
+        error_message,
+        request_context,
+        error_timestamp,
+        load_date,
+        record_source
+    ) VALUES (
+        v_error_id,
+        p_tenant_hk,
+        p_error_code,
+        p_error_message,
+        p_request_context,
+        CURRENT_TIMESTAMP,
+        util.current_load_date(),
+        util.get_record_source()
+    );
+    
+    -- Build standardized error response
+    v_error_response := jsonb_build_object(
+        'success', false,
+        'data', null,
+        'meta', jsonb_build_object(
+            'requestId', p_request_context->>'requestId',
+            'timestamp', CURRENT_TIMESTAMP,
+            'tenantId', encode(p_tenant_hk, 'hex'),
+            'errorId', encode(v_error_id, 'hex')
+        ),
+        'errors', jsonb_build_array(
+            jsonb_build_object(
+                'code', p_error_code,
+                'message', p_error_message,
+                'severity', CASE 
+                    WHEN p_error_code LIKE 'CRITICAL_%' THEN 'CRITICAL'
+                    WHEN p_error_code LIKE 'ERROR_%' THEN 'ERROR'
+                    WHEN p_error_code LIKE 'WARNING_%' THEN 'WARNING'
+                    ELSE 'INFO'
+                END
+            )
+        ),
+        'warnings', jsonb_build_array()
+    );
+    
+    RETURN v_error_response;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Error Classification System
+```yaml
+# Standardized error codes for all API operations
+error_codes:
+  critical_errors:
+    CRITICAL_TENANT_ISOLATION: "Tenant isolation violation detected"
+    CRITICAL_SECURITY_BREACH: "Security breach attempt detected"
+    CRITICAL_DATA_CORRUPTION: "Data corruption detected during processing"
+    
+  processing_errors:
+    ERROR_INVALID_PAYLOAD: "Invalid payload structure or format"
+    ERROR_VALIDATION_FAILED: "Data validation failed"
+    ERROR_BUSINESS_RULE_VIOLATION: "Business rule validation failed"
+    ERROR_DUPLICATE_RECORD: "Duplicate record detected"
+    ERROR_MISSING_REQUIRED_FIELD: "Required field missing from payload"
+    
+  performance_errors:
+    ERROR_TIMEOUT: "Operation exceeded maximum processing time"
+    ERROR_BATCH_TOO_LARGE: "Batch size exceeds maximum limit"
+    ERROR_RATE_LIMIT_EXCEEDED: "API rate limit exceeded"
+    
+  warnings:
+    WARNING_DATA_QUALITY_LOW: "Data quality below recommended threshold"
+    WARNING_PARTIAL_SUCCESS: "Operation completed with some failures"
+    WARNING_DEPRECATED_FIELD: "Using deprecated field in API request"
+```
+
+---
+
+## 📋 **IMPLEMENTATION CHECKLIST**
+
+### API Contract Development Checklist
+- [ ] **Extract Phase**
+  - [ ] API endpoint properly classified by data source type
+  - [ ] Required headers implemented and validated
+  - [ ] Tenant isolation enforced at entry point
+  - [ ] Request metadata captured completely
+  - [ ] Payload structure validation implemented
+  
+- [ ] **Load Phase**
+  - [ ] Raw data loaded to appropriate table based on source type
+  - [ ] Full audit trail captured with all metadata
+  - [ ] Data quality assessment performed and recorded
+  - [ ] Tenant isolation validated before any data storage
+  - [ ] Error handling implemented with proper logging
+  
+- [ ] **Transform Phase**
+  - [ ] Staging processing pipeline configured
+  - [ ] Business rules validation implemented
+  - [ ] Entity resolution and standardization applied
+  - [ ] Quality improvement tracking implemented
+  - [ ] Cross-industry compatibility verified
+  
+- [ ] **Security & Compliance**
+  - [ ] PHI/PII detection and classification implemented
+  - [ ] HIPAA audit logging configured
+  - [ ] GDPR consent and rights management implemented
+  - [ ] Encryption requirements enforced
+  - [ ] Access control validation implemented
+  
+- [ ] **Performance & Quality**
+  - [ ] Response time SLAs validated
+  - [ ] Batch size limits enforced
+  - [ ] Quality thresholds configured by data type
+  - [ ] Performance monitoring implemented
+  - [ ] Load testing completed
+  
+- [ ] **Error Handling**
+  - [ ] Standardized error response format implemented
+  - [ ] Error classification system applied
+  - [ ] Error logging and tracking configured
+  - [ ] Recovery procedures documented
+  - [ ] User-friendly error messages provided
+
+---
+
+## 🎯 **UNIVERSAL INDUSTRY COMPATIBILITY**
+
+### Industry-Agnostic Data Processing
+```sql
+-- Universal business entity processing
+CREATE OR REPLACE FUNCTION staging.process_universal_entity(
+    p_tenant_hk BYTEA,
+    p_industry_type VARCHAR(100),
+    p_entity_data JSONB
+) RETURNS TABLE (
+    processing_result VARCHAR(20),
+    standardized_entity JSONB,
+    quality_score DECIMAL(5,2)
+) AS $$
+DECLARE
+    v_industry_config JSONB;
+    v_standardized JSONB;
+    v_score DECIMAL(5,2);
+BEGIN
+    -- Load industry-specific processing configuration
+    SELECT configuration INTO v_industry_config
+    FROM ref.industry_processing_config_r
+    WHERE industry_type = p_industry_type;
+    
+    -- Apply universal standardization rules
+    v_standardized := staging.apply_universal_standards(p_entity_data, v_industry_config);
+    
+    -- Calculate quality score
+    v_score := staging.calculate_entity_quality(v_standardized, p_industry_type);
+    
+    RETURN QUERY SELECT 
+        'COMPLETED'::VARCHAR(20),
+        v_standardized,
+        v_score;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Supported Industry Examples
+```yaml
+# Universal platform supports any industry through configuration
+supported_industries:
+  equine_management:
+    entities: ["horses", "clients", "trainers", "facilities", "events"]
+    specific_fields: ["breed", "training_level", "medical_history"]
+    compliance: ["animal_welfare", "competition_rules"]
+    
+  healthcare:
+    entities: ["patients", "providers", "treatments", "facilities", "insurance"]
+    specific_fields: ["medical_record_number", "diagnosis", "treatment_plan"]
+    compliance: ["HIPAA", "FDA", "state_regulations"]
+    
+  manufacturing:
+    entities: ["products", "suppliers", "equipment", "quality_metrics", "orders"]
+    specific_fields: ["serial_number", "batch_id", "quality_rating"]
+    compliance: ["ISO_standards", "safety_regulations"]
+    
+  retail:
+    entities: ["customers", "products", "orders", "inventory", "suppliers"]
+    specific_fields: ["sku", "category", "seasonal_demand"]
+    compliance: ["PCI_DSS", "consumer_protection"]
+    
+  financial_services:
+    entities: ["clients", "accounts", "transactions", "investments", "advisors"]
+    specific_fields: ["account_number", "transaction_type", "risk_profile"]
+    compliance: ["SOX", "FINRA", "SEC", "AML"]
+```
+
+This comprehensive API rules and regulations document ensures that all API contracts follow our established ELT processing standards while maintaining the flexibility to support any industry through our universal learning loop platform. Every API implementation must adhere to these rules to ensure data integrity, security, compliance, and optimal performance.
+

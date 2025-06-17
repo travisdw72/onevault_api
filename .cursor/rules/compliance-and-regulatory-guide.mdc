@@ -1,0 +1,607 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Comprehensive Compliance & Regulatory Guide
+## Multi-Tenant Data Vault 2.0 SaaS Platform
+
+### Current Compliance Status ✅
+Based on your existing implementation, you already have:
+- **HIPAA** - Healthcare data protection
+- **GDPR** - European data protection  
+- **IRS** - Tax compliance for financial transactions
+
+---
+
+## 🏛️ **FINANCIAL SERVICES REGULATIONS**
+
+### SOX (Sarbanes-Oxley Act)
+**Applies to**: Publicly traded companies and their data processors
+```sql
+-- SOX Compliance Implementation
+CREATE TABLE audit.sox_control_s (
+    control_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    financial_period VARCHAR(10) NOT NULL,        -- Q1, Q2, Q3, Q4, Annual
+    control_type VARCHAR(50) NOT NULL,            -- ITGC, Entity Level, Process Level
+    control_description TEXT NOT NULL,
+    control_owner VARCHAR(100) NOT NULL,
+    test_date TIMESTAMP WITH TIME ZONE,
+    test_result VARCHAR(20),                      -- Effective, Ineffective, Not Tested
+    deficiency_severity VARCHAR(20),              -- None, Deficiency, Significant, Material
+    remediation_plan TEXT,
+    certification_required BOOLEAN DEFAULT true,
+    ceo_certification BOOLEAN DEFAULT false,
+    cfo_certification BOOLEAN DEFAULT false,
+    record_source VARCHAR(100) NOT NULL
+);
+
+-- SOX Section 404 - Internal Controls
+CREATE OR REPLACE FUNCTION audit.validate_sox_controls(
+    p_tenant_hk BYTEA,
+    p_financial_period VARCHAR(10)
+) RETURNS TABLE (
+    control_effectiveness_score DECIMAL(5,2),
+    material_weaknesses INTEGER,
+    significant_deficiencies INTEGER,
+    certification_ready BOOLEAN
+);
+```
+
+### PCI DSS (Payment Card Industry Data Security Standard)
+**Applies to**: Any system processing, storing, or transmitting credit card data
+```sql
+-- PCI DSS Requirements Implementation
+CREATE TABLE security.pci_compliance_s (
+    pci_assessment_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    assessment_date DATE NOT NULL,
+    pci_level VARCHAR(10) NOT NULL,               -- Level 1, 2, 3, 4
+    requirement_1_firewall BOOLEAN DEFAULT false, -- Install/maintain firewall
+    requirement_2_defaults BOOLEAN DEFAULT false, -- Remove default passwords
+    requirement_3_cardholder_data BOOLEAN DEFAULT false, -- Protect stored data
+    requirement_4_encryption BOOLEAN DEFAULT false, -- Encrypt transmission
+    requirement_5_antivirus BOOLEAN DEFAULT false, -- Use/maintain antivirus
+    requirement_6_secure_systems BOOLEAN DEFAULT false, -- Secure applications
+    requirement_7_access_control BOOLEAN DEFAULT false, -- Restrict access
+    requirement_8_unique_ids BOOLEAN DEFAULT false, -- Assign unique IDs
+    requirement_9_physical_access BOOLEAN DEFAULT false, -- Restrict physical access
+    requirement_10_monitoring BOOLEAN DEFAULT false, -- Track/monitor access
+    requirement_11_testing BOOLEAN DEFAULT false, -- Regular security testing
+    requirement_12_policy BOOLEAN DEFAULT false, -- Maintain security policy
+    overall_compliance_score DECIMAL(5,2),
+    qsa_validated BOOLEAN DEFAULT false,          -- Qualified Security Assessor
+    record_source VARCHAR(100) NOT NULL
+);
+
+-- PCI DSS Data Protection
+CREATE OR REPLACE FUNCTION security.mask_pan_data(p_card_number TEXT)
+RETURNS TEXT AS $$
+BEGIN
+    -- Mask all but last 4 digits: 4*** **** **** 1234
+    RETURN LEFT(p_card_number, 1) || 
+           REPEAT('*', LENGTH(p_card_number) - 5) || 
+           RIGHT(p_card_number, 4);
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+```
+
+### GLBA (Gramm-Leach-Bliley Act)
+**Applies to**: Financial institutions and their service providers
+```sql
+-- GLBA Privacy Implementation
+CREATE TABLE compliance.glba_privacy_s (
+    privacy_notice_hk BYTEA NOT NULL,
+    customer_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    privacy_notice_provided BOOLEAN DEFAULT false,
+    customer_consent_collected BOOLEAN DEFAULT false,
+    opt_out_allowed BOOLEAN DEFAULT true,
+    opt_out_exercised BOOLEAN DEFAULT false,
+    information_sharing_disclosed BOOLEAN DEFAULT false,
+    safeguards_implemented BOOLEAN DEFAULT false,
+    annual_notice_sent BOOLEAN DEFAULT false,
+    record_source VARCHAR(100) NOT NULL
+);
+```
+
+---
+
+## 🌍 **INTERNATIONAL DATA PROTECTION**
+
+### CCPA (California Consumer Privacy Act)
+**Applies to**: Businesses serving California residents
+```sql
+-- CCPA Rights Implementation
+CREATE TABLE compliance.ccpa_request_s (
+    ccpa_request_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    request_type VARCHAR(50) NOT NULL,           -- Know, Delete, Opt-Out, Portability
+    consumer_verified BOOLEAN DEFAULT false,
+    request_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    response_due_date TIMESTAMP WITH TIME ZONE NOT NULL, -- 45 days max
+    request_status VARCHAR(20) DEFAULT 'PENDING', -- PENDING, PROCESSING, COMPLETED, DENIED
+    personal_info_categories TEXT[],              -- What data is collected
+    business_purposes TEXT[],                     -- Why data is collected
+    third_party_sharing TEXT[],                   -- Who data is shared with
+    response_provided TIMESTAMP WITH TIME ZONE,
+    verification_method VARCHAR(50),
+    record_source VARCHAR(100) NOT NULL
+);
+
+-- CCPA "Do Not Sell" Implementation
+CREATE OR REPLACE FUNCTION compliance.process_do_not_sell(p_consumer_hk BYTEA)
+RETURNS BOOLEAN AS $$
+BEGIN
+    -- Mark consumer as opted out of data sales
+    INSERT INTO compliance.ccpa_opt_out_s (
+        consumer_hk,
+        opt_out_date,
+        opt_out_verified,
+        global_privacy_control
+    ) VALUES (
+        p_consumer_hk,
+        CURRENT_TIMESTAMP,
+        true,
+        true
+    );
+    RETURN true;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### PIPEDA (Canada)
+**Applies to**: Organizations collecting personal information in Canada
+```sql
+-- PIPEDA Consent Management
+CREATE TABLE compliance.pipeda_consent_s (
+    consent_hk BYTEA NOT NULL,
+    individual_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    purpose_specified BOOLEAN DEFAULT false,
+    consent_meaningful BOOLEAN DEFAULT false,     -- Knowledgeable consent
+    consent_method VARCHAR(50),                   -- Explicit, Implied, Opt-in, Opt-out
+    withdrawal_method_provided BOOLEAN DEFAULT false,
+    consent_current BOOLEAN DEFAULT true,
+    privacy_officer_designated BOOLEAN DEFAULT false,
+    record_source VARCHAR(100) NOT NULL
+);
+```
+
+---
+
+## 🏥 **HEALTHCARE SPECIFIC REGULATIONS**
+
+### HITECH Act (Health Information Technology for Economic and Clinical Health)
+**Enhances HIPAA** - Already partially implemented
+```sql
+-- HITECH Breach Notification
+CREATE TABLE compliance.hitech_breach_s (
+    breach_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    breach_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    discovery_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    affected_individuals INTEGER NOT NULL,
+    breach_threshold VARCHAR(20),                 -- Under500, Over500
+    hhs_notification_required BOOLEAN DEFAULT false,
+    hhs_notification_date TIMESTAMP WITH TIME ZONE,
+    media_notification_required BOOLEAN DEFAULT false,
+    individual_notification_date TIMESTAMP WITH TIME ZONE,
+    business_associate_involved BOOLEAN DEFAULT false,
+    risk_assessment_completed BOOLEAN DEFAULT false,
+    mitigation_actions TEXT[],
+    record_source VARCHAR(100) NOT NULL
+);
+
+-- HITECH Audit Logs (Enhanced beyond basic HIPAA)
+CREATE OR REPLACE FUNCTION audit.log_phi_access_hitech(
+    p_user_hk BYTEA,
+    p_patient_hk BYTEA,
+    p_access_type VARCHAR(50),
+    p_minimum_necessary BOOLEAN
+) RETURNS VOID AS $$
+BEGIN
+    INSERT INTO audit.phi_access_log_s (
+        access_hk,
+        user_hk,
+        patient_hk,
+        access_timestamp,
+        access_type,
+        minimum_necessary_applied,
+        ip_address,
+        user_agent,
+        session_id,
+        record_source
+    ) VALUES (
+        util.hash_binary(p_user_hk::text || p_patient_hk::text || CURRENT_TIMESTAMP::text),
+        p_user_hk,
+        p_patient_hk,
+        CURRENT_TIMESTAMP,
+        p_access_type,
+        p_minimum_necessary,
+        inet_client_addr(),
+        current_setting('application_name', true),
+        current_setting('session_id', true),
+        util.get_record_source()
+    );
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### FDA 21 CFR Part 11 (Electronic Records)
+**Applies to**: FDA-regulated industries (pharma, medical devices)
+```sql
+-- 21 CFR Part 11 Electronic Signatures
+CREATE TABLE compliance.cfr_part11_signature_s (
+    signature_hk BYTEA NOT NULL,
+    document_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    signer_hk BYTEA NOT NULL,
+    signature_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    signature_method VARCHAR(50) NOT NULL,       -- Digital, Electronic, Biometric
+    signature_hash BYTEA NOT NULL,               -- Cryptographic hash
+    document_hash_at_signing BYTEA NOT NULL,     -- Document integrity
+    audit_trail_complete BOOLEAN DEFAULT false,
+    non_repudiation BOOLEAN DEFAULT false,
+    access_controls_verified BOOLEAN DEFAULT false,
+    time_stamp_authority VARCHAR(100),
+    record_source VARCHAR(100) NOT NULL
+);
+
+-- Electronic Record Integrity
+CREATE OR REPLACE FUNCTION compliance.validate_electronic_record(
+    p_document_hk BYTEA
+) RETURNS TABLE (
+    integrity_verified BOOLEAN,
+    signature_valid BOOLEAN,
+    audit_trail_complete BOOLEAN,
+    cfr_part11_compliant BOOLEAN
+);
+```
+
+---
+
+## 🛡️ **CYBERSECURITY FRAMEWORKS**
+
+### NIST Cybersecurity Framework
+**Industry Standard** - Recommended for all organizations
+```sql
+-- NIST Framework Implementation
+CREATE TABLE security.nist_control_s (
+    control_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    function_category VARCHAR(20) NOT NULL,      -- Identify, Protect, Detect, Respond, Recover
+    category_code VARCHAR(10) NOT NULL,          -- ID.AM, PR.AC, DE.AE, etc.
+    subcategory_code VARCHAR(20) NOT NULL,
+    control_description TEXT NOT NULL,
+    implementation_status VARCHAR(20) DEFAULT 'NOT_IMPLEMENTED',
+    maturity_level INTEGER CHECK (maturity_level BETWEEN 1 AND 4),
+    risk_rating VARCHAR(10),                     -- Low, Medium, High, Critical
+    last_assessment_date DATE,
+    next_assessment_due DATE,
+    responsible_party VARCHAR(100),
+    record_source VARCHAR(100) NOT NULL
+);
+
+-- NIST Risk Assessment
+CREATE OR REPLACE FUNCTION security.calculate_nist_risk_score(
+    p_tenant_hk BYTEA
+) RETURNS TABLE (
+    overall_risk_score DECIMAL(5,2),
+    identify_score DECIMAL(5,2),
+    protect_score DECIMAL(5,2),
+    detect_score DECIMAL(5,2),
+    respond_score DECIMAL(5,2),
+    recover_score DECIMAL(5,2)
+);
+```
+
+### ISO 27001/27002
+**International Standard** - Information Security Management
+```sql
+-- ISO 27001 Controls
+CREATE TABLE security.iso27001_control_s (
+    control_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    control_number VARCHAR(10) NOT NULL,         -- A.5.1.1, A.8.2.3, etc.
+    control_title VARCHAR(200) NOT NULL,
+    control_objective TEXT NOT NULL,
+    implementation_guidance TEXT,
+    control_type VARCHAR(20),                    -- Administrative, Technical, Physical
+    criticality_level VARCHAR(10),              -- Low, Medium, High
+    implementation_status VARCHAR(20) DEFAULT 'PLANNED',
+    effectiveness_rating VARCHAR(20),
+    last_audit_date DATE,
+    next_audit_due DATE,
+    record_source VARCHAR(100) NOT NULL
+);
+```
+
+---
+
+## 📊 **INDUSTRY-SPECIFIC REGULATIONS**
+
+### FERPA (Educational Records)
+**Applies to**: Educational institutions and their service providers
+```sql
+-- FERPA Educational Records Protection
+CREATE TABLE compliance.ferpa_consent_s (
+    consent_hk BYTEA NOT NULL,
+    student_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    directory_info_consent BOOLEAN DEFAULT false,
+    academic_record_access TEXT[],              -- Who can access records
+    parent_access_until_18 BOOLEAN DEFAULT true,
+    student_inspection_right BOOLEAN DEFAULT true,
+    amendment_request_process BOOLEAN DEFAULT true,
+    disclosure_log_maintained BOOLEAN DEFAULT true,
+    record_source VARCHAR(100) NOT NULL
+);
+```
+
+### CJIS (Criminal Justice Information)
+**Applies to**: Law enforcement and justice system data
+```sql
+-- CJIS Security Requirements
+CREATE TABLE security.cjis_compliance_s (
+    assessment_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    background_check_completed BOOLEAN DEFAULT false,
+    fingerprint_verification BOOLEAN DEFAULT false,
+    advanced_authentication BOOLEAN DEFAULT false, -- 2FA minimum
+    identification_authentication BOOLEAN DEFAULT false,
+    authorization_controls BOOLEAN DEFAULT false,
+    session_controls BOOLEAN DEFAULT false,        -- 30-minute timeout
+    encryption_requirements BOOLEAN DEFAULT false, -- FIPS 140-2 Level 2+
+    audit_logging BOOLEAN DEFAULT false,
+    security_awareness_training BOOLEAN DEFAULT false,
+    incident_response_plan BOOLEAN DEFAULT false,
+    record_source VARCHAR(100) NOT NULL
+);
+```
+
+---
+
+## 🏢 **BUSINESS & OPERATIONAL STANDARDS**
+
+### SOC 2 (Service Organization Control 2)
+**Essential for SaaS** - Trust Services Criteria
+```sql
+-- SOC 2 Trust Services Criteria
+CREATE TABLE compliance.soc2_control_s (
+    control_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    trust_service_category VARCHAR(20) NOT NULL, -- Security, Availability, Processing, Confidentiality, Privacy
+    control_reference VARCHAR(50) NOT NULL,
+    control_description TEXT NOT NULL,
+    control_activity TEXT NOT NULL,
+    test_of_controls TEXT,
+    control_frequency VARCHAR(20),               -- Daily, Weekly, Monthly, Quarterly, Annual
+    control_owner VARCHAR(100),
+    control_effectiveness VARCHAR(20),           -- Effective, Ineffective, Not Tested
+    deficiency_noted BOOLEAN DEFAULT false,
+    management_response TEXT,
+    auditor_testing_date DATE,
+    record_source VARCHAR(100) NOT NULL
+);
+
+-- SOC 2 Automated Monitoring
+CREATE OR REPLACE FUNCTION compliance.monitor_soc2_controls()
+RETURNS TABLE (
+    security_controls_effective BOOLEAN,
+    availability_sla_met BOOLEAN,
+    processing_integrity_verified BOOLEAN,
+    confidentiality_maintained BOOLEAN,
+    privacy_controls_effective BOOLEAN
+);
+```
+
+### COBIT (Control Objectives for Information Technologies)
+**IT Governance Framework**
+```sql
+-- COBIT Process Assessment
+CREATE TABLE governance.cobit_process_s (
+    process_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    domain VARCHAR(50) NOT NULL,                -- EDM, APO, BAI, DSS, MEA
+    process_code VARCHAR(10) NOT NULL,          -- EDM01, APO01, etc.
+    process_name VARCHAR(200) NOT NULL,
+    capability_level INTEGER CHECK (capability_level BETWEEN 0 AND 5),
+    target_capability_level INTEGER CHECK (target_capability_level BETWEEN 0 AND 5),
+    gap_analysis TEXT,
+    improvement_actions TEXT[],
+    responsible_party VARCHAR(100),
+    last_assessment_date DATE,
+    record_source VARCHAR(100) NOT NULL
+);
+```
+
+---
+
+## 🌐 **GLOBAL ACCESSIBILITY & STANDARDS**
+
+### ADA (Americans with Disabilities Act) / WCAG
+**Digital Accessibility**
+```sql
+-- WCAG Compliance Tracking
+CREATE TABLE compliance.wcag_compliance_s (
+    page_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    wcag_level VARCHAR(3) NOT NULL,             -- A, AA, AAA
+    perceivable_score DECIMAL(5,2),            -- Text alternatives, captions, etc.
+    operable_score DECIMAL(5,2),               -- Keyboard accessible, no seizures
+    understandable_score DECIMAL(5,2),         -- Readable, predictable
+    robust_score DECIMAL(5,2),                 -- Compatible with assistive technologies
+    overall_compliance_score DECIMAL(5,2),
+    accessibility_statement_published BOOLEAN DEFAULT false,
+    user_feedback_mechanism BOOLEAN DEFAULT false,
+    record_source VARCHAR(100) NOT NULL
+);
+```
+
+---
+
+## 📋 **IMPLEMENTATION CHECKLIST**
+
+### Critical Implementation Areas
+
+#### 1. Data Governance & Classification
+```sql
+-- Data Classification System
+CREATE TABLE governance.data_classification_s (
+    data_element_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    classification_level VARCHAR(20) NOT NULL,  -- Public, Internal, Confidential, Restricted
+    sensitivity_rating VARCHAR(20),             -- Low, Medium, High, Critical
+    regulatory_requirements TEXT[],             -- Which regulations apply
+    retention_period INTERVAL,
+    disposal_method VARCHAR(50),
+    encryption_required BOOLEAN DEFAULT false,
+    access_logging_required BOOLEAN DEFAULT false,
+    data_residency_requirements TEXT[],
+    record_source VARCHAR(100) NOT NULL
+);
+```
+
+#### 2. Incident Response & Breach Management
+```sql
+-- Unified Incident Response
+CREATE TABLE incident.security_incident_s (
+    incident_hk BYTEA NOT NULL,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    incident_type VARCHAR(50) NOT NULL,
+    severity_level VARCHAR(20) NOT NULL,        -- Low, Medium, High, Critical
+    detection_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    containment_timestamp TIMESTAMP WITH TIME ZONE,
+    eradication_timestamp TIMESTAMP WITH TIME ZONE,
+    recovery_timestamp TIMESTAMP WITH TIME ZONE,
+    affected_systems TEXT[],
+    affected_data_types TEXT[],
+    estimated_records_affected INTEGER,
+    regulatory_notification_required BOOLEAN DEFAULT false,
+    regulatory_notifications_sent TEXT[],      -- Which agencies notified
+    customer_notification_required BOOLEAN DEFAULT false,
+    lessons_learned TEXT,
+    record_source VARCHAR(100) NOT NULL
+);
+```
+
+#### 3. Compliance Monitoring Dashboard
+```sql
+-- Real-time Compliance Status
+CREATE OR REPLACE FUNCTION compliance.get_compliance_dashboard(
+    p_tenant_hk BYTEA
+) RETURNS TABLE (
+    regulation VARCHAR(50),
+    compliance_score DECIMAL(5,2),
+    last_assessment DATE,
+    next_assessment_due DATE,
+    critical_findings INTEGER,
+    remediation_items INTEGER,
+    status VARCHAR(20)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        'HIPAA'::VARCHAR(50),
+        hipaa_score.score,
+        hipaa_score.last_assessed,
+        hipaa_score.next_due,
+        hipaa_score.critical_count,
+        hipaa_score.remediation_count,
+        hipaa_score.status
+    FROM compliance.calculate_hipaa_score(p_tenant_hk) hipaa_score
+    
+    UNION ALL
+    
+    SELECT 
+        'SOC2'::VARCHAR(50),
+        soc2_score.score,
+        soc2_score.last_assessed,
+        soc2_score.next_due,
+        soc2_score.critical_count,
+        soc2_score.remediation_count,
+        soc2_score.status
+    FROM compliance.calculate_soc2_score(p_tenant_hk) soc2_score
+    
+    -- Add other compliance frameworks...
+    ;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+## 🚨 **CRITICAL SUCCESS FACTORS**
+
+### 1. Regular Compliance Assessments
+- **Quarterly** internal assessments
+- **Annual** external audits
+- **Continuous** monitoring via automated tools
+
+### 2. Documentation Requirements
+- Maintain detailed audit trails
+- Document all compliance decisions
+- Keep evidence of control effectiveness
+
+### 3. Training & Awareness
+- Regular security awareness training
+- Compliance-specific training for relevant roles
+- Incident response training and drills
+
+### 4. Technology Controls
+- Automated compliance monitoring
+- Regular vulnerability assessments
+- Penetration testing (at least annually)
+
+### 5. Vendor Management
+- Due diligence on all third-party providers
+- Contractual compliance requirements
+- Regular vendor assessments
+
+---
+
+## 📊 **COMPLIANCE METRICS & KPIs**
+
+```sql
+-- Compliance Metrics View
+CREATE VIEW compliance.compliance_metrics AS
+SELECT 
+    tenant_hk,
+    'Overall Compliance Score' as metric_name,
+    ROUND(AVG(compliance_score), 2) as metric_value,
+    CURRENT_DATE as calculation_date
+FROM (
+    SELECT tenant_hk, hipaa_compliance_score as compliance_score FROM compliance.hipaa_status
+    UNION ALL
+    SELECT tenant_hk, gdpr_compliance_score FROM compliance.gdpr_status
+    UNION ALL
+    SELECT tenant_hk, sox_compliance_score FROM compliance.sox_status
+    UNION ALL
+    SELECT tenant_hk, soc2_compliance_score FROM compliance.soc2_status
+) combined_scores
+GROUP BY tenant_hk;
+```
+
+---
+
+## 🎯 **RECOMMENDATION PRIORITY**
+
+### High Priority (Implement Immediately)
+1. **SOC 2 Type II** - Essential for SaaS credibility
+2. **ISO 27001** - International security standard
+3. **Data Classification** - Foundation for all other compliance
+4. **Incident Response** - Required by most regulations
+
+### Medium Priority (6-12 months)
+1. **NIST Cybersecurity Framework** - Industry best practices
+2. **PCI DSS** - If processing payments
+3. **CCPA** - If serving California customers
+
+### Lower Priority (As Needed)
+1. Industry-specific regulations based on customer base
+2. International standards for global expansion
+3. Specialized frameworks for specific use cases
+
+This comprehensive approach ensures your platform meets the highest standards of compliance while maintaining operational efficiency and customer trust.

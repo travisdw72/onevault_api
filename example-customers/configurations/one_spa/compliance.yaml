@@ -1,0 +1,325 @@
+# OneVault Compliance Configuration
+# Customer: Luxe Wellness Spa
+# Primary Regulation: HIPAA (Health Insurance Portability and Accountability Act)
+# Secondary: CCPA, State Health Privacy Laws
+
+# HIPAA Configuration
+hipaa:
+  enabled: true
+  compliance_officer: "Sarah Johnson"
+  compliance_email: "sarah@luxewellness.com"
+  hipaa_coordinator: "Dr. Maria Rodriguez"
+  
+  # Administrative Safeguards
+  administrative_safeguards:
+    security_officer_assigned: true
+    workforce_training:
+      required: true
+      frequency: "annual"
+      last_completed: "2024-01-10"
+      next_due: "2025-01-10"
+      completion_rate: 100
+      training_modules:
+        - "HIPAA Privacy Rule"
+        - "HIPAA Security Rule" 
+        - "Breach Notification"
+        - "Minimum Necessary Standard"
+        - "PHI Handling Procedures"
+    
+    access_management:
+      role_based_access: true
+      principle_of_least_privilege: true
+      access_review_frequency: "quarterly"
+      last_access_review: "2024-01-15"
+      next_access_review: "2024-04-15"
+      
+    workforce_access_procedures:
+      background_checks_required: true
+      confidentiality_agreements: true
+      termination_procedures: true
+      access_revocation_timeframe: "immediate"
+    
+    contingency_plan:
+      data_backup_plan: true
+      disaster_recovery_plan: true
+      emergency_mode_procedures: true
+      testing_frequency: "semi_annual"
+      last_tested: "2023-12-15"
+      next_test: "2024-06-15"
+    
+    audit_controls:
+      audit_logging_enabled: true
+      log_retention_period: "6_years"
+      audit_review_frequency: "monthly"
+      automated_monitoring: true
+      
+  # Physical Safeguards
+  physical_safeguards:
+    facility_access_controls:
+      physical_security_present: true
+      access_card_system: true
+      visitor_log_required: true
+      after_hours_access_controls: true
+      
+    workstation_controls:
+      automatic_logoff: true
+      logoff_time_minutes: 15
+      screen_locks: true
+      workstation_positioning: "privacy_protected"
+      
+    device_media_controls:
+      encryption_required: true
+      device_inventory: true
+      disposal_procedures: true
+      media_reuse_procedures: true
+      
+  # Technical Safeguards  
+  technical_safeguards:
+    access_control:
+      unique_user_ids: true
+      automatic_logoff: true
+      encryption_at_rest: true
+      encryption_in_transit: true
+      
+    audit_controls:
+      system_activity_logging: true
+      unsuccessful_login_attempts: true
+      phi_access_logging: true
+      log_monitoring: "real_time"
+      
+    integrity:
+      data_integrity_controls: true
+      digital_signatures: false  # Not required for spa
+      checksum_verification: true
+      
+    transmission_security:
+      end_to_end_encryption: true
+      secure_communication_protocols: true
+      network_transmission_controls: true
+
+# Protected Health Information (PHI) Classification
+phi_data:
+  categories:
+    - name: "Member Health History"
+      classification: "phi"
+      retention_period: "6_years"
+      access_level: "restricted"
+      encryption_required: true
+      
+    - name: "Treatment Notes"
+      classification: "phi"
+      retention_period: "6_years"
+      access_level: "restricted"
+      encryption_required: true
+      
+    - name: "Allergy Information"
+      classification: "phi"
+      retention_period: "6_years"
+      access_level: "restricted"
+      encryption_required: true
+      
+    - name: "Before/After Photos"
+      classification: "phi"
+      retention_period: "6_years"
+      access_level: "restricted"
+      encryption_required: true
+      consent_required: true
+      
+    - name: "Medication Information"
+      classification: "phi"
+      retention_period: "6_years"
+      access_level: "restricted"
+      encryption_required: true
+
+# Breach Notification Procedures
+breach_notification:
+  internal_notification:
+    timeframe: "immediate"
+    notification_chain:
+      - "HIPAA Compliance Officer"
+      - "IT Security Team"
+      - "Legal Department"
+      - "Senior Management"
+      
+  external_notification:
+    individuals:
+      timeframe: "60_days"
+      method: "written_notice"
+      
+    hhs_notification:
+      timeframe: "60_days"
+      method: "electronic"
+      
+    media_notification:
+      threshold: "500_or_more_individuals"
+      timeframe: "60_days"
+      
+  documentation_requirements:
+    incident_description: true
+    affected_individuals_count: true
+    mitigation_actions: true
+    prevention_measures: true
+
+# Business Associate Agreements (BAAs)
+business_associates:
+  - name: "AWS (Cloud Infrastructure)"
+    baa_signed: true
+    baa_date: "2024-01-01"
+    baa_expiration: "2027-01-01"
+    services: ["Cloud hosting", "Data storage", "Backup services"]
+    
+  - name: "Stripe (Payment Processing)"
+    baa_signed: true
+    baa_date: "2024-01-01"
+    baa_expiration: "2026-01-01"
+    services: ["Payment processing"]
+    
+  - name: "Twilio (SMS Communications)"
+    baa_signed: true
+    baa_date: "2024-01-01"
+    baa_expiration: "2025-01-01"
+    services: ["SMS notifications", "Appointment reminders"]
+
+# Additional State Compliance (California)
+state_compliance:
+  ccpa:
+    enabled: true
+    privacy_policy_posted: true
+    consumer_rights_notice: true
+    opt_out_mechanism: true
+    
+  california_health_privacy:
+    enabled: true
+    additional_consent_requirements: true
+    enhanced_breach_notification: true
+
+# Risk Assessment
+risk_assessment:
+  last_conducted: "2023-12-01"
+  next_due: "2024-12-01"
+  frequency: "annual"
+  conducted_by: "Third Party Consultant"
+  
+  risk_categories:
+    - category: "Data Breach"
+      risk_level: "medium"
+      mitigation_status: "implemented"
+      
+    - category: "Unauthorized Access"
+      risk_level: "low"
+      mitigation_status: "implemented"
+      
+    - category: "System Failure"
+      risk_level: "low"
+      mitigation_status: "implemented"
+      
+    - category: "Vendor Risk"
+      risk_level: "medium"
+      mitigation_status: "monitored"
+
+# Audit Requirements
+audits:
+  internal_audits:
+    frequency: "quarterly"
+    last_audit: "2024-01-15"
+    next_audit: "2024-04-15"
+    scope: ["Access controls", "PHI handling", "Staff compliance"]
+    
+  external_audits:
+    frequency: "annual"
+    last_audit: "2023-11-15"
+    next_audit: "2024-11-15"
+    auditor: "Healthcare Compliance Associates"
+    
+  penetration_testing:
+    frequency: "annual"
+    last_test: "2023-10-01"
+    next_test: "2024-10-01"
+    testing_firm: "SecureHealth Testing"
+
+# Compliance Monitoring
+monitoring:
+  automated_checks:
+    enabled: true
+    frequency: "daily"
+    alerts_enabled: true
+    
+  compliance_dashboard:
+    enabled: true
+    real_time_status: true
+    monthly_reports: true
+    
+  violation_tracking:
+    enabled: true
+    escalation_procedures: true
+    remediation_tracking: true
+
+# Data Retention & Disposal
+data_retention:
+  phi_retention_period: "6_years"
+  business_records_retention: "7_years"
+  audit_log_retention: "6_years"
+  
+  disposal_procedures:
+    secure_deletion: true
+    certificate_of_destruction: true
+    verification_required: true
+    disposal_logging: true
+
+# Incident Response
+incident_response:
+  response_team:
+    - role: "Incident Commander"
+      name: "Sarah Johnson"
+      phone: "+1-555-123-4567"
+      
+    - role: "Technical Lead"
+      name: "IT Security Team"
+      phone: "+1-555-SUPPORT"
+      
+    - role: "Legal Counsel"
+      name: "Legal Department"
+      phone: "+1-555-LEGAL-1"
+      
+  escalation_matrix:
+    level_1: "IT Support"
+    level_2: "Security Team"
+    level_3: "Compliance Officer"
+    level_4: "Legal & Executive"
+
+# Training & Awareness
+training:
+  annual_training_required: true
+  role_specific_training: true
+  new_employee_training: true
+  refresher_training: true
+  
+  tracking:
+    completion_tracking: true
+    certification_required: true
+    refresher_frequency: "annual"
+    non_compliance_escalation: true
+
+# Metadata
+metadata:
+  created_by: "compliance_team"
+  created_at: "2024-01-15T10:30:00Z"
+  updated_by: "sarah.johnson@luxewellness.com"
+  updated_at: "2024-01-20T11:15:44Z"
+  version: "1.1"
+  schema_version: "2024.1"
+  compliance_framework_version: "hipaa_2024"
+  
+# Compliance Status
+status:
+  overall_compliance_score: 94
+  last_assessment: "2024-01-15"
+  areas_for_improvement:
+    - "Enhance staff training completion rates"
+    - "Implement additional access logging"
+  
+  certifications:
+    - name: "HIPAA Compliance"
+      status: "compliant"
+      last_verified: "2024-01-15"
+      next_review: "2024-07-15" 

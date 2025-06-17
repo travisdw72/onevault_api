@@ -1,0 +1,6 @@
+
+# Database Version Control
+database/schema_snapshots/temp_*
+database/config/db_config.local.yaml
+*.backup
+*.dump

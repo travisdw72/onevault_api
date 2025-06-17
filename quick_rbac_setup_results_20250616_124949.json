@@ -1,0 +1,23 @@
+{
+  "setup_timestamp": "2025-06-16T12:49:49.245848",
+  "database": "one_vault_demo_barn",
+  "tenants": [
+    {
+      "name": "SYSTEM_ADMIN",
+      "tenant_hk": null,
+      "admin_user_hk": null,
+      "admin_email": "sysadmin@onevault.demo"
+    }
+  ],
+  "users": [],
+  "test_credentials": {
+    "system_admin": {
+      "tenant": "SYSTEM_ADMIN",
+      "email": "sysadmin@onevault.demo",
+      "password": "AdminSecure123!@#",
+      "role": "ADMIN",
+      "description": "Full system administration access"
+    }
+  },
+  "verification": []
+}

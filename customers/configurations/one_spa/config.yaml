@@ -1,0 +1,268 @@
+# OneVault Customer Configuration - Luxe Wellness Spa Chain
+# Customer: Luxe Wellness Spa - Premium spa chain with 3 locations
+# Industry: Spa & Wellness
+# Compliance: HIPAA, HITECH
+
+customer:
+  id: "one_spa"
+  name: "Luxe Wellness Spa"
+  display_name: "Luxe Wellness Spa Management Platform"
+  industry: 
+    type: "spa_wellness"
+    specialization: "luxury_spa_franchise"
+  
+  # Contact and billing information
+  contact:
+    primary_contact: "Sarah Johnson"
+    email: "sarah.johnson@luxewellness.com"
+    phone: "+1-555-0123"
+    address: "123 Wellness Boulevard, Luxury City, CA 90210"
+  
+  # Billing and subscription
+  billing:
+    plan: "Enterprise Spa Package"
+    monthly_fee: 4999.00
+    per_location_fee: 299.00
+    currency: "USD"
+    billing_cycle: "monthly"
+
+# Database configuration for complete isolation
+database:
+  url: "postgresql://spa_user:secure_spa_password@spa-db-cluster:5432/one_spa_db"
+  name: "one_spa_db"
+  schema_prefix: "luxe_spa"
+  backup_schedule: "daily"
+  retention_policy: "7_years"  # HIPAA compliance
+  encryption:
+    enabled: true
+    key_rotation: "quarterly"
+
+# Industry-specific features for spa/wellness
+features:
+  enabled:
+    # Core spa management
+    - "member_management"
+    - "appointment_scheduling"
+    - "treatment_tracking"
+    - "health_records"
+    - "allergy_management"
+    
+    # Franchise operations
+    - "franchise_management"
+    - "multi_location_dashboard"
+    - "standardized_procedures"
+    - "cross_location_booking"
+    - "franchise_reporting"
+    
+    # HIPAA compliance features
+    - "phi_protection"
+    - "audit_trails"
+    - "access_controls"
+    - "breach_notification"
+    - "minimum_necessary"
+    
+    # Business intelligence
+    - "member_analytics"
+    - "revenue_reporting"
+    - "treatment_effectiveness"
+    - "location_performance"
+    
+  disabled:
+    - "financial_portfolio"
+    - "horse_management"
+    - "property_management"
+
+# Regulatory compliance requirements
+compliance:
+  frameworks:
+    - "hipaa"
+    - "hitech"
+    - "ccpa"  # California privacy law
+  
+  hipaa:
+    business_associate_agreement: true
+    phi_encryption: true
+    audit_logging: true
+    access_controls: true
+    user_training_required: true
+    breach_notification: true
+    minimum_necessary: true
+    
+  data_retention:
+    member_records: "7_years"
+    health_data: "7_years"
+    audit_logs: "7_years"
+    financial_records: "7_years"
+
+# White-label branding configuration
+branding:
+  # Primary brand colors
+  colors:
+    primary: "#2D5AA0"     # Sophisticated Blue
+    secondary: "#E8B931"   # Elegant Gold
+    accent: "#F8F9FA"      # Clean White
+    success: "#28A745"     # Success Green
+    warning: "#FFC107"     # Warning Amber
+    danger: "#DC3545"      # Alert Red
+  
+  # Typography
+  fonts:
+    primary: "Montserrat"
+    secondary: "Open Sans"
+    headings: "Montserrat"
+    body: "Open Sans"
+  
+  # Logo and assets
+  logo:
+    primary: "luxe-wellness-logo-primary.svg"
+    icon: "luxe-wellness-icon.png"
+    favicon: "luxe-wellness-favicon.ico"
+  
+  # Theme and styling
+  theme: "luxury_wellness"
+  style: "sophisticated_nurturing"
+  
+  # Login experience
+  login:
+    background_image: "serene-spa-treatment-room.jpg"
+    tagline: "Elevate Your Wellness Journey"
+    welcome_message: "Welcome to your sanctuary of wellness"
+    footer_text: "Luxe Wellness Spa - Where Wellness Meets Luxury"
+
+# Multi-tenant structure (locations within customer)
+tenants:
+  - tenant_id: "location_001"
+    name: "Luxe Wellness - Beverly Hills"
+    address: "456 Rodeo Drive, Beverly Hills, CA 90210"
+    phone: "+1-555-0124"
+    manager: "Jennifer Martinez"
+    capacity: 50
+    services: ["massage", "facial", "body_treatments", "wellness_coaching"]
+    
+  - tenant_id: "location_002"
+    name: "Luxe Wellness - Manhattan Beach"
+    address: "789 Ocean Boulevard, Manhattan Beach, CA 90266"
+    phone: "+1-555-0125"
+    manager: "Michael Thompson"
+    capacity: 35
+    services: ["massage", "facial", "aromatherapy", "couples_treatments"]
+    
+  - tenant_id: "location_003"
+    name: "Luxe Wellness - Newport Beach"
+    address: "321 Coast Highway, Newport Beach, CA 92660"
+    phone: "+1-555-0126"
+    manager: "Lisa Rodriguez"
+    capacity: 40
+    services: ["massage", "facial", "body_treatments", "meditation"]
+
+# Security and access controls
+security:
+  # Multi-factor authentication
+  mfa:
+    required: true
+    methods: ["totp", "sms", "email"]
+    backup_codes: true
+  
+  # Session management
+  session:
+    timeout_minutes: 30  # HIPAA requirement
+    max_concurrent: 3
+    idle_warning_minutes: 25
+  
+  # Password policy
+  password:
+    min_length: 12
+    require_uppercase: true
+    require_lowercase: true
+    require_numbers: true
+    require_special: true
+    history_count: 12
+    expiry_days: 90
+  
+  # Access controls
+  rbac:
+    roles:
+      - "spa_admin"
+      - "location_manager" 
+      - "front_desk"
+      - "therapist"
+      - "franchise_owner"
+    
+    permissions:
+      spa_admin: ["all"]
+      location_manager: ["location_management", "staff_management", "member_management"]
+      front_desk: ["appointments", "member_checkin", "payment_processing"]
+      therapist: ["treatment_notes", "member_health_view"]
+      franchise_owner: ["franchise_analytics", "cross_location_reports"]
+
+# Integration capabilities
+integrations:
+  enabled:
+    - "payment_processing"
+    - "email_marketing"
+    - "sms_notifications"
+    - "calendar_sync"
+    - "accounting_export"
+  
+  payment_processors:
+    - "stripe"
+    - "square"
+  
+  marketing_platforms:
+    - "mailchimp"
+    - "constant_contact"
+  
+  calendar_systems:
+    - "google_calendar"
+    - "outlook"
+
+# Monitoring and analytics
+monitoring:
+  health_checks: true
+  performance_monitoring: true
+  user_analytics: true
+  business_metrics: true
+  
+  dashboards:
+    - "executive_dashboard"
+    - "location_performance"
+    - "member_engagement"
+    - "revenue_analytics"
+    - "compliance_status"
+
+# Environment and deployment
+environment:
+  tier: "production"
+  region: "us-west-2"
+  availability_zone: "multi-az"
+  backup_region: "us-east-1"
+  
+  scaling:
+    auto_scaling: true
+    min_instances: 2
+    max_instances: 10
+    cpu_threshold: 70
+    memory_threshold: 80
+
+# Customer success metrics
+success_metrics:
+  onboarding_completed: "2023-09-15"
+  go_live_date: "2023-10-01"
+  users_trained: 25
+  locations_active: 3
+  member_count: 1250
+  monthly_revenue: 185000.00
+  
+  satisfaction:
+    nps_score: 82
+    support_rating: 4.8
+    feature_adoption: 85
+
+# Support and maintenance
+support:
+  tier: "enterprise"
+  sla: "99.9%"
+  response_time: "1_hour"
+  dedicated_csm: "Amanda Foster"
+  support_hours: "24x7"
+  escalation_contact: "support-escalation@onevault.com" 

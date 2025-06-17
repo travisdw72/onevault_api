@@ -1,0 +1,321 @@
+# OneVault Feature Configuration
+# Customer: Luxe Wellness Spa
+# Features enabled for spa industry with franchise management
+
+# Core Platform Features
+core:
+  user_management: true
+  role_based_access: true
+  multi_tenant: true
+  audit_logging: true
+  data_export: true
+  api_access: true
+  mobile_app: true
+  
+# Spa & Wellness Specific Features
+spa_wellness:
+  # Member Management
+  member_management:
+    enabled: true
+    features:
+      member_profiles: true
+      health_history: true          # HIPAA compliant
+      allergies_tracking: true      # HIPAA compliant
+      medication_tracking: true     # HIPAA compliant
+      photo_storage: true
+      membership_tiers: true
+      loyalty_points: true
+      family_accounts: true
+      corporate_accounts: true
+    limits:
+      max_members_per_location: 10000
+      photo_storage_mb_per_member: 50
+  
+  # Appointment Scheduling
+  appointment_scheduling:
+    enabled: true
+    features:
+      online_booking: true
+      staff_scheduling: true
+      room_management: true
+      equipment_booking: true
+      waitlist_management: true
+      automated_reminders: true
+      no_show_tracking: true
+      recurring_appointments: true
+      group_bookings: true
+      package_scheduling: true
+    limits:
+      max_advance_booking_days: 365
+      max_concurrent_bookings: 50
+      reminder_channels: ["email", "sms", "push"]
+  
+  # Treatment & Service Management
+  treatment_management:
+    enabled: true
+    features:
+      service_catalog: true
+      treatment_protocols: true
+      pre_post_care_instructions: true
+      treatment_notes: true         # HIPAA compliant
+      progress_tracking: true       # HIPAA compliant
+      before_after_photos: true     # HIPAA compliant
+      contraindications: true
+      outcome_tracking: true
+    limits:
+      max_services: 500
+      max_protocols_per_service: 10
+  
+  # Staff Management
+  staff_management:
+    enabled: true
+    features:
+      therapist_profiles: true
+      certification_tracking: true
+      continuing_education: true
+      performance_analytics: true
+      commission_tracking: true
+      schedule_management: true
+      client_preferences: true
+    limits:
+      max_staff_per_location: 100
+      certification_reminder_days: 30
+  
+  # Inventory Management
+  inventory_management:
+    enabled: true
+    features:
+      product_catalog: true
+      stock_tracking: true
+      automatic_reordering: true
+      vendor_management: true
+      cost_tracking: true
+      expiration_alerts: true
+      usage_analytics: true
+    limits:
+      max_products: 1000
+      max_vendors: 50
+  
+  # Point of Sale & Retail
+  pos_retail:
+    enabled: true
+    features:
+      integrated_pos: true
+      retail_sales: true
+      gift_card_management: true
+      package_sales: true
+      membership_sales: true
+      tip_processing: true
+      split_payments: true
+      refund_processing: true
+    payment_processors: ["stripe", "square", "clover"]
+    
+  # Marketing & Communications
+  marketing:
+    enabled: true
+    features:
+      email_campaigns: true
+      sms_marketing: true
+      loyalty_programs: true
+      referral_programs: true
+      birthday_campaigns: true
+      win_back_campaigns: true
+      review_management: true
+      social_media_integration: true
+    limits:
+      monthly_emails: 50000
+      monthly_sms: 10000
+
+# Franchise Management Features
+franchise:
+  # Multi-Location Management
+  multi_location:
+    enabled: true
+    features:
+      location_dashboard: true
+      cross_location_booking: true
+      staff_sharing: true
+      inventory_transfers: true
+      consolidated_reporting: true
+      brand_compliance: true
+      standardized_protocols: true
+    limits:
+      max_locations: 25
+      
+  # Franchise Operations
+  franchise_ops:
+    enabled: true
+    features:
+      franchise_reporting: true
+      royalty_calculations: true
+      marketing_fund_tracking: true
+      compliance_monitoring: true
+      training_modules: true
+      operations_manual: true
+      vendor_negotiations: true
+    
+  # Financial Management
+  financial_franchise:
+    enabled: true
+    features:
+      location_p_and_l: true
+      consolidated_financials: true
+      budget_management: true
+      cash_flow_analysis: true
+      franchise_fee_tracking: true
+      cost_center_analysis: true
+
+# Compliance & Security Features
+compliance:
+  hipaa:
+    enabled: true
+    features:
+      phi_protection: true
+      access_controls: true
+      audit_logging: true
+      breach_detection: true
+      risk_assessments: true
+      staff_training: true
+      incident_response: true
+    
+  business_compliance:
+    enabled: true
+    features:
+      state_licensing: true
+      insurance_tracking: true
+      safety_protocols: true
+      sanitation_standards: true
+      equipment_maintenance: true
+
+# Analytics & Reporting
+analytics:
+  # Business Intelligence
+  business_intelligence:
+    enabled: true
+    features:
+      revenue_analytics: true
+      customer_analytics: true
+      staff_performance: true
+      treatment_analytics: true
+      retention_analysis: true
+      profitability_analysis: true
+      forecasting: true
+      benchmarking: true
+    
+  # Custom Reporting
+  custom_reporting:
+    enabled: true
+    features:
+      report_builder: true
+      scheduled_reports: true
+      dashboard_customization: true
+      data_export: true
+      white_label_reports: true
+    limits:
+      max_custom_reports: 100
+      max_scheduled_reports: 20
+
+# Integration Features
+integrations:
+  # Third-party Integrations
+  third_party:
+    enabled: true
+    available_integrations:
+      - name: "QuickBooks"
+        type: "accounting"
+        enabled: true
+      - name: "Mailchimp"
+        type: "marketing"
+        enabled: true
+      - name: "Google Calendar"
+        type: "scheduling"
+        enabled: false
+      - name: "Zenoti"
+        type: "legacy_migration"
+        enabled: false
+      - name: "MindBody"
+        type: "legacy_migration"
+        enabled: false
+  
+  # API Access
+  api:
+    enabled: true
+    features:
+      rest_api: true
+      webhooks: true
+      rate_limiting: true
+      api_documentation: true
+    limits:
+      api_calls_per_hour: 10000
+      webhook_endpoints: 10
+
+# Mobile Features
+mobile:
+  staff_app:
+    enabled: true
+    features:
+      appointment_management: true
+      client_notes: true
+      inventory_checks: true
+      schedule_viewing: true
+      commission_tracking: true
+  
+  client_app:
+    enabled: true
+    features:
+      online_booking: true
+      account_management: true
+      loyalty_tracking: true
+      push_notifications: true
+      treatment_history: true
+
+# Advanced Features (Premium)
+advanced:
+  ai_features:
+    enabled: false  # Not yet enabled
+    features:
+      demand_forecasting: false
+      dynamic_pricing: false
+      personalized_recommendations: false
+      automated_marketing: false
+  
+  enterprise_features:
+    enabled: true
+    features:
+      sso_integration: true
+      advanced_security: true
+      custom_workflows: true
+      dedicated_support: true
+      white_label_mobile: true
+
+# Feature Limits Summary
+limits:
+  users_per_location: 50
+  total_storage_gb: 500
+  monthly_transactions: 100000
+  api_calls_per_hour: 10000
+  locations: 25
+  members_per_location: 10000
+
+# Metadata
+metadata:
+  created_by: "onboarding_team"
+  created_at: "2024-01-15T10:30:00Z"
+  updated_by: "sarah.johnson@luxewellness.com"
+  updated_at: "2024-01-20T16:45:22Z"
+  version: "1.3"
+  schema_version: "2024.1"
+  
+# Feature Update History
+update_history:
+  - date: "2024-01-20"
+    action: "enabled"
+    feature: "franchise.multi_location.cross_location_booking"
+    requested_by: "sarah.johnson@luxewellness.com"
+    approved_by: "jennifer.martinez@onevault.com"
+  - date: "2024-01-18"
+    action: "increased_limit"
+    feature: "limits.locations"
+    old_value: 10
+    new_value: 25
+    reason: "Franchise expansion plan" 

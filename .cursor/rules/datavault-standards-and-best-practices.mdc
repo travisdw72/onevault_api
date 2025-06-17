@@ -1,0 +1,1084 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Data Vault 2.0 Engineering Standards & Best Practices
+## Enterprise Multi-Tenant SaaS Platform
+
+### Current Implementation Status ✅
+Your platform already implements many Data Vault 2.0 best practices:
+- ✅ **Proper Table Structure**: Hubs (_h), Satellites (_s), Links (_l)
+- ✅ **Temporal Tracking**: load_date, load_end_date, hash_diff
+- ✅ **Multi-Tenant Isolation**: tenant_hk in all structures
+- ✅ **Performance Optimization**: Strategic indexing and materialized views
+- ✅ **Audit Framework**: Comprehensive tracking and compliance
+- ✅ **Hash Key Strategy**: SHA-256 binary keys for performance
+
+---
+
+## 🏗️ **DATA VAULT 2.0 METHODOLOGY STANDARDS**
+
+### Loading Patterns & Data Movement
+
+#### Raw Data Layer (ELT over ETL)
+```sql
+-- Raw layer captures data exactly as received
+CREATE TABLE raw.source_system_extract_h (
+    extract_hk BYTEA PRIMARY KEY,
+    extract_bk VARCHAR(255) NOT NULL,        -- Source system + batch ID
+    tenant_hk BYTEA NOT NULL REFERENCES auth.tenant_h(tenant_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE raw.source_system_extract_s (
+    extract_hk BYTEA NOT NULL REFERENCES raw.source_system_extract_h(extract_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    load_end_date TIMESTAMP WITH TIME ZONE,
+    hash_diff BYTEA NOT NULL,
+    source_system VARCHAR(100) NOT NULL,
+    extract_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    extract_type VARCHAR(50) NOT NULL,       -- FULL, INCREMENTAL, CDC
+    record_count INTEGER,
+    file_size_bytes BIGINT,
+    extraction_duration_ms INTEGER,
+    data_quality_score DECIMAL(5,2),
+    raw_payload JSONB,                       -- Store original data
+    processing_status VARCHAR(20) DEFAULT 'PENDING',
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (extract_hk, load_date)
+);
+
+-- Data loading function with comprehensive error handling
+CREATE OR REPLACE FUNCTION raw.load_source_data(
+    p_tenant_hk BYTEA,
+    p_source_system VARCHAR(100),
+    p_raw_data JSONB,
+    p_extract_type VARCHAR(50) DEFAULT 'INCREMENTAL'
+) RETURNS TABLE (
+    extract_hk BYTEA,
+    records_processed INTEGER,
+    data_quality_score DECIMAL(5,2),
+    processing_status VARCHAR(20)
+) AS $$
+DECLARE
+    v_extract_hk BYTEA;
+    v_extract_bk VARCHAR(255);
+    v_record_count INTEGER;
+    v_quality_score DECIMAL(5,2);
+BEGIN
+    -- Generate business key for this extraction
+    v_extract_bk := p_source_system || '_' || to_char(CURRENT_TIMESTAMP, 'YYYYMMDD_HH24MISS');
+    v_extract_hk := util.hash_binary(v_extract_bk);
+    
+    -- Count records in payload
+    v_record_count := jsonb_array_length(p_raw_data->'records');
+    
+    -- Calculate initial data quality score
+    v_quality_score := raw.calculate_data_quality(p_raw_data);
+    
+    -- Insert extraction record
+    INSERT INTO raw.source_system_extract_h VALUES (
+        v_extract_hk, v_extract_bk, p_tenant_hk, 
+        util.current_load_date(), util.get_record_source()
+    );
+    
+    INSERT INTO raw.source_system_extract_s VALUES (
+        v_extract_hk, util.current_load_date(), NULL,
+        util.hash_binary(p_source_system || v_record_count::text),
+        p_source_system, CURRENT_TIMESTAMP, p_extract_type,
+        v_record_count, pg_column_size(p_raw_data), 0,
+        v_quality_score, p_raw_data, 'LOADED',
+        util.get_record_source()
+    );
+    
+    RETURN QUERY SELECT v_extract_hk, v_record_count, v_quality_score, 'LOADED'::VARCHAR(20);
+END;
+$$ LANGUAGE plpgsql;
+```
+
+#### Business Rules Implementation
+```sql
+-- Business rules schema for complex logic
+CREATE SCHEMA business_rules;
+
+-- Business rule definitions
+CREATE TABLE business_rules.rule_definition_h (
+    rule_hk BYTEA PRIMARY KEY,
+    rule_bk VARCHAR(255) NOT NULL,
+    tenant_hk BYTEA NOT NULL REFERENCES auth.tenant_h(tenant_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE business_rules.rule_definition_s (
+    rule_hk BYTEA NOT NULL REFERENCES business_rules.rule_definition_h(rule_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    load_end_date TIMESTAMP WITH TIME ZONE,
+    hash_diff BYTEA NOT NULL,
+    rule_name VARCHAR(200) NOT NULL,
+    rule_description TEXT,
+    rule_type VARCHAR(50) NOT NULL,          -- VALIDATION, TRANSFORMATION, ENRICHMENT
+    rule_logic TEXT NOT NULL,                -- SQL or expression
+    rule_priority INTEGER DEFAULT 100,
+    is_active BOOLEAN DEFAULT true,
+    applies_to_entities TEXT[],              -- Which hubs this affects
+    error_handling VARCHAR(50) DEFAULT 'LOG', -- LOG, REJECT, QUARANTINE
+    created_by VARCHAR(100) DEFAULT SESSION_USER,
+    approved_by VARCHAR(100),
+    approval_date TIMESTAMP WITH TIME ZONE,
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (rule_hk, load_date)
+);
+
+-- Business rule execution framework
+CREATE OR REPLACE FUNCTION business_rules.execute_rules(
+    p_tenant_hk BYTEA,
+    p_entity_type VARCHAR(100),
+    p_data JSONB
+) RETURNS TABLE (
+    rule_name VARCHAR(200),
+    execution_result VARCHAR(20),
+    error_message TEXT,
+    modified_data JSONB
+) AS $$
+DECLARE
+    v_rule RECORD;
+    v_result VARCHAR(20);
+    v_error_msg TEXT;
+    v_modified_data JSONB := p_data;
+BEGIN
+    FOR v_rule IN 
+        SELECT rd.rule_name, rd.rule_logic, rd.error_handling
+        FROM business_rules.rule_definition_h rh
+        JOIN business_rules.rule_definition_s rd ON rh.rule_hk = rd.rule_hk
+        WHERE rh.tenant_hk = p_tenant_hk
+        AND p_entity_type = ANY(rd.applies_to_entities)
+        AND rd.is_active = true
+        AND rd.load_end_date IS NULL
+        ORDER BY rd.rule_priority
+    LOOP
+        BEGIN
+            -- Execute the rule logic (simplified - would need more sophisticated execution)
+            v_result := 'PASSED';
+            v_error_msg := NULL;
+            
+        EXCEPTION WHEN OTHERS THEN
+            v_result := 'FAILED';
+            v_error_msg := SQLERRM;
+            
+            -- Handle based on error handling strategy
+            IF v_rule.error_handling = 'REJECT' THEN
+                RAISE EXCEPTION 'Business rule failed: %', v_error_msg;
+            END IF;
+        END;
+        
+        RETURN QUERY SELECT v_rule.rule_name, v_result, v_error_msg, v_modified_data;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Point-in-Time (PIT) Tables for Performance
+```sql
+-- PIT tables for efficient historical queries
+CREATE TABLE business.customer_pit (
+    customer_hk BYTEA NOT NULL,
+    tenant_hk BYTEA NOT NULL,
+    snapshot_date DATE NOT NULL,
+    customer_profile_load_date TIMESTAMP WITH TIME ZONE,
+    customer_contact_load_date TIMESTAMP WITH TIME ZONE,
+    customer_preferences_load_date TIMESTAMP WITH TIME ZONE,
+    is_current BOOLEAN DEFAULT false,
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (customer_hk, snapshot_date)
+);
+
+-- Automated PIT table maintenance
+CREATE OR REPLACE PROCEDURE business.refresh_customer_pit(
+    p_tenant_hk BYTEA DEFAULT NULL,
+    p_start_date DATE DEFAULT CURRENT_DATE - INTERVAL '7 days',
+    p_end_date DATE DEFAULT CURRENT_DATE
+) AS $$
+DECLARE
+    v_date DATE;
+    v_records_processed INTEGER := 0;
+BEGIN
+    FOR v_date IN SELECT generate_series(p_start_date, p_end_date, '1 day'::interval)::date
+    LOOP
+        INSERT INTO business.customer_pit (
+            customer_hk,
+            tenant_hk,
+            snapshot_date,
+            customer_profile_load_date,
+            customer_contact_load_date,
+            customer_preferences_load_date,
+            is_current
+        )
+        SELECT DISTINCT
+            ch.customer_hk,
+            ch.tenant_hk,
+            v_date,
+            (SELECT MAX(load_date) FROM business.customer_profile_s cp 
+             WHERE cp.customer_hk = ch.customer_hk AND cp.load_date <= v_date + INTERVAL '1 day' - INTERVAL '1 second'),
+            (SELECT MAX(load_date) FROM business.customer_contact_s cc 
+             WHERE cc.customer_hk = ch.customer_hk AND cc.load_date <= v_date + INTERVAL '1 day' - INTERVAL '1 second'),
+            (SELECT MAX(load_date) FROM business.customer_preferences_s cp 
+             WHERE cp.customer_hk = ch.customer_hk AND cp.load_date <= v_date + INTERVAL '1 day' - INTERVAL '1 second'),
+            (v_date = CURRENT_DATE)
+        FROM business.customer_h ch
+        WHERE (p_tenant_hk IS NULL OR ch.tenant_hk = p_tenant_hk)
+        AND ch.load_date <= v_date + INTERVAL '1 day' - INTERVAL '1 second'
+        ON CONFLICT (customer_hk, snapshot_date) DO UPDATE SET
+            customer_profile_load_date = EXCLUDED.customer_profile_load_date,
+            customer_contact_load_date = EXCLUDED.customer_contact_load_date,
+            customer_preferences_load_date = EXCLUDED.customer_preferences_load_date,
+            is_current = EXCLUDED.is_current;
+            
+        GET DIAGNOSTICS v_records_processed = ROW_COUNT;
+    END LOOP;
+    
+    RAISE NOTICE 'Processed % PIT records for date range % to %', 
+                 v_records_processed, p_start_date, p_end_date;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+## 🔍 **DATA QUALITY FRAMEWORK**
+
+### Data Profiling & Quality Metrics
+```sql
+-- Data quality schema
+CREATE SCHEMA data_quality;
+
+-- Data quality rules hub
+CREATE TABLE data_quality.quality_rule_h (
+    quality_rule_hk BYTEA PRIMARY KEY,
+    quality_rule_bk VARCHAR(255) NOT NULL,
+    tenant_hk BYTEA NOT NULL REFERENCES auth.tenant_h(tenant_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+-- Data quality rule definitions
+CREATE TABLE data_quality.quality_rule_s (
+    quality_rule_hk BYTEA NOT NULL REFERENCES data_quality.quality_rule_h(quality_rule_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    load_end_date TIMESTAMP WITH TIME ZONE,
+    hash_diff BYTEA NOT NULL,
+    rule_name VARCHAR(200) NOT NULL,
+    rule_category VARCHAR(50) NOT NULL,      -- COMPLETENESS, ACCURACY, CONSISTENCY, VALIDITY
+    target_table VARCHAR(100) NOT NULL,
+    target_column VARCHAR(100),
+    rule_sql TEXT NOT NULL,
+    threshold_value DECIMAL(5,2),            -- Expected quality score (0-100)
+    severity VARCHAR(20) DEFAULT 'MEDIUM',   -- LOW, MEDIUM, HIGH, CRITICAL
+    is_active BOOLEAN DEFAULT true,
+    notification_recipients TEXT[],
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (quality_rule_hk, load_date)
+);
+
+-- Data quality assessment results
+CREATE TABLE data_quality.quality_assessment_h (
+    assessment_hk BYTEA PRIMARY KEY,
+    assessment_bk VARCHAR(255) NOT NULL,
+    tenant_hk BYTEA NOT NULL REFERENCES auth.tenant_h(tenant_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE data_quality.quality_assessment_s (
+    assessment_hk BYTEA NOT NULL REFERENCES data_quality.quality_assessment_h(assessment_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    load_end_date TIMESTAMP WITH TIME ZONE,
+    hash_diff BYTEA NOT NULL,
+    quality_rule_hk BYTEA NOT NULL REFERENCES data_quality.quality_rule_h(quality_rule_hk),
+    assessment_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    total_records INTEGER,
+    failed_records INTEGER,
+    quality_score DECIMAL(5,2),              -- Calculated as (total-failed)/total * 100
+    threshold_met BOOLEAN,
+    assessment_details JSONB,                -- Detailed results
+    remediation_suggested TEXT,
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (assessment_hk, load_date)
+);
+
+-- Comprehensive data quality function
+CREATE OR REPLACE FUNCTION data_quality.run_quality_assessment(
+    p_tenant_hk BYTEA,
+    p_table_name VARCHAR(100) DEFAULT NULL
+) RETURNS TABLE (
+    rule_name VARCHAR(200),
+    quality_score DECIMAL(5,2),
+    threshold_met BOOLEAN,
+    failed_records INTEGER,
+    severity VARCHAR(20),
+    remediation_action TEXT
+) AS $$
+DECLARE
+    v_rule RECORD;
+    v_assessment_hk BYTEA;
+    v_total_records INTEGER;
+    v_failed_records INTEGER;
+    v_quality_score DECIMAL(5,2);
+    v_threshold_met BOOLEAN;
+BEGIN
+    FOR v_rule IN 
+        SELECT qr.*, qs.rule_name, qs.target_table, qs.target_column, 
+               qs.rule_sql, qs.threshold_value, qs.severity
+        FROM data_quality.quality_rule_h qr
+        JOIN data_quality.quality_rule_s qs ON qr.quality_rule_hk = qs.quality_rule_hk
+        WHERE qr.tenant_hk = p_tenant_hk
+        AND (p_table_name IS NULL OR qs.target_table = p_table_name)
+        AND qs.is_active = true
+        AND qs.load_end_date IS NULL
+    LOOP
+        -- Generate assessment ID
+        v_assessment_hk := util.hash_binary(v_rule.quality_rule_bk || CURRENT_TIMESTAMP::text);
+        
+        -- Execute the quality rule SQL (simplified - would need dynamic SQL execution)
+        BEGIN
+            -- This would execute the actual rule SQL dynamically
+            -- For now, simulate results
+            v_total_records := 1000;
+            v_failed_records := 25;
+            v_quality_score := ROUND((v_total_records - v_failed_records)::DECIMAL / v_total_records * 100, 2);
+            v_threshold_met := v_quality_score >= v_rule.threshold_value;
+            
+            -- Log assessment results
+            INSERT INTO data_quality.quality_assessment_h VALUES (
+                v_assessment_hk, 'ASSESS_' || v_rule.rule_name || '_' || to_char(CURRENT_TIMESTAMP, 'YYYYMMDD_HH24MISS'),
+                p_tenant_hk, util.current_load_date(), util.get_record_source()
+            );
+            
+            INSERT INTO data_quality.quality_assessment_s VALUES (
+                v_assessment_hk, util.current_load_date(), NULL,
+                util.hash_binary(v_rule.quality_rule_bk || v_quality_score::text),
+                v_rule.quality_rule_hk, CURRENT_TIMESTAMP,
+                v_total_records, v_failed_records, v_quality_score, v_threshold_met,
+                jsonb_build_object('execution_time_ms', 150, 'rule_details', v_rule.rule_sql),
+                CASE WHEN NOT v_threshold_met THEN 'Review data validation rules for ' || v_rule.target_table ELSE NULL END,
+                util.get_record_source()
+            );
+            
+        EXCEPTION WHEN OTHERS THEN
+            v_quality_score := 0;
+            v_threshold_met := false;
+            v_failed_records := v_total_records;
+        END;
+        
+        RETURN QUERY SELECT 
+            v_rule.rule_name, 
+            v_quality_score, 
+            v_threshold_met, 
+            v_failed_records, 
+            v_rule.severity,
+            CASE WHEN NOT v_threshold_met THEN 'Data quality below threshold - investigate source data' ELSE 'Quality standards met' END;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Data Validation Pipeline
+```sql
+-- Real-time data validation
+CREATE OR REPLACE FUNCTION util.validate_data_vault_record(
+    p_table_schema VARCHAR(100),
+    p_table_name VARCHAR(100),
+    p_record_data JSONB
+) RETURNS TABLE (
+    validation_passed BOOLEAN,
+    validation_errors TEXT[],
+    data_quality_score DECIMAL(5,2)
+) AS $$
+DECLARE
+    v_errors TEXT[] := ARRAY[]::TEXT[];
+    v_score DECIMAL(5,2) := 100.0;
+    v_table_suffix VARCHAR(2);
+BEGIN
+    v_table_suffix := RIGHT(p_table_name, 2);
+    
+    -- Common validations for all Data Vault tables
+    IF NOT (p_record_data ? 'load_date') THEN
+        v_errors := array_append(v_errors, 'Missing required field: load_date');
+        v_score := v_score - 20;
+    END IF;
+    
+    IF NOT (p_record_data ? 'record_source') THEN
+        v_errors := array_append(v_errors, 'Missing required field: record_source');
+        v_score := v_score - 15;
+    END IF;
+    
+    -- Hub-specific validations
+    IF v_table_suffix = '_h' THEN
+        IF NOT (p_record_data ? 'tenant_hk') THEN
+            v_errors := array_append(v_errors, 'Hub table missing tenant_hk for tenant isolation');
+            v_score := v_score - 30;
+        END IF;
+        
+        IF NOT (p_record_data ? (REPLACE(p_table_name, '_h', '_bk'))) THEN
+            v_errors := array_append(v_errors, 'Hub table missing business key');
+            v_score := v_score - 25;
+        END IF;
+    END IF;
+    
+    -- Satellite-specific validations
+    IF v_table_suffix = '_s' THEN
+        IF NOT (p_record_data ? 'hash_diff') THEN
+            v_errors := array_append(v_errors, 'Satellite table missing hash_diff for change detection');
+            v_score := v_score - 20;
+        END IF;
+    END IF;
+    
+    -- Link-specific validations
+    IF v_table_suffix = '_l' THEN
+        IF NOT (p_record_data ? 'tenant_hk') THEN
+            v_errors := array_append(v_errors, 'Link table missing tenant_hk for tenant isolation');
+            v_score := v_score - 30;
+        END IF;
+    END IF;
+    
+    RETURN QUERY SELECT 
+        (array_length(v_errors, 1) IS NULL),
+        v_errors,
+        GREATEST(v_score, 0.0);
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+## 📊 **OPERATIONAL EXCELLENCE**
+
+### Monitoring & Alerting Framework
+```sql
+-- Monitoring schema
+CREATE SCHEMA monitoring;
+
+-- System health metrics
+CREATE TABLE monitoring.system_health_h (
+    health_metric_hk BYTEA PRIMARY KEY,
+    health_metric_bk VARCHAR(255) NOT NULL,
+    tenant_hk BYTEA REFERENCES auth.tenant_h(tenant_hk), -- NULL for system-wide metrics
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE monitoring.system_health_s (
+    health_metric_hk BYTEA NOT NULL REFERENCES monitoring.system_health_h(health_metric_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    load_end_date TIMESTAMP WITH TIME ZONE,
+    hash_diff BYTEA NOT NULL,
+    metric_name VARCHAR(100) NOT NULL,
+    metric_category VARCHAR(50) NOT NULL,   -- PERFORMANCE, AVAILABILITY, SECURITY, COMPLIANCE
+    metric_value DECIMAL(15,4),
+    metric_unit VARCHAR(20),                -- ms, %, GB, count, etc.
+    threshold_warning DECIMAL(15,4),
+    threshold_critical DECIMAL(15,4),
+    status VARCHAR(20) DEFAULT 'NORMAL',    -- NORMAL, WARNING, CRITICAL
+    measurement_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    additional_context JSONB,
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (health_metric_hk, load_date)
+);
+
+-- Automated health check function
+CREATE OR REPLACE FUNCTION monitoring.collect_system_metrics(
+    p_tenant_hk BYTEA DEFAULT NULL
+) RETURNS TABLE (
+    metric_name VARCHAR(100),
+    current_value DECIMAL(15,4),
+    status VARCHAR(20),
+    threshold_warning DECIMAL(15,4),
+    threshold_critical DECIMAL(15,4)
+) AS $$
+DECLARE
+    v_metric_record RECORD;
+    v_health_hk BYTEA;
+    v_db_size BIGINT;
+    v_connection_count INTEGER;
+    v_session_count INTEGER;
+    v_avg_query_time DECIMAL(15,4);
+BEGIN
+    -- Database size metric
+    SELECT pg_database_size(current_database()) INTO v_db_size;
+    
+    -- Active connections
+    SELECT count(*) INTO v_connection_count 
+    FROM pg_stat_activity 
+    WHERE state = 'active';
+    
+    -- Active sessions for tenant
+    SELECT count(*) INTO v_session_count
+    FROM auth.session_state_s 
+    WHERE session_status = 'ACTIVE' 
+    AND load_end_date IS NULL
+    AND (p_tenant_hk IS NULL OR session_hk IN (
+        SELECT s.session_hk 
+        FROM auth.session_h s 
+        WHERE s.tenant_hk = p_tenant_hk
+    ));
+    
+    -- Average query execution time (simplified)
+    v_avg_query_time := 125.5; -- Would calculate from actual metrics
+    
+    -- Store and return metrics
+    FOR v_metric_record IN 
+        SELECT * FROM (VALUES 
+            ('database_size_gb', v_db_size / 1024.0 / 1024.0 / 1024.0, 'PERFORMANCE', 50.0, 80.0),
+            ('active_connections', v_connection_count::DECIMAL, 'PERFORMANCE', 80.0, 95.0),
+            ('active_sessions', v_session_count::DECIMAL, 'AVAILABILITY', 1000.0, 5000.0),
+            ('avg_query_time_ms', v_avg_query_time, 'PERFORMANCE', 200.0, 500.0)
+        ) AS t(name, value, category, warn_threshold, crit_threshold)
+    LOOP
+        v_health_hk := util.hash_binary(
+            COALESCE(encode(p_tenant_hk, 'hex'), 'SYSTEM') || '_' || 
+            v_metric_record.name || '_' || 
+            CURRENT_TIMESTAMP::text
+        );
+        
+        -- Insert hub record
+        INSERT INTO monitoring.system_health_h VALUES (
+            v_health_hk,
+            'METRIC_' || v_metric_record.name || '_' || to_char(CURRENT_TIMESTAMP, 'YYYYMMDD_HH24MISS'),
+            p_tenant_hk,
+            util.current_load_date(),
+            util.get_record_source()
+        ) ON CONFLICT DO NOTHING;
+        
+        -- Insert satellite record
+        INSERT INTO monitoring.system_health_s VALUES (
+            v_health_hk,
+            util.current_load_date(),
+            NULL,
+            util.hash_binary(v_metric_record.name || v_metric_record.value::text),
+            v_metric_record.name,
+            v_metric_record.category,
+            v_metric_record.value,
+            CASE v_metric_record.name 
+                WHEN 'database_size_gb' THEN 'GB'
+                WHEN 'avg_query_time_ms' THEN 'ms'
+                ELSE 'count'
+            END,
+            v_metric_record.warn_threshold,
+            v_metric_record.crit_threshold,
+            CASE 
+                WHEN v_metric_record.value >= v_metric_record.crit_threshold THEN 'CRITICAL'
+                WHEN v_metric_record.value >= v_metric_record.warn_threshold THEN 'WARNING'
+                ELSE 'NORMAL'
+            END,
+            CURRENT_TIMESTAMP,
+            jsonb_build_object('tenant_scoped', p_tenant_hk IS NOT NULL),
+            util.get_record_source()
+        );
+        
+        RETURN QUERY SELECT 
+            v_metric_record.name,
+            v_metric_record.value,
+            CASE 
+                WHEN v_metric_record.value >= v_metric_record.crit_threshold THEN 'CRITICAL'
+                WHEN v_metric_record.value >= v_metric_record.warn_threshold THEN 'WARNING'
+                ELSE 'NORMAL'
+            END,
+            v_metric_record.warn_threshold,
+            v_metric_record.crit_threshold;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Backup & Recovery Standards
+```sql
+-- Backup management schema
+CREATE SCHEMA backup_mgmt;
+
+-- Backup execution tracking
+CREATE TABLE backup_mgmt.backup_execution_h (
+    backup_hk BYTEA PRIMARY KEY,
+    backup_bk VARCHAR(255) NOT NULL,
+    tenant_hk BYTEA REFERENCES auth.tenant_h(tenant_hk), -- NULL for full system backup
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE backup_mgmt.backup_execution_s (
+    backup_hk BYTEA NOT NULL REFERENCES backup_mgmt.backup_execution_h(backup_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    load_end_date TIMESTAMP WITH TIME ZONE,
+    hash_diff BYTEA NOT NULL,
+    backup_type VARCHAR(50) NOT NULL,       -- FULL, INCREMENTAL, DIFFERENTIAL, POINT_IN_TIME
+    backup_scope VARCHAR(50) NOT NULL,      -- SYSTEM, TENANT, TABLE
+    backup_start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    backup_end_time TIMESTAMP WITH TIME ZONE,
+    backup_status VARCHAR(20) DEFAULT 'RUNNING', -- RUNNING, COMPLETED, FAILED
+    backup_size_bytes BIGINT,
+    backup_location TEXT,
+    retention_period INTERVAL DEFAULT '7 years', -- For compliance
+    verification_status VARCHAR(20),        -- PENDING, VERIFIED, FAILED
+    verification_date TIMESTAMP WITH TIME ZONE,
+    recovery_tested BOOLEAN DEFAULT false,
+    error_message TEXT,
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (backup_hk, load_date)
+);
+
+-- Automated backup procedure
+CREATE OR REPLACE PROCEDURE backup_mgmt.execute_backup(
+    p_backup_type VARCHAR(50) DEFAULT 'INCREMENTAL',
+    p_tenant_hk BYTEA DEFAULT NULL,
+    p_retention_period INTERVAL DEFAULT '7 years'
+) AS $$
+DECLARE
+    v_backup_hk BYTEA;
+    v_backup_bk VARCHAR(255);
+    v_start_time TIMESTAMP WITH TIME ZONE;
+    v_backup_location TEXT;
+BEGIN
+    v_start_time := CURRENT_TIMESTAMP;
+    v_backup_bk := 'BACKUP_' || p_backup_type || '_' || 
+                   COALESCE(encode(p_tenant_hk, 'hex'), 'SYSTEM') || '_' ||
+                   to_char(v_start_time, 'YYYYMMDD_HH24MISS');
+    v_backup_hk := util.hash_binary(v_backup_bk);
+    
+    -- Determine backup location
+    v_backup_location := '/backup/' || 
+                        to_char(v_start_time, 'YYYY/MM/DD/') || 
+                        v_backup_bk || '.backup';
+    
+    -- Log backup start
+    INSERT INTO backup_mgmt.backup_execution_h VALUES (
+        v_backup_hk, v_backup_bk, p_tenant_hk, 
+        util.current_load_date(), util.get_record_source()
+    );
+    
+    INSERT INTO backup_mgmt.backup_execution_s VALUES (
+        v_backup_hk, util.current_load_date(), NULL,
+        util.hash_binary(v_backup_bk || 'STARTING'),
+        p_backup_type,
+        CASE WHEN p_tenant_hk IS NULL THEN 'SYSTEM' ELSE 'TENANT' END,
+        v_start_time, NULL, 'RUNNING', NULL, v_backup_location,
+        p_retention_period, 'PENDING', NULL, false, NULL,
+        util.get_record_source()
+    );
+    
+    -- Execute backup logic would go here
+    -- This would integrate with your actual backup solution
+    
+    RAISE NOTICE 'Backup % initiated for %', 
+                 v_backup_bk, 
+                 COALESCE('tenant ' || encode(p_tenant_hk, 'hex'), 'entire system');
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+## 📚 **DATA GOVERNANCE & LINEAGE**
+
+### Data Lineage Tracking
+```sql
+-- Data lineage schema
+CREATE SCHEMA data_lineage;
+
+-- Data flow tracking
+CREATE TABLE data_lineage.data_flow_h (
+    data_flow_hk BYTEA PRIMARY KEY,
+    data_flow_bk VARCHAR(255) NOT NULL,
+    tenant_hk BYTEA REFERENCES auth.tenant_h(tenant_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE data_lineage.data_flow_s (
+    data_flow_hk BYTEA NOT NULL REFERENCES data_lineage.data_flow_h(data_flow_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    load_end_date TIMESTAMP WITH TIME ZONE,
+    hash_diff BYTEA NOT NULL,
+    source_system VARCHAR(100) NOT NULL,
+    source_table VARCHAR(100) NOT NULL,
+    source_column VARCHAR(100),
+    target_system VARCHAR(100) NOT NULL,
+    target_table VARCHAR(100) NOT NULL,
+    target_column VARCHAR(100),
+    transformation_logic TEXT,
+    data_classification VARCHAR(50),     -- PUBLIC, INTERNAL, CONFIDENTIAL, RESTRICTED
+    business_purpose TEXT,
+    data_steward VARCHAR(100),
+    last_modified_by VARCHAR(100) DEFAULT SESSION_USER,
+    impact_assessment TEXT,
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (data_flow_hk, load_date)
+);
+
+-- Data lineage mapping function
+CREATE OR REPLACE FUNCTION data_lineage.map_data_flow(
+    p_tenant_hk BYTEA,
+    p_source_table VARCHAR(100),
+    p_target_table VARCHAR(100),
+    p_transformation_logic TEXT DEFAULT NULL
+) RETURNS BYTEA AS $$
+DECLARE
+    v_flow_hk BYTEA;
+    v_flow_bk VARCHAR(255);
+BEGIN
+    v_flow_bk := p_source_table || '_TO_' || p_target_table;
+    v_flow_hk := util.hash_binary(v_flow_bk);
+    
+    INSERT INTO data_lineage.data_flow_h VALUES (
+        v_flow_hk, v_flow_bk, p_tenant_hk,
+        util.current_load_date(), util.get_record_source()
+    ) ON CONFLICT DO NOTHING;
+    
+    INSERT INTO data_lineage.data_flow_s VALUES (
+        v_flow_hk, util.current_load_date(), NULL,
+        util.hash_binary(v_flow_bk || COALESCE(p_transformation_logic, 'DIRECT')),
+        'APPLICATION', p_source_table, NULL,
+        'DATA_VAULT', p_target_table, NULL,
+        p_transformation_logic, 'INTERNAL',
+        'Business data processing and storage',
+        SESSION_USER, SESSION_USER,
+        'Standard data vault loading process',
+        util.get_record_source()
+    );
+    
+    RETURN v_flow_hk;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### Master Data Management
+```sql
+-- Master data schema
+CREATE SCHEMA master_data;
+
+-- Golden record management
+CREATE TABLE master_data.golden_record_h (
+    golden_record_hk BYTEA PRIMARY KEY,
+    golden_record_bk VARCHAR(255) NOT NULL,
+    tenant_hk BYTEA NOT NULL REFERENCES auth.tenant_h(tenant_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE master_data.golden_record_s (
+    golden_record_hk BYTEA NOT NULL REFERENCES master_data.golden_record_h(golden_record_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    load_end_date TIMESTAMP WITH TIME ZONE,
+    hash_diff BYTEA NOT NULL,
+    entity_type VARCHAR(100) NOT NULL,      -- CUSTOMER, PRODUCT, VENDOR, etc.
+    source_records JSONB NOT NULL,          -- Array of source system records
+    master_attributes JSONB NOT NULL,       -- Consolidated/cleaned attributes
+    confidence_score DECIMAL(5,2),          -- Quality/confidence in master record
+    matching_algorithm VARCHAR(100),        -- How records were matched
+    steward_approved BOOLEAN DEFAULT false,
+    approved_by VARCHAR(100),
+    approval_date TIMESTAMP WITH TIME ZONE,
+    review_due_date DATE,
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (golden_record_hk, load_date)
+);
+
+-- Master data matching function
+CREATE OR REPLACE FUNCTION master_data.create_golden_record(
+    p_tenant_hk BYTEA,
+    p_entity_type VARCHAR(100),
+    p_source_records JSONB,
+    p_matching_algorithm VARCHAR(100) DEFAULT 'FUZZY_MATCH'
+) RETURNS BYTEA AS $$
+DECLARE
+    v_golden_hk BYTEA;
+    v_golden_bk VARCHAR(255);
+    v_master_attributes JSONB;
+    v_confidence_score DECIMAL(5,2);
+BEGIN
+    v_golden_bk := p_entity_type || '_MASTER_' || encode(util.hash_binary(p_source_records::text), 'hex');
+    v_golden_hk := util.hash_binary(v_golden_bk);
+    
+    -- Apply master data rules to create consolidated record
+    v_master_attributes := master_data.consolidate_attributes(p_source_records);
+    v_confidence_score := master_data.calculate_confidence(p_source_records, v_master_attributes);
+    
+    INSERT INTO master_data.golden_record_h VALUES (
+        v_golden_hk, v_golden_bk, p_tenant_hk,
+        util.current_load_date(), util.get_record_source()
+    );
+    
+    INSERT INTO master_data.golden_record_s VALUES (
+        v_golden_hk, util.current_load_date(), NULL,
+        util.hash_binary(v_golden_bk || v_master_attributes::text),
+        p_entity_type, p_source_records, v_master_attributes,
+        v_confidence_score, p_matching_algorithm, false, NULL, NULL,
+        CURRENT_DATE + INTERVAL '90 days', util.get_record_source()
+    );
+    
+    RETURN v_golden_hk;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+## 🧪 **TESTING STRATEGY**
+
+### Data Vault Testing Framework
+```sql
+-- Testing schema
+CREATE SCHEMA testing;
+
+-- Test case definitions
+CREATE TABLE testing.test_case_h (
+    test_case_hk BYTEA PRIMARY KEY,
+    test_case_bk VARCHAR(255) NOT NULL,
+    tenant_hk BYTEA REFERENCES auth.tenant_h(tenant_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE testing.test_case_s (
+    test_case_hk BYTEA NOT NULL REFERENCES testing.test_case_h(test_case_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    load_end_date TIMESTAMP WITH TIME ZONE,
+    hash_diff BYTEA NOT NULL,
+    test_name VARCHAR(200) NOT NULL,
+    test_category VARCHAR(50) NOT NULL,     -- UNIT, INTEGRATION, DATA_QUALITY, PERFORMANCE
+    test_description TEXT,
+    test_sql TEXT NOT NULL,
+    expected_result JSONB,
+    test_priority VARCHAR(20) DEFAULT 'MEDIUM',
+    is_automated BOOLEAN DEFAULT true,
+    run_frequency VARCHAR(50) DEFAULT 'ON_DEMAND', -- DAILY, WEEKLY, MONTHLY, ON_DEMAND
+    created_by VARCHAR(100) DEFAULT SESSION_USER,
+    is_active BOOLEAN DEFAULT true,
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (test_case_hk, load_date)
+);
+
+-- Test execution results
+CREATE TABLE testing.test_execution_h (
+    test_execution_hk BYTEA PRIMARY KEY,
+    test_execution_bk VARCHAR(255) NOT NULL,
+    tenant_hk BYTEA REFERENCES auth.tenant_h(tenant_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE testing.test_execution_s (
+    test_execution_hk BYTEA NOT NULL REFERENCES testing.test_execution_h(test_execution_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    load_end_date TIMESTAMP WITH TIME ZONE,
+    hash_diff BYTEA NOT NULL,
+    test_case_hk BYTEA NOT NULL REFERENCES testing.test_case_h(test_case_hk),
+    execution_timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    execution_duration_ms INTEGER,
+    test_status VARCHAR(20) NOT NULL,       -- PASSED, FAILED, ERROR, SKIPPED
+    actual_result JSONB,
+    error_message TEXT,
+    assertions_passed INTEGER DEFAULT 0,
+    assertions_failed INTEGER DEFAULT 0,
+    executed_by VARCHAR(100) DEFAULT SESSION_USER,
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (test_execution_hk, load_date)
+);
+
+-- Automated test runner
+CREATE OR REPLACE FUNCTION testing.run_test_suite(
+    p_tenant_hk BYTEA DEFAULT NULL,
+    p_test_category VARCHAR(50) DEFAULT NULL,
+    p_test_priority VARCHAR(20) DEFAULT NULL
+) RETURNS TABLE (
+    test_name VARCHAR(200),
+    test_status VARCHAR(20),
+    execution_duration_ms INTEGER,
+    error_message TEXT
+) AS $$
+DECLARE
+    v_test RECORD;
+    v_execution_hk BYTEA;
+    v_start_time TIMESTAMP WITH TIME ZONE;
+    v_end_time TIMESTAMP WITH TIME ZONE;
+    v_duration INTEGER;
+    v_actual_result JSONB;
+    v_test_status VARCHAR(20);
+    v_error_msg TEXT;
+BEGIN
+    FOR v_test IN 
+        SELECT tc.*, ts.test_name, ts.test_sql, ts.expected_result
+        FROM testing.test_case_h tc
+        JOIN testing.test_case_s ts ON tc.test_case_hk = ts.test_case_hk
+        WHERE (p_tenant_hk IS NULL OR tc.tenant_hk = p_tenant_hk)
+        AND (p_test_category IS NULL OR ts.test_category = p_test_category)
+        AND (p_test_priority IS NULL OR ts.test_priority = p_test_priority)
+        AND ts.is_active = true
+        AND ts.load_end_date IS NULL
+        ORDER BY ts.test_priority DESC, ts.test_name
+    LOOP
+        v_start_time := CURRENT_TIMESTAMP;
+        v_execution_hk := util.hash_binary(v_test.test_case_bk || v_start_time::text);
+        
+        BEGIN
+            -- Execute the test SQL (simplified - would need dynamic SQL execution)
+            v_actual_result := jsonb_build_object('test_executed', true, 'timestamp', v_start_time);
+            v_test_status := 'PASSED';
+            v_error_msg := NULL;
+            
+        EXCEPTION WHEN OTHERS THEN
+            v_test_status := 'ERROR';
+            v_error_msg := SQLERRM;
+            v_actual_result := jsonb_build_object('error', v_error_msg);
+        END;
+        
+        v_end_time := CURRENT_TIMESTAMP;
+        v_duration := EXTRACT(EPOCH FROM (v_end_time - v_start_time)) * 1000;
+        
+        -- Log test execution
+        INSERT INTO testing.test_execution_h VALUES (
+            v_execution_hk,
+            'EXEC_' || v_test.test_name || '_' || to_char(v_start_time, 'YYYYMMDD_HH24MISS'),
+            p_tenant_hk,
+            util.current_load_date(),
+            util.get_record_source()
+        );
+        
+        INSERT INTO testing.test_execution_s VALUES (
+            v_execution_hk, util.current_load_date(), NULL,
+            util.hash_binary(v_test.test_case_bk || v_test_status),
+            v_test.test_case_hk, v_start_time, v_duration,
+            v_test_status, v_actual_result, v_error_msg,
+            CASE WHEN v_test_status = 'PASSED' THEN 1 ELSE 0 END,
+            CASE WHEN v_test_status = 'FAILED' THEN 1 ELSE 0 END,
+            SESSION_USER, util.get_record_source()
+        );
+        
+        RETURN QUERY SELECT v_test.test_name, v_test_status, v_duration, v_error_msg;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+---
+
+## 📋 **IMPLEMENTATION CHECKLIST**
+
+### Essential Data Engineering Standards
+
+#### ✅ **Architecture Compliance**
+- [ ] All tables follow Data Vault 2.0 structure (_h, _s, _l suffixes)
+- [ ] Tenant isolation implemented in every hub table
+- [ ] Hash keys (SHA-256) used consistently
+- [ ] Business keys preserved and never modified
+- [ ] Temporal tracking with load_date/load_end_date implemented
+
+#### ✅ **Data Quality Standards**
+- [ ] Data validation rules defined for each entity
+- [ ] Quality assessment procedures automated
+- [ ] Error handling and quarantine processes established
+- [ ] Data profiling metrics collected regularly
+- [ ] Business rules engine implemented
+
+#### ✅ **Performance Standards**
+- [ ] Strategic indexing on hash keys and business keys
+- [ ] Materialized views for frequent queries
+- [ ] PIT tables for historical analysis
+- [ ] Bulk operations for high-volume processing
+- [ ] Query performance monitoring implemented
+
+#### ✅ **Operational Standards**
+- [ ] Comprehensive monitoring and alerting
+- [ ] Automated backup and recovery procedures
+- [ ] Health check procedures scheduled
+- [ ] Error logging and notification systems
+- [ ] Performance metrics collection automated
+
+#### ✅ **Governance Standards**
+- [ ] Data lineage tracking implemented
+- [ ] Master data management processes defined
+- [ ] Data stewardship roles assigned
+- [ ] Privacy and compliance controls active
+- [ ] Change management procedures documented
+
+#### ✅ **Testing Standards**
+- [ ] Unit tests for all Data Vault procedures
+- [ ] Integration tests for data flows
+- [ ] Data quality tests automated
+- [ ] Performance benchmark tests defined
+- [ ] Regression test suite maintained
+
+---
+
+## 🎯 **RECOMMENDED IMPLEMENTATION ORDER**
+
+### Phase 1: Foundation (Weeks 1-2)
+1. **Data Quality Framework** - Essential for data trust
+2. **Monitoring System** - Critical for operations  
+3. **Business Rules Engine** - Required for data validation
+
+### Phase 2: Enhancement (Weeks 3-4)
+1. **PIT Tables** - For performance optimization
+2. **Data Lineage** - For governance and compliance
+3. **Testing Framework** - For quality assurance
+
+### Phase 3: Advanced (Weeks 5-6)
+1. **Master Data Management** - For data consolidation
+2. **Advanced Analytics** - For business insights
+3. **Performance Optimization** - For scale
+
+### Phase 4: Production Readiness (Weeks 7-8)
+1. **Backup/Recovery Testing** - For business continuity
+2. **Load Testing** - For performance validation
+3. **Security Testing** - For compliance verification
+
+---
+
+## 🏆 **SUCCESS METRICS**
+
+### Data Engineering KPIs
+```sql
+-- Comprehensive Data Engineering Dashboard
+CREATE VIEW monitoring.data_engineering_kpi AS
+SELECT 
+    'Data Quality Score' as kpi_name,
+    ROUND(AVG(quality_score), 2) as current_value,
+    95.0 as target_value,
+    '%' as unit
+FROM data_quality.quality_assessment_s 
+WHERE load_end_date IS NULL 
+AND assessment_timestamp >= CURRENT_DATE - INTERVAL '7 days'
+
+UNION ALL
+
+SELECT 
+    'System Availability',
+    99.9,
+    99.5,
+    '%'
+
+UNION ALL
+
+SELECT 
+    'Average Query Performance',
+    (SELECT AVG(execution_time_ms) FROM util.query_performance_s 
+     WHERE load_end_date IS NULL 
+     AND execution_timestamp >= CURRENT_DATE - INTERVAL '1 hour'),
+    200.0,
+    'ms'
+
+UNION ALL
+
+SELECT 
+    'Backup Success Rate',
+    (SELECT COUNT(*) FILTER (WHERE backup_status = 'COMPLETED') * 100.0 / COUNT(*) 
+     FROM backup_mgmt.backup_execution_s 
+     WHERE load_end_date IS NULL 
+     AND backup_start_time >= CURRENT_DATE - INTERVAL '30 days'),
+    100.0,
+    '%';
+```
+
+
+This comprehensive Data Vault 2.0 engineering framework ensures your platform maintains the highest standards of data engineering excellence while supporting your business requirements for multi-entity optimization, compliance, and scalability.

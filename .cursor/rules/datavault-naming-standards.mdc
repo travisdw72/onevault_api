@@ -1,0 +1,560 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Database Naming Conventions
+## Multi-Tenant Data Vault 2.0 SaaS Platform
+
+### Project Overview
+This document defines the comprehensive naming conventions for our Multi-Tenant Business Optimization Platform database, implementing Data Vault 2.0 methodology with complete tenant isolation, HIPAA/GDPR compliance, and IRS compliance for financial management.
+
+---
+
+## 🏗️ **SCHEMA ORGANIZATION**
+
+### Core Schemas
+```sql
+-- Data processing layers (Data Vault 2.0)
+raw         -- Raw data ingestion layer
+staging     -- Data validation and processing layer  
+business    -- Business logic and rules layer
+infomart    -- Information mart for reporting
+
+-- Application layers
+auth        -- Authentication and authorization
+audit       -- Audit trails and compliance tracking
+util        -- Utility functions and procedures
+validation  -- Data validation rules and checks
+
+-- Management layers  
+config      -- Configuration and settings
+metadata    -- Data catalog and lineage
+archive     -- Historical data archival
+ref         -- Reference data and lookups
+```
+
+### Schema Naming Rules
+- **Lowercase only**: All schema names use lowercase letters
+- **Single words preferred**: Avoid underscores where possible
+- **Descriptive purpose**: Schema name clearly indicates its function
+- **No abbreviations**: Use full words for clarity
+
+---
+
+## 📊 **TABLE NAMING CONVENTIONS**
+
+### Data Vault 2.0 Table Types
+
+#### Hub Tables (`_h` suffix)
+Hub tables store unique business keys and provide the foundational entities.
+
+```sql
+-- Pattern: {entity_name}_h
+CREATE TABLE auth.tenant_h (
+    tenant_hk BYTEA PRIMARY KEY,           -- Hash key
+    tenant_bk VARCHAR(255) NOT NULL,       -- Business key  
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+-- Examples:
+auth.tenant_h              -- Tenant hub
+auth.user_h                -- User hub  
+auth.session_h             -- Session hub
+auth.role_h                -- Role hub
+business.entity_h          -- Business entity hub
+business.asset_h           -- Asset hub
+business.transaction_h     -- Transaction hub
+```
+
+#### Satellite Tables (`_s` suffix)
+Satellite tables store descriptive attributes and track changes over time.
+
+```sql
+-- Pattern: {entity_name}_{context}_s
+CREATE TABLE auth.tenant_profile_s (
+    tenant_hk BYTEA NOT NULL REFERENCES auth.tenant_h(tenant_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    load_end_date TIMESTAMP WITH TIME ZONE,
+    hash_diff BYTEA NOT NULL,
+    -- Descriptive attributes here
+    record_source VARCHAR(100) NOT NULL,
+    PRIMARY KEY (tenant_hk, load_date)
+);
+
+-- Examples:
+auth.tenant_profile_s      -- Tenant profile information
+auth.user_profile_s        -- User profile data
+auth.user_auth_s           -- User authentication data
+auth.session_state_s       -- Session state information
+business.asset_details_s   -- Asset descriptive information
+business.transaction_details_s -- Transaction details
+```
+
+#### Link Tables (`_l` suffix)
+Link tables store relationships between hub tables.
+
+```sql
+-- Pattern: {entity1}_{entity2}_l
+CREATE TABLE auth.user_role_l (
+    link_user_role_hk BYTEA PRIMARY KEY,
+    user_hk BYTEA NOT NULL REFERENCES auth.user_h(user_hk),
+    role_hk BYTEA NOT NULL REFERENCES auth.role_h(role_hk),
+    tenant_hk BYTEA NOT NULL REFERENCES auth.tenant_h(tenant_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+
+-- Examples:
+auth.user_role_l           -- User to role relationships
+auth.user_session_l        -- User to session relationships
+business.entity_asset_l    -- Entity to asset relationships
+business.transaction_entity_l -- Transaction to entity relationships
+```
+
+#### Bridge Tables (`_b` suffix)
+Bridge tables handle complex many-to-many relationships.
+
+```sql
+-- Pattern: {context}_bridge_b
+-- Examples:
+auth.permission_bridge_b   -- Complex permission relationships
+business.ownership_bridge_b -- Complex ownership structures
+```
+
+#### Reference Tables (`_r` suffix)
+Reference tables store lookup data and static reference information.
+
+```sql
+-- Pattern: {reference_type}_r
+-- Examples:  
+ref.entity_type_r          -- Business entity types
+ref.transaction_type_r     -- Transaction types
+ref.country_r              -- Country reference data
+ref.currency_r             -- Currency reference data
+```
+
+---
+
+## 🔑 **COLUMN NAMING CONVENTIONS**
+
+### Primary Data Vault Columns
+
+#### Hash Keys (`_hk` suffix)
+```sql
+-- Pattern: {entity_name}_hk
+tenant_hk BYTEA             -- Tenant hash key
+user_hk BYTEA               -- User hash key  
+session_hk BYTEA            -- Session hash key
+asset_hk BYTEA              -- Asset hash key
+transaction_hk BYTEA        -- Transaction hash key
+
+-- Link table hash keys
+link_user_role_hk BYTEA     -- User-role link hash key
+link_user_session_hk BYTEA  -- User-session link hash key
+```
+
+#### Business Keys (`_bk` suffix)
+```sql
+-- Pattern: {entity_name}_bk  
+tenant_bk VARCHAR(255)      -- Tenant business key
+user_bk VARCHAR(255)        -- User business key
+session_bk VARCHAR(255)     -- Session business key
+asset_bk VARCHAR(255)       -- Asset business key
+```
+
+#### Temporal Columns
+```sql
+-- Standard temporal tracking
+load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date()
+load_end_date TIMESTAMP WITH TIME ZONE
+created_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date()
+last_updated_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date()
+
+-- Specific temporal contexts
+password_last_changed TIMESTAMP WITH TIME ZONE
+last_login_date TIMESTAMP WITH TIME ZONE
+session_start TIMESTAMP WITH TIME ZONE
+transaction_date TIMESTAMP WITH TIME ZONE
+```
+
+#### Data Vault Metadata
+```sql
+hash_diff BYTEA NOT NULL                    -- Change detection hash
+record_source VARCHAR(100) NOT NULL        -- Source system identifier
+```
+
+### Business-Specific Columns
+
+#### Multi-Entity Business Platform
+```sql
+-- Entity management
+entity_name VARCHAR(100)
+entity_type VARCHAR(50)                    -- LLC, Corporation, Partnership, etc.
+entity_status VARCHAR(20)                  -- Active, Inactive, Dissolved
+tax_id VARCHAR(50)                         -- EIN or SSN
+formation_date DATE
+dissolution_date DATE
+
+-- Financial data  
+amount DECIMAL(15,2)                       -- Monetary amounts
+interest_rate DECIMAL(5,4)                 -- Interest rates (e.g., 0.0525 for 5.25%)
+payment_amount DECIMAL(15,2)
+balance_amount DECIMAL(15,2)
+
+-- Asset management
+asset_name VARCHAR(200)
+asset_type VARCHAR(50)                     -- Equipment, IP, Real Estate, etc.
+purchase_price DECIMAL(15,2)
+fair_market_value DECIMAL(15,2)
+depreciation_method VARCHAR(50)
+
+-- Transaction categorization
+transaction_type VARCHAR(50)               -- Sale, Lease, License, Service
+payment_terms VARCHAR(100)
+payment_frequency VARCHAR(20)              -- Monthly, Quarterly, Annual
+```
+
+#### Authentication & Security
+```sql
+-- User management
+username VARCHAR(100)                      -- Standardized to 100 chars
+email VARCHAR(255)                         -- RFC compliant length
+first_name VARCHAR(100)
+last_name VARCHAR(100)  
+phone VARCHAR(50)
+job_title VARCHAR(100)
+
+-- Security attributes
+password_hash BYTEA
+password_salt BYTEA
+account_locked BOOLEAN DEFAULT false
+failed_login_attempts INTEGER DEFAULT 0
+session_status VARCHAR(20)                 -- ACTIVE, EXPIRED, TERMINATED
+ip_address INET
+user_agent TEXT
+
+-- HIPAA/GDPR compliance
+is_active BOOLEAN DEFAULT true
+privacy_consent BOOLEAN DEFAULT false
+data_retention_date DATE
+anonymization_date DATE
+```
+
+### Column Naming Rules
+1. **Lowercase with underscores**: `user_name`, `created_date`
+2. **Descriptive and specific**: `password_last_changed` not `pwd_chg`
+3. **No abbreviations**: `transaction_amount` not `txn_amt`
+4. **Consistent patterns**: All dates end with `_date`, all amounts with `_amount`
+5. **Boolean prefixes**: `is_active`, `has_permission`, `requires_mfa`
+
+---
+
+## 🔧 **FUNCTION & PROCEDURE NAMING**
+
+### Utility Functions (`util` schema)
+```sql
+-- Hash and key generation
+util.hash_binary(input TEXT) RETURNS BYTEA
+util.hash_concat(VARIADIC args TEXT[]) RETURNS BYTEA
+util.generate_bk(input_text TEXT) RETURNS VARCHAR(255)
+
+-- Date and time utilities  
+util.current_load_date() RETURNS TIMESTAMP WITH TIME ZONE
+util.get_record_source() RETURNS VARCHAR(100)
+
+-- Tenant management
+util.process_hex_tenant(hex_string TEXT) RETURNS BYTEA
+util.validate_tenant_context(tenant_hk BYTEA) RETURNS BOOLEAN
+```
+
+### Authentication Functions (`auth` schema)
+```sql
+-- User management procedures
+auth.register_tenant(...)
+auth.register_user(...)  
+auth.create_user_request(...)
+
+-- Session management
+auth.login_user(...)
+auth.complete_login(...)
+auth.validate_session(...)
+auth.create_session_with_token(...)
+
+-- Token management
+auth.validate_token_and_session(...)
+auth.revoke_token(...)
+
+-- Security functions
+auth.establish_base_security_policy(...)
+auth.validate_hipaa_policy(...)
+```
+
+### Business Logic Functions (`business` schema)
+```sql
+-- Entity operations
+business.create_entity(...)
+business.transfer_asset(...)
+business.calculate_depreciation(...)
+
+-- Transaction processing
+business.process_payment(...)
+business.generate_invoice(...)
+business.calculate_tax_impact(...)
+
+-- Financial analysis
+business.calculate_roi(...)
+business.generate_financial_report(...)
+```
+
+### Function Naming Rules
+1. **Schema prefix required**: `util.function_name`
+2. **Verb-noun pattern**: `create_user`, `validate_session`, `calculate_tax`
+3. **Parameter prefix**: `p_tenant_id`, `p_user_email`, `p_amount`
+4. **Return type indicators**: Functions returning JSON end with `_json`
+5. **No abbreviations**: `validate_user` not `val_usr`
+
+---
+
+## 📋 **INDEX NAMING CONVENTIONS**
+
+### Index Patterns
+```sql
+-- Primary key indexes (automatic)
+pk_{table_name}
+
+-- Unique indexes  
+uk_{table_name}_{column_list}
+uk_user_auth_s_username_tenant
+
+-- Regular indexes
+idx_{table_name}_{column_list}
+idx_user_profile_s_email
+idx_session_state_s_status
+idx_transaction_details_s_date_amount
+
+-- Partial indexes (with WHERE clause)
+idx_{table_name}_{column_list}_{condition}
+idx_user_profile_s_is_active_true
+idx_session_state_s_active_sessions
+
+-- Functional indexes
+idx_{table_name}_{function}_{column}
+idx_user_profile_s_lower_email
+```
+
+### Performance-Critical Indexes
+```sql
+-- Tenant isolation (highest priority)
+idx_user_h_tenant_hk
+idx_transaction_h_tenant_hk  
+idx_asset_h_tenant_hk
+
+-- Authentication lookups
+idx_user_auth_s_username_optimized
+idx_session_state_s_activity_optimized
+
+-- Financial queries
+idx_transaction_details_s_date_amount
+idx_asset_details_s_type_value
+```
+
+---
+
+## 🔐 **CONSTRAINT NAMING CONVENTIONS**
+
+### Constraint Types
+```sql
+-- Primary key constraints
+pk_{table_name}
+
+-- Foreign key constraints  
+fk_{table_name}_{referenced_table}_{column}
+fk_user_profile_s_user_h_user_hk
+fk_transaction_details_s_transaction_h_transaction_hk
+
+-- Check constraints
+chk_{table_name}_{column}_{condition}
+chk_user_auth_s_failed_attempts_positive
+chk_session_state_s_status_valid
+chk_transaction_details_s_amount_positive
+
+-- Unique constraints
+uk_{table_name}_{column_list}
+uk_tenant_profile_s_domain_name
+uk_user_auth_s_username_tenant
+```
+
+---
+
+## 🎯 **TENANT ISOLATION PATTERNS**
+
+### Mandatory Tenant Columns
+Every hub table MUST include tenant isolation:
+```sql
+CREATE TABLE {schema}.{entity}_h (
+    {entity}_hk BYTEA PRIMARY KEY,
+    {entity}_bk VARCHAR(255) NOT NULL,
+    tenant_hk BYTEA NOT NULL REFERENCES auth.tenant_h(tenant_hk),
+    load_date TIMESTAMP WITH TIME ZONE DEFAULT util.current_load_date(),
+    record_source VARCHAR(100) NOT NULL
+);
+```
+
+### Tenant-Based Naming
+```sql
+-- Hash keys derived from tenant context
+tenant_hk + entity_bk → entity_hk
+
+-- Business keys include tenant context where needed  
+'TENANT_' + substr(encode(tenant_hk, 'hex'), 1, 8) + '_' + entity_identifier
+```
+
+---
+
+## 📈 **AUDIT & COMPLIANCE NAMING**
+
+### Audit Tables
+```sql
+audit.audit_event_h           -- Audit event hub
+audit.audit_detail_s          -- Audit event details
+audit.data_access_s           -- Data access tracking  
+audit.privacy_event_s         -- GDPR/HIPAA events
+```
+
+### Compliance Columns
+```sql
+-- HIPAA compliance
+hipaa_consent BOOLEAN
+phi_access_logged BOOLEAN  
+minimum_necessary_applied BOOLEAN
+
+-- GDPR compliance  
+gdpr_consent BOOLEAN
+right_to_be_forgotten BOOLEAN
+data_processing_basis VARCHAR(50)
+
+-- IRS compliance
+tax_year INTEGER
+filing_status VARCHAR(20)
+supporting_documentation TEXT[]
+irs_form_type VARCHAR(20)
+```
+
+---
+
+## 🛡️ **SECURITY NAMING CONVENTIONS**
+
+### Role-Based Access
+```sql
+-- Role naming pattern
+{environment}_{entity}_{permission_level}
+prod_tenant_admin
+prod_user_read
+staging_system_full
+
+-- Permission naming
+{action}_{resource}_{scope}
+read_financial_own_entity
+write_user_all_tenants
+delete_audit_none
+```
+
+### Security Functions
+```sql
+auth.validate_permission(p_user_hk BYTEA, p_resource VARCHAR, p_action VARCHAR)
+auth.check_tenant_access(p_user_hk BYTEA, p_tenant_hk BYTEA)
+auth.log_security_event(p_event_type VARCHAR, p_details JSONB)
+```
+
+---
+
+## 🔄 **MIGRATION & VERSIONING**
+
+### Migration Script Naming
+```sql
+-- Pattern: dbCreation_{step_number}.sql
+dbCreation_1.sql              -- Initial schema creation
+dbCreation_2.sql              -- Core tables
+dbCreation_15.sql             -- Performance optimization
+dbCreation_21.sql             -- Character length standardization
+
+-- Rollback procedures
+util.rollback_step_{number}()
+util.rollback_step_15()
+util.rollback_step_21()
+```
+
+### Version Control
+```sql
+-- Schema version tracking
+config.schema_version         -- Current schema version
+config.migration_history      -- Migration execution log
+```
+
+---
+
+## ✅ **VALIDATION RULES**
+
+### Naming Validation Checklist
+- [ ] Schema names are lowercase, single words
+- [ ] Table names include proper Data Vault suffix (`_h`, `_s`, `_l`)
+- [ ] Column names use lowercase with underscores
+- [ ] Hash keys follow `{entity}_hk` pattern  
+- [ ] Business keys follow `{entity}_bk` pattern
+- [ ] All tables include `tenant_hk` for isolation
+- [ ] Functions are properly schema-qualified
+- [ ] Indexes follow naming conventions
+- [ ] Constraints are descriptively named
+
+### Automated Validation
+```sql
+-- Function to validate naming conventions
+util.validate_naming_conventions() RETURNS TABLE(
+    schema_name VARCHAR,
+    table_name VARCHAR, 
+    column_name VARCHAR,
+    violation_type VARCHAR,
+    recommendation VARCHAR
+);
+```
+
+---
+
+## 📚 **DOCUMENTATION STANDARDS**
+
+### Table Comments
+```sql
+COMMENT ON TABLE auth.tenant_h IS 
+'Hub table for tenant entities maintaining unique identifiers and load metadata for multi-tenant Data Vault 2.0 architecture with complete tenant isolation and regulatory compliance support.';
+```
+
+### Column Comments  
+```sql
+COMMENT ON COLUMN auth.user_auth_s.password_hash IS
+'Cryptographically secure password hash using bcrypt algorithm with configurable cost factor for enhanced security and HIPAA compliance.';
+```
+
+### Function Documentation
+```sql
+COMMENT ON FUNCTION auth.validate_session IS
+'Validates session tokens and returns user context for API requests with comprehensive security checking, tenant isolation verification, and detailed audit logging for regulatory compliance.';
+```
+
+---
+
+## 🎯 **CONCLUSION**
+
+This naming convention document ensures:
+
+1. **Consistency**: All database objects follow predictable patterns
+2. **Clarity**: Names clearly indicate purpose and relationships  
+3. **Compliance**: Supports HIPAA, GDPR, and IRS requirements
+4. **Scalability**: Patterns support growth and new features
+5. **Maintainability**: Clear structure aids development and operations
+6. **Multi-tenancy**: Complete tenant isolation throughout
+7. **Data Vault 2.0**: Proper implementation of methodology principles
+
+
+These conventions are mandatory for all database development and must be validated during code review processes.
