@@ -16,13 +16,30 @@ These scripts require PostgreSQL to be installed and accessible from the command
 
 ## 🚀 **Quick Start**
 
+### Environment Setup (Choose One Option)
+
+#### Option 1: Set Environment Variable (Recommended)
+```powershell
+# Set for current session
+$env:PGPASSWORD = "your_actual_password"
+
+# Or add to PowerShell profile permanently
+Add-Content -Path $PROFILE -Value '$env:PGPASSWORD = "your_actual_password"'
+```
+
+#### Option 2: Interactive Password
+The script will prompt for password if no environment variable is set.
+
 ### Before Testing/Development Work
 ```bash
 # Quick backup of main database
 python scripts/quick_backup.py
 
-# Quick backup of development database
+# Quick backup of development database  
 python scripts/quick_backup.py one_vault_dev
+
+# NEW: Integrated backup with database tracking
+python scripts/integrated_backup.py --env one_vault_dev
 ```
 
 ### Full Backup Operations
