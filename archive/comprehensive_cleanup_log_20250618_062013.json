@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-06-18T06:20:13.363951",
+  "actions": [],
+  "duplicates_removed": [],
+  "files_moved": [],
+  "errors": [
+    "Error moving database\\scripts\\ai_migration_analysis.md: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\ai_migration_analysis.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\AI_MONITORING_README.md: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\AI_MONITORING_README.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\audit_trail_validation_summary.md: 'database\\\\organized_migrations\\\\09_monitoring_audit\\\\audit_trail_validation_summary.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\cleanup_barn_user.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\cleanup_barn_user.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\complete_ai_ml_enhancement.md: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\complete_ai_ml_enhancement.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\CONFIGURATION_SUMMARY.md: 'archive\\\\documentation\\\\CONFIGURATION_SUMMARY.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\config_summary.md: 'archive\\\\documentation\\\\config_summary.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\customize_application_users.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\customize_application_users.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\DEPLOYMENT_ORDER.md: 'archive\\\\documentation\\\\DEPLOYMENT_ORDER.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\DEPLOYMENT_SUMMARY.md: 'archive\\\\documentation\\\\DEPLOYMENT_SUMMARY.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\deploy_critical_schemas.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\deploy_critical_schemas.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\deploy_missing_schemas.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\deploy_missing_schemas.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\deploy_template_foundation.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\deploy_template_foundation.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\fix_text_password_security.sql: 'database\\\\organized_migrations\\\\03_auth_system\\\\fix_text_password_security.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\investigation_summary.md: 'archive\\\\documentation\\\\investigation_summary.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\migration_summary.md: 'archive\\\\documentation\\\\migration_summary.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\one_barn_db_investigation_results.md: 'archive\\\\documentation\\\\one_barn_db_investigation_results.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\one_barn_gap_analysis.md: 'archive\\\\documentation\\\\one_barn_gap_analysis.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\password_audit_dashboard.sql: 'database\\\\organized_migrations\\\\03_auth_system\\\\password_audit_dashboard.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\sox_assessment.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\sox_assessment.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\TESTING_STATUS_SUMMARY.md: 'archive\\\\documentation\\\\TESTING_STATUS_SUMMARY.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\test_ai_api_contracts.sql: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\test_ai_api_contracts.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\test_ai_api_contracts_enhanced.sql: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\test_ai_api_contracts_enhanced.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "cleanup_timestamp": "2025-06-17T20:00:02.909383",
+  "directories_created": 7,
+  "files_moved": 31,
+  "cleanup_actions": [
+    "Created directory: tools/analysis",
+    "Created directory: tools/config",
+    "Created directory: testing",
+    "Created directory: demos/rbac",
+    "Created directory: archive/investigation_results",
+    "Created directory: archive/superseded",
+    "Created directory: archive/cache",
+    "Created README for tools/analysis",
+    "Created README for tools/config",
+    "Created README for testing",
+    "Created README for demos/rbac",
+    "Created README for archive",
+    "Updated .gitignore file"
+  ],
+  "directory_structure": {
+    "tools/analysis": "Analysis and investigation tools",
+    "tools/config": "Configuration management tools",
+    "testing": "Test scripts and validation tools",
+    "demos/rbac": "RBAC demonstration scripts",
+    "archive/investigation_results": "Investigation JSON outputs",
+    "archive/superseded": "Replaced/outdated SQL files",
+    "archive/cache": "Python cache and temporary files"
+  },
+  "preserved_directories": [
+    "legacy/ (historical iterations)",
+    "ai_agents_scripts/ (AI-specific tools)",
+    "config_examples/ (configuration examples)",
+    "Production_ready_assesment/ (production assessment)",
+    "ai_ml_99.9_scripts/ (advanced AI scripts)",
+    "intellegent_api_gateway/ (API gateway scripts)"
+  ],
+  "core_scripts_preserved": [
+    "01_create_raw_schema.sql",
+    "02_create_staging_schema.sql",
+    "03_create_raw_staging_functions.sql",
+    "04_create_raw_staging_indexes_fixed.sql",
+    "enhanced_database_version_control.sql"
+  ]
+}

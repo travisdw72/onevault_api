@@ -1,0 +1,353 @@
+{
+  "timestamp": "2025-06-18T06:15:49.944961",
+  "actions": [
+    "Removed artifact: CLEANUP_SUMMARY.md",
+    "Removed artifact: cleanup_scripts_folder.py"
+  ],
+  "duplicates_removed": [
+    {
+      "file": "database\\scripts\\01_create_raw_schema.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\01_create_raw_schema.sql",
+      "size_bytes": 11247
+    },
+    {
+      "file": "database\\scripts\\02_create_staging_schema.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\02_create_staging_schema.sql",
+      "size_bytes": 17018
+    },
+    {
+      "file": "database\\scripts\\add_finance_schema.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\add_finance_schema.sql",
+      "size_bytes": 23735
+    },
+    {
+      "file": "database\\scripts\\add_health_schema.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\add_health_schema.sql",
+      "size_bytes": 20972
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\agent_orchestration_api.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\agent_orchestration_api.sql",
+      "size_bytes": 16400
+    },
+    {
+      "file": "database\\scripts\\create_one_barn_database.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\create_one_barn_database.sql",
+      "size_bytes": 21227
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\multi_database_architecture.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\multi_database_architecture.sql",
+      "size_bytes": 15486
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\optimal_tenant_architecture.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\optimal_tenant_architecture.sql",
+      "size_bytes": 11280
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\phase4_security_compliance.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\phase4_security_compliance.sql",
+      "size_bytes": 14778
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\02_core_schemas\\step_11_security_hardening.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\step_11_security_hardening.sql",
+      "size_bytes": 26143
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\02_core_schemas\\step_12_compliance_automation.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\step_12_compliance_automation.sql",
+      "size_bytes": 28327
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\02_core_schemas\\step_13_sox_compliance_automation.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\step_13_sox_compliance_automation.sql",
+      "size_bytes": 41377
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\02_core_schemas\\step_14_gdpr_compliance_rights.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\step_14_gdpr_compliance_rights.sql",
+      "size_bytes": 24364
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\02_core_schemas\\step_4_alerting_system.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\step_4_alerting_system.sql",
+      "size_bytes": 38635
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\02_core_schemas\\step_9_capacity_planning.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\step_9_capacity_planning.sql",
+      "size_bytes": 26675
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\tenant_isolation_strategies.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\tenant_isolation_strategies.sql",
+      "size_bytes": 12626
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\video_upload_enhancement.sql",
+      "duplicate_of": "database\\organized_migrations\\02_core_schemas\\video_upload_enhancement.sql",
+      "size_bytes": 18676
+    },
+    {
+      "file": "database\\scripts\\dbCreation_22_hipaa_consent_and_reference_enhancement.sql",
+      "duplicate_of": "database\\organized_migrations\\05_data_vault_tables\\dbCreation_22_hipaa_consent_and_reference_enhancement.sql",
+      "size_bytes": 36774
+    },
+    {
+      "file": "database\\scripts\\03_create_raw_staging_functions.sql",
+      "duplicate_of": "database\\organized_migrations\\06_functions_procedures\\03_create_raw_staging_functions.sql",
+      "size_bytes": 19634
+    },
+    {
+      "file": "database\\scripts\\04_create_raw_staging_indexes_fixed.sql",
+      "duplicate_of": "database\\organized_migrations\\06_functions_procedures\\04_create_raw_staging_indexes_fixed.sql",
+      "size_bytes": 27068
+    },
+    {
+      "file": "database\\scripts\\fix_password_security_vulnerability.sql",
+      "duplicate_of": "database\\organized_migrations\\06_functions_procedures\\fix_password_security_vulnerability.sql",
+      "size_bytes": 9451
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\06_functions_procedures\\fix_token_function_conflict.sql",
+      "duplicate_of": "database\\organized_migrations\\06_functions_procedures\\fix_token_function_conflict.sql",
+      "size_bytes": 9317
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\implementation_guide.sql",
+      "duplicate_of": "database\\organized_migrations\\06_functions_procedures\\implementation_guide.sql",
+      "size_bytes": 10045
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\phase2_tenant_isolation.sql",
+      "duplicate_of": "database\\organized_migrations\\06_functions_procedures\\phase2_tenant_isolation.sql",
+      "size_bytes": 7183
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\06_functions_procedures\\production_api_token_generator.sql",
+      "duplicate_of": "database\\organized_migrations\\06_functions_procedures\\production_api_token_generator.sql",
+      "size_bytes": 19255
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\06_functions_procedures\\step_10_growth_forecasting.sql",
+      "duplicate_of": "database\\organized_migrations\\06_functions_procedures\\step_10_growth_forecasting.sql",
+      "size_bytes": 30675
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\06_functions_procedures\\step_8_blocking_detection.sql",
+      "duplicate_of": "database\\organized_migrations\\06_functions_procedures\\step_8_blocking_detection.sql",
+      "size_bytes": 28084
+    },
+    {
+      "file": "database\\scripts\\ai_agents_scripts\\TEMPLATE_CUSTOMIZATION_EXAMPLES.sql",
+      "duplicate_of": "database\\organized_migrations\\06_functions_procedures\\TEMPLATE_CUSTOMIZATION_EXAMPLES.sql",
+      "size_bytes": 15520
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\video_api_contracts.sql",
+      "duplicate_of": "database\\organized_migrations\\06_functions_procedures\\video_api_contracts.sql",
+      "size_bytes": 28383
+    },
+    {
+      "file": "database\\scripts\\add_performance_schema.sql",
+      "duplicate_of": "database\\organized_migrations\\07_indexes_performance\\add_performance_schema.sql",
+      "size_bytes": 21545
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\phase3_performance_optimization.sql",
+      "duplicate_of": "database\\organized_migrations\\07_indexes_performance\\phase3_performance_optimization.sql",
+      "size_bytes": 19055
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\07_indexes_performance\\step_5_performance_optimization.sql",
+      "duplicate_of": "database\\organized_migrations\\07_indexes_performance\\step_5_performance_optimization.sql",
+      "size_bytes": 40918
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\ai_application_integration.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\ai_application_integration.sql",
+      "size_bytes": 14405
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\ai_automation_engine.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\ai_automation_engine.sql",
+      "size_bytes": 20922
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\ai_intelligent_routing.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\ai_intelligent_routing.sql",
+      "size_bytes": 15372
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\ai_video_management.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\ai_video_management.sql",
+      "size_bytes": 28975
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\business_domain_examples.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\business_domain_examples.sql",
+      "size_bytes": 18451
+    },
+    {
+      "file": "database\\scripts\\cleanup_domain_contamination.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\cleanup_domain_contamination.sql",
+      "size_bytes": 10938
+    },
+    {
+      "file": "database\\scripts\\dbCreation_AI_Monitoring.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\dbCreation_AI_Monitoring.sql",
+      "size_bytes": 19885
+    },
+    {
+      "file": "database\\scripts\\dbCreation_AI_Monitoring_API.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\dbCreation_AI_Monitoring_API.sql",
+      "size_bytes": 31880
+    },
+    {
+      "file": "database\\scripts\\dbCreation_AI_Monitoring_Functions.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\dbCreation_AI_Monitoring_Functions.sql",
+      "size_bytes": 31110
+    },
+    {
+      "file": "database\\scripts\\legacy\\Initial AI Integration\\deploy_ai_api_integration.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\deploy_ai_api_integration.sql",
+      "size_bytes": 25454
+    },
+    {
+      "file": "database\\scripts\\legacy\\Initial AI Integration\\deploy_ai_data_vault.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\deploy_ai_data_vault.sql",
+      "size_bytes": 28144
+    },
+    {
+      "file": "database\\scripts\\deploy_ai_monitoring.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\deploy_ai_monitoring.sql",
+      "size_bytes": 3929
+    },
+    {
+      "file": "database\\scripts\\legacy\\Initial AI Integration\\deploy_ai_observation_system.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\deploy_ai_observation_system.sql",
+      "size_bytes": 67483
+    },
+    {
+      "file": "database\\scripts\\deploy_ai_observation_system_fixed.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\deploy_ai_observation_system_fixed.sql",
+      "size_bytes": 40365
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\08_ai_ml_systems\\detailed_function_analysis.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\detailed_function_analysis.sql",
+      "size_bytes": 18684
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\generic_ai_business_intelligence.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\generic_ai_business_intelligence.sql",
+      "size_bytes": 20943
+    },
+    {
+      "file": "database\\scripts\\ai_ml_99.9_scripts\\sql\\phase1_ai_infrastructure.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\phase1_ai_infrastructure.sql",
+      "size_bytes": 18962
+    },
+    {
+      "file": "database\\scripts\\show_last_login_details.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\show_last_login_details.sql",
+      "size_bytes": 5221
+    },
+    {
+      "file": "database\\scripts\\ai_agents_scripts\\step1_create_ai_agents_schema_and_core_tables.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\step1_create_ai_agents_schema_and_core_tables.sql",
+      "size_bytes": 5191
+    },
+    {
+      "file": "database\\scripts\\ai_agents_scripts\\step2_create_knowledge_domain_isolation.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\step2_create_knowledge_domain_isolation.sql",
+      "size_bytes": 5824
+    },
+    {
+      "file": "database\\scripts\\ai_agents_scripts\\step5_create_domain_specific_ai_functions.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\step5_create_domain_specific_ai_functions.sql",
+      "size_bytes": 19068
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\08_ai_ml_systems\\step_6_automated_maintenance.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\step_6_automated_maintenance.sql",
+      "size_bytes": 39454
+    },
+    {
+      "file": "database\\scripts\\ai_agents_scripts\\zero_trust_ai_agents.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\zero_trust_ai_agents.sql",
+      "size_bytes": 34343
+    },
+    {
+      "file": "database\\scripts\\ai_agents_scripts\\zero_trust_ai_agents_implementation.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\zero_trust_ai_agents_implementation.sql",
+      "size_bytes": 3081
+    },
+    {
+      "file": "database\\scripts\\ai_agents_scripts\\zero_trust_ai_agents_implementation_1.sql",
+      "duplicate_of": "database\\organized_migrations\\08_ai_ml_systems\\zero_trust_ai_agents_implementation_1.sql",
+      "size_bytes": 34339
+    },
+    {
+      "file": "database\\scripts\\ai_agents_scripts\\step10_create_integration_monitoring_system.sql",
+      "duplicate_of": "database\\organized_migrations\\09_monitoring_audit\\step10_create_integration_monitoring_system.sql",
+      "size_bytes": 31325
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\09_monitoring_audit\\step_3_monitoring_infrastructure.sql",
+      "duplicate_of": "database\\organized_migrations\\09_monitoring_audit\\step_3_monitoring_infrastructure.sql",
+      "size_bytes": 29957
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\09_monitoring_audit\\step_7_lock_monitoring.sql",
+      "duplicate_of": "database\\organized_migrations\\09_monitoring_audit\\step_7_lock_monitoring.sql",
+      "size_bytes": 34447
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\99_production_enhancements\\step_1_backup_recovery_infrastructure.sql",
+      "duplicate_of": "database\\organized_migrations\\99_production_enhancements\\step_1_backup_recovery_infrastructure.sql",
+      "size_bytes": 21184
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\99_production_enhancements\\step_1_backup_recovery_infrastructure_corrected.sql",
+      "duplicate_of": "database\\organized_migrations\\99_production_enhancements\\step_1_backup_recovery_infrastructure_corrected.sql",
+      "size_bytes": 17394
+    },
+    {
+      "file": "database\\scripts\\Production_ready_assesment\\organized_migrations\\99_production_enhancements\\step_1_backup_recovery_infrastructure_fixed.sql",
+      "duplicate_of": "database\\organized_migrations\\99_production_enhancements\\step_1_backup_recovery_infrastructure_fixed.sql",
+      "size_bytes": 21147
+    }
+  ],
+  "files_moved": [],
+  "errors": [
+    "Error moving database\\scripts\\ai_migration_analysis.md: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\ai_migration_analysis.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\AI_MONITORING_README.md: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\AI_MONITORING_README.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\audit_trail_validation_summary.md: 'database\\\\organized_migrations\\\\09_monitoring_audit\\\\audit_trail_validation_summary.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\cleanup_barn_user.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\cleanup_barn_user.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\complete_ai_ml_enhancement.md: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\complete_ai_ml_enhancement.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\CONFIGURATION_SUMMARY.md: 'archive\\\\documentation\\\\CONFIGURATION_SUMMARY.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\config_summary.md: 'archive\\\\documentation\\\\config_summary.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\customize_application_users.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\customize_application_users.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\DEPLOYMENT_ORDER.md: 'archive\\\\documentation\\\\DEPLOYMENT_ORDER.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\DEPLOYMENT_SUMMARY.md: 'archive\\\\documentation\\\\DEPLOYMENT_SUMMARY.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\deploy_ai_api_integration.sql: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\deploy_ai_api_integration_20250618_061550.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\deploy_ai_data_vault.sql: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\deploy_ai_data_vault_20250618_061550.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\deploy_ai_observation_system.sql: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\deploy_ai_observation_system_20250618_061550.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\deploy_critical_schemas.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\deploy_critical_schemas.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\deploy_missing_schemas.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\deploy_missing_schemas.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\deploy_template_foundation.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\deploy_template_foundation.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\fix_text_password_security.sql: 'database\\\\organized_migrations\\\\03_auth_system\\\\fix_text_password_security.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\investigation_summary.md: 'archive\\\\documentation\\\\investigation_summary.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\migration_summary.md: 'archive\\\\documentation\\\\migration_summary.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\one_barn_db_investigation_results.md: 'archive\\\\documentation\\\\one_barn_db_investigation_results.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\one_barn_gap_analysis.md: 'archive\\\\documentation\\\\one_barn_gap_analysis.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\password_audit_dashboard.sql: 'database\\\\organized_migrations\\\\03_auth_system\\\\password_audit_dashboard.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\sox_assessment.sql: 'database\\\\organized_migrations\\\\02_core_schemas\\\\sox_assessment.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\TESTING_STATUS_SUMMARY.md: 'archive\\\\documentation\\\\TESTING_STATUS_SUMMARY.md' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\test_ai_api_contracts.sql: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\test_ai_api_contracts.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'",
+    "Error moving database\\scripts\\test_ai_api_contracts_enhanced.sql: 'database\\\\organized_migrations\\\\08_ai_ml_systems\\\\test_ai_api_contracts_enhanced.sql' is not in the subpath of 'C:\\\\Users\\\\travi\\\\OneDrive\\\\Documents\\\\Development\\\\One_Vault'"
+  ]
+}
