@@ -1,0 +1,80 @@
+{
+  "agent": {
+    "id": "ECA-001",
+    "name": "Equine Care Agent",
+    "version": "1.0.0",
+    "domain": "EQUINE",
+    "description": "Veterinary AI agent specialized in equine health and care management"
+  },
+  "security": {
+    "certificate_path": "/etc/ssl/agents/eca-001/agent.crt",
+    "private_key_path": "/etc/ssl/agents/eca-001/agent.key",
+    "ca_certificate_path": "/etc/ssl/ca/ca.crt",
+    "zero_trust_gateway": "https://ztg.onevault.com",
+    "session_duration_minutes": 10,
+    "max_session_renewals": 3
+  },
+  "tenant": {
+    "tenant_hk": "b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef12345678",
+    "organization": "OneVault Equine Services",
+    "compliance_level": "VETERINARY_LEVEL_3"
+  },
+  "database": {
+    "host": "postgres.onevault.com",
+    "port": 5432,
+    "database": "one_vault",
+    "ssl_mode": "require",
+    "connection_pool_size": 10,
+    "query_timeout_seconds": 30
+  },
+  "veterinary_ai": {
+    "model_version": "equine_v1.8.0",
+    "confidence_threshold": 0.70,
+    "max_differential_diagnoses": 3,
+    "enable_drug_interaction_check": true,
+    "enable_breed_specific_analysis": true,
+    "equine_knowledge_base": "/opt/veterinary_kb/equine_conditions.json"
+  },
+  "permissions": {
+    "allowed_operations": [
+      "equine_data_read",
+      "veterinary_diagnosis_write",
+      "horse_history_read",
+      "vaccination_record_access"
+    ],
+    "forbidden_domains": [
+      "MEDICAL",
+      "MANUFACTURING",
+      "FINANCIAL",
+      "CUSTOMER_SERVICE"
+    ],
+    "data_classification": "VETERINARY_RESTRICTED"
+  },
+  "audit": {
+    "log_all_queries": true,
+    "log_diagnosis_reasoning": true,
+    "retention_period_years": 5,
+    "veterinary_audit_level": "COMPREHENSIVE"
+  },
+  "reasoning": {
+    "engine_type": "VETERINARY_EXPERT_SYSTEM",
+    "use_breed_specific_data": true,
+    "age_weight_analysis": true,
+    "vaccination_history_integration": true,
+    "differential_diagnosis_depth": 3
+  },
+  "api": {
+    "port": 3001,
+    "rate_limit_requests_per_minute": 100,
+    "max_request_size_mb": 10,
+    "cors_enabled": false,
+    "metrics_endpoint": "/metrics"
+  },
+  "logging": {
+    "level": "info",
+    "file_path": "./logs/eca-combined.log",
+    "error_file_path": "./logs/eca-error.log",
+    "max_file_size_mb": 100,
+    "max_files": 5
+  }
+} 

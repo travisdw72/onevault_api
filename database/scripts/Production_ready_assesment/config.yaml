@@ -1,0 +1,132 @@
+# Database Function Analyzer Configuration
+# =========================================
+
+# Database connection settings
+database:
+  host: localhost
+  port: 5432
+  database: one_vault
+  user: postgres
+  password: null  # Will prompt if not provided
+
+# Analysis configuration
+analysis:
+  include_system_functions: false
+  analyze_dependencies: true
+  include_source_code: true
+  group_by_purpose: true
+  performance_analysis: true
+  security_analysis: true
+  compliance_analysis: true
+
+# Output configuration
+output:
+  format: json  # json, yaml
+  filename: null  # Auto-generate if null
+  include_metrics: true
+  include_source_code: false  # Set to true for full source in export
+  pretty_print: true
+
+# Function classification rules
+classification:
+  critical_functions:
+    - "backup_mgmt.execute_backup"
+    - "backup_mgmt.restore_database" 
+    - "backup_mgmt.schedule_backup"
+    - "monitoring.collect_system_metrics"
+    - "monitoring.create_alert"
+    - "monitoring.process_alert"
+    - "auth.validate_session"
+    - "auth.login_user"
+    - "api.auth_login"
+    - "api.auth_validate_session"
+    - "util.hash_binary"
+    - "util.current_load_date"
+  
+  api_endpoints:
+    authentication:
+      - "api.auth_login"
+      - "api.auth_complete_login"
+      - "api.auth_validate_session"
+      - "api.tenant_register"
+      - "api.user_register"
+    
+    business:
+      - "api.entity_create"
+      - "api.entity_update"
+      - "api.transaction_create"
+      - "api.asset_management"
+    
+    monitoring:
+      - "api.system_health"
+      - "api.performance_metrics"
+      - "api.alert_management"
+    
+    ai_operations:
+      - "api.ai_create_session"
+      - "api.ai_chat_history"
+      - "api.ai_get_observations"
+
+  compliance_functions:
+    hipaa:
+      keywords: ["hipaa", "phi", "patient", "medical"]
+      schemas: ["compliance", "audit"]
+    
+    gdpr:
+      keywords: ["gdpr", "privacy", "consent", "personal_data"]
+      schemas: ["compliance", "auth"]
+    
+    backup_compliance:
+      keywords: ["backup", "restore", "recovery", "archive"]
+      schemas: ["backup_mgmt", "archive"]
+
+# Performance thresholds
+performance:
+  slow_function_threshold_ms: 1000
+  high_call_count_threshold: 10000
+  critical_function_timeout_ms: 5000
+
+# Production readiness criteria
+production_readiness:
+  minimum_functions_by_schema:
+    backup_mgmt: 5
+    monitoring: 5
+    auth: 10
+    api: 15
+    audit: 5
+    util: 5
+  
+  required_capabilities:
+    - "Database backup and recovery"
+    - "Real-time monitoring"
+    - "User authentication"
+    - "API layer"
+    - "Audit logging"
+    - "Multi-tenant isolation"
+    - "Data Vault 2.0 operations"
+
+# Report configuration
+reporting:
+  include_sections:
+    - "summary"
+    - "schema_analysis"
+    - "performance_statistics"
+    - "api_endpoints"
+    - "compliance_analysis"
+    - "production_readiness"
+    - "recommendations"
+  
+  summary_top_n: 10
+  detail_level: "comprehensive"  # basic, detailed, comprehensive
+  
+  charts:
+    generate_performance_charts: false
+    generate_dependency_graphs: false
+    chart_format: "png"
+
+# Security settings
+security:
+  mask_sensitive_data: true
+  include_source_code: false  # For security, exclude source by default
+  log_analysis_activity: true
+  audit_access: true 

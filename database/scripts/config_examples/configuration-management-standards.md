@@ -1,0 +1,1161 @@
+# Configuration Management Standards
+## Multi-Tenant Data Vault 2.0 SaaS Platform
+
+### Project Overview
+This document defines the comprehensive configuration management standards for our Multi-Tenant Business Optimization Platform, implementing best practices for Python configuration scripts and YAML simple configs in database management and application development contexts.
+
+---
+
+## 🏗️ **CONFIGURATION ARCHITECTURE**
+
+### Configuration Layers
+```
+-- Execution layers (Dynamic Configuration)
+python_scripts     -- Complex logic, dynamic behavior, database operations
+config_modules     -- Environment-specific logic and validation
+execution_runners  -- Database connection and query execution
+
+-- Data layers (Static Configuration)  
+yaml_configs       -- Human-readable static settings
+json_configs       -- API integration and structured data
+toml_configs       -- Modern configuration with strong typing
+reference_data     -- Lookup tables and static reference information
+
+-- Management layers
+environment_vars   -- Runtime environment configuration
+secrets_mgmt       -- Secure credential and token management
+validation_rules   -- Configuration validation and compliance
+documentation      -- Configuration schemas and examples
+```
+
+### Configuration Type Rules
+- **Python Scripts**: Use for complex logic, dynamic behavior, and database operations
+- **YAML Simple Configs**: Use for static settings, templates, and human-readable data
+- **Environment Variables**: Use for secrets, environment-specific overrides
+- **JSON Configs**: Use for API integration and structured data exchange
+- **Documentation**: Always accompany configuration with clear examples and validation rules
+
+---
+
+## 🐍 **PYTHON CONFIGURATION SCRIPTS**
+
+### Purpose and Use Cases
+Python configuration scripts handle complex database operations with logic, validation, and dynamic behavior.
+
+#### Script Categories
+
+##### Database Operation Scripts
+```python
+# Pattern: {operation}_{context}.py
+investigate_database.py        -- Database health analysis
+audit_password_security.py     -- Security compliance auditing
+universal_config_runner.py     -- Complex database operations
+simple_config_runner.py        -- Simplified database operations
+backup_database_manager.py     -- Backup and recovery operations
+
+# Examples:
+database/scripts/investigate_database.py
+database/scripts/audit_password_security.py
+database/scripts/universal_config_runner.py
+```
+
+##### Configuration Module Scripts
+```python
+# Pattern: config_{environment}.py or config.py
+config.py                      -- Main configuration with environment logic
+config_development.py          -- Development-specific configuration
+config_production.py           -- Production-specific configuration
+config_testing.py              -- Testing environment configuration
+
+# Examples:
+config/config.py
+config/config_development.py
+config/config_production.py
+```
+
+##### Utility and Helper Scripts
+```python
+# Pattern: {utility_name}_helper.py
+database_helper.py             -- Database connection utilities
+security_helper.py             -- Security validation utilities
+validation_helper.py           -- Configuration validation utilities
+environment_helper.py          -- Environment detection utilities
+
+# Examples:
+utils/database_helper.py
+utils/security_helper.py
+utils/validation_helper.py
+```
+
+### Python Script Structure Standards
+
+#### Required Components
+```python
+# Standard imports
+import os
+import sys
+import logging
+from typing import Dict, List, Optional, Any
+
+# Configuration constants
+ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
+IS_PRODUCTION = ENVIRONMENT == 'production'
+IS_DEVELOPMENT = ENVIRONMENT == 'development'
+
+# Configuration validation
+def validate_config() -> List[str]:
+    """Validate configuration and return list of errors"""
+    errors = []
+    # Validation logic here
+    return errors
+
+# Environment-specific logic
+def get_environment_config() -> Dict[str, Any]:
+    """Get configuration based on current environment"""
+    if IS_PRODUCTION:
+        return get_production_config()
+    elif IS_DEVELOPMENT:
+        return get_development_config()
+    else:
+        return get_default_config()
+
+# Error handling
+def handle_configuration_error(error: Exception) -> None:
+    """Standard error handling for configuration issues"""
+    logging.error(f"Configuration error: {error}")
+    if IS_PRODUCTION:
+        # Production error handling
+        pass
+    else:
+        # Development error handling
+        raise error
+```
+
+#### Database Connection Standards
+```python
+# Pattern: database connection with error handling
+def connect_to_database() -> Optional[psycopg2.connection]:
+    """
+    Establish database connection with proper error handling
+    Returns connection object or None if connection fails
+    """
+    try:
+        conn = psycopg2.connect(
+            host=CONFIG['database']['host'],
+            port=CONFIG['database']['port'],
+            database=CONFIG['database']['database'],
+            user=CONFIG['database']['user'],
+            password=os.getenv('DB_PASSWORD'),
+            sslmode=CONFIG['database'].get('ssl_mode', 'prefer')
+        )
+        return conn
+    except psycopg2.Error as e:
+        logging.error(f"Database connection failed: {e}")
+        return None
+    except Exception as e:
+        logging.error(f"Unexpected error connecting to database: {e}")
+        return None
+
+# Pattern: query execution with validation
+def execute_query(query_name: str, params: Optional[List] = None) -> Optional[List]:
+    """
+    Execute named query with parameter validation and error handling
+    """
+    if query_name not in CONFIG['queries']:
+        raise ValueError(f"Query '{query_name}' not found in configuration")
+    
+    conn = connect_to_database()
+    if not conn:
+        return None
+        
+    try:
+        cursor = conn.cursor()
+        cursor.execute(CONFIG['queries'][query_name], params)
+        return cursor.fetchall()
+    except Exception as e:
+        logging.error(f"Query execution failed for '{query_name}': {e}")
+        raise
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+```
+
+#### Environment Detection Standards
+```python
+# Pattern: environment-specific configuration
+ENVIRONMENT_CONFIGS = {
+    'production': {
+        'database': {
+            'host': os.getenv('PROD_DB_HOST'),
+            'port': 5432,
+            'connection_pool_size': 50,
+            'ssl_mode': 'require',
+            'backup_enabled': True,
+            'debug_queries': False
+        },
+        'logging': {
+            'level': 'INFO',
+            'file_path': '/var/log/one_vault/app.log'
+        },
+        'security': {
+            'session_timeout_minutes': 15,
+            'max_login_attempts': 3
+        }
+    },
+    'development': {
+        'database': {
+            'host': 'localhost',
+            'port': 5432,
+            'connection_pool_size': 5,
+            'ssl_mode': 'prefer',
+            'backup_enabled': False,
+            'debug_queries': True
+        },
+        'logging': {
+            'level': 'DEBUG',
+            'file_path': './logs/app.log'
+        },
+        'security': {
+            'session_timeout_minutes': 30,
+            'max_login_attempts': 10
+        }
+    }
+}
+
+# Get current environment configuration
+CURRENT_CONFIG = ENVIRONMENT_CONFIGS.get(ENVIRONMENT, ENVIRONMENT_CONFIGS['development'])
+```
+
+---
+
+## 📄 **YAML SIMPLE CONFIGS**
+
+### Purpose and Use Cases
+YAML simple configs store static, human-readable configuration that doesn't change based on logic.
+
+#### YAML File Categories
+
+##### Database Configuration Files
+```yaml
+# Pattern: database-{context}.yaml
+database-connection.yaml       -- Static connection parameters
+database-queries.yaml          -- SQL query templates
+database-settings.yaml         -- Database-specific settings
+database-compliance.yaml       -- Compliance and audit settings
+
+# Examples:
+config/database-connection.yaml
+config/database-queries.yaml
+config/database-settings.yaml
+```
+
+##### Application Configuration Files
+```yaml
+# Pattern: app-{context}.yaml
+app-settings.yaml              -- Application configuration values
+app-security.yaml              -- Security settings and requirements
+app-logging.yaml               -- Logging configuration
+app-features.yaml              -- Feature flags and toggles
+
+# Examples:
+config/app-settings.yaml
+config/app-security.yaml
+config/app-logging.yaml
+```
+
+##### Reference Data Files
+```yaml
+# Pattern: ref-{data_type}.yaml
+ref-entity-types.yaml          -- Business entity types
+ref-transaction-types.yaml     -- Transaction categories
+ref-compliance-frameworks.yaml -- Compliance framework definitions
+ref-data-classifications.yaml  -- Data classification levels
+
+# Examples:
+config/reference/ref-entity-types.yaml
+config/reference/ref-transaction-types.yaml
+config/reference/ref-compliance-frameworks.yaml
+```
+
+### YAML Structure Standards
+
+#### Database Connection Configuration
+```yaml
+# database-connection.yaml
+database:
+  host: localhost
+  port: 5432
+  database: one_vault
+  user: postgres
+  # password comes from environment variable DB_PASSWORD
+  
+connection_pool:
+  min_connections: 1
+  max_connections: 10
+  timeout_seconds: 30
+  retry_attempts: 3
+  
+ssl_settings:
+  mode: prefer  # require, prefer, allow, disable
+  cert_file: null
+  key_file: null
+  ca_file: null
+
+# Connection validation
+health_check:
+  enabled: true
+  interval_seconds: 60
+  timeout_seconds: 5
+  query: "SELECT 1"
+```
+
+#### SQL Query Templates
+```yaml
+# database-queries.yaml
+queries:
+  # User management queries
+  get_user_by_email: |
+    SELECT 
+        up.first_name,
+        up.last_name,
+        up.email,
+        uas.username,
+        uas.last_login_date,
+        uas.password_last_changed
+    FROM auth.user_profile_s up
+    JOIN auth.user_h uh ON up.user_hk = uh.user_hk
+    JOIN auth.user_auth_s uas ON uh.user_hk = uas.user_hk
+    WHERE up.email = $1 
+    AND up.load_end_date IS NULL
+    AND uas.load_end_date IS NULL
+
+  get_tenant_stats: |
+    SELECT 
+        COUNT(DISTINCT uh.user_hk) as user_count,
+        COUNT(DISTINCT CASE WHEN ss.session_status = 'ACTIVE' 
+                            THEN sh.session_hk END) as active_sessions,
+        MAX(uas.last_login_date) as last_activity
+    FROM auth.user_h uh
+    LEFT JOIN auth.user_session_l usl ON uh.user_hk = usl.user_hk
+    LEFT JOIN auth.session_h sh ON usl.session_hk = sh.session_hk
+    LEFT JOIN auth.session_state_s ss ON sh.session_hk = ss.session_hk 
+                                      AND ss.load_end_date IS NULL
+    LEFT JOIN auth.user_auth_s uas ON uh.user_hk = uas.user_hk 
+                                   AND uas.load_end_date IS NULL
+    WHERE uh.tenant_hk = $1
+    GROUP BY uh.tenant_hk
+
+  # Security audit queries
+  audit_password_security: |
+    SELECT 
+        'PASSWORD SECURITY AUDIT' as audit_type,
+        table_schema || '.' || table_name as table_location,
+        column_name,
+        data_type,
+        CASE 
+            WHEN column_name LIKE '%hash%' AND data_type = 'bytea' THEN 'SECURE_HASH'
+            WHEN column_name LIKE '%salt%' AND data_type = 'bytea' THEN 'SECURE_SALT'
+            WHEN column_name LIKE '%indicator%' THEN 'SAFE_INDICATOR'
+            WHEN column_name LIKE '%password%' AND data_type = 'bytea' THEN 'SECURE_BINARY'
+            WHEN column_name LIKE '%password%' AND data_type != 'bytea' THEN 'REVIEW_NEEDED'
+            ELSE 'OTHER'
+        END as security_status
+    FROM information_schema.columns 
+    WHERE (LOWER(column_name) LIKE '%password%'
+       OR LOWER(column_name) LIKE '%hash%'
+       OR LOWER(column_name) LIKE '%salt%')
+    AND table_schema NOT LIKE 'pg_%'
+    AND table_schema != 'information_schema'
+    ORDER BY 
+        CASE WHEN column_name LIKE '%password%' AND data_type != 'bytea' THEN 1 ELSE 2 END,
+        table_schema, 
+        table_name, 
+        column_name
+
+# Query metadata
+query_metadata:
+  get_user_by_email:
+    description: "Retrieve user profile and authentication data by email"
+    parameters: ["email_address"]
+    returns: "User profile with authentication details"
+    
+  get_tenant_stats:
+    description: "Get comprehensive tenant statistics including user counts and activity"
+    parameters: ["tenant_hk"]
+    returns: "Tenant statistics summary"
+    
+  audit_password_security:
+    description: "Comprehensive password security audit across all tables"
+    parameters: []
+    returns: "Security status of password-related columns"
+```
+
+#### Application Settings Configuration
+```yaml
+# app-settings.yaml
+application:
+  name: "One Vault"
+  version: "1.0.0"
+  environment: "development"  # overridden by ENVIRONMENT env var
+  
+logging:
+  level: INFO  # DEBUG, INFO, WARN, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_path: "./logs/one_vault.log"
+  max_file_size_mb: 100
+  backup_count: 5
+  console_output: true
+
+security:
+  password_requirements:
+    min_length: 12
+    require_uppercase: true
+    require_lowercase: true
+    require_numbers: true
+    require_special_chars: true
+    forbidden_patterns:
+      - "password"
+      - "123456"
+      - "qwerty"
+  
+  session:
+    timeout_minutes: 30
+    max_concurrent_sessions: 3
+    secure_cookies: true
+    
+  authentication:
+    max_login_attempts: 5
+    lockout_duration_minutes: 15
+    password_reset_token_expiry_hours: 24
+
+compliance:
+  hipaa_enabled: true
+  gdpr_enabled: true
+  audit_retention_years: 7
+  data_classification_required: true
+  encryption_at_rest_required: true
+  
+  data_retention:
+    user_data_years: 7
+    audit_logs_years: 10
+    backup_retention_years: 7
+    
+performance:
+  database_connection_pool:
+    min_size: 1
+    max_size: 10
+    timeout_seconds: 30
+    
+  caching:
+    enabled: true
+    default_ttl_seconds: 300
+    max_memory_mb: 128
+    
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 100
+    burst_limit: 50
+
+# Feature flags
+features:
+  enable_debug_mode: false
+  enable_performance_monitoring: true
+  enable_audit_logging: true
+  enable_real_time_alerts: false
+  enable_advanced_analytics: false
+```
+
+#### Reference Data Configuration
+```yaml
+# ref-entity-types.yaml
+entity_types:
+  - code: "LLC"
+    name: "Limited Liability Company"
+    description: "A business structure that combines the pass-through taxation of a partnership or sole proprietorship with the limited liability of a corporation"
+    tax_implications:
+      - "Pass-through taxation"
+      - "Self-employment tax may apply"
+    compliance_requirements:
+      - "Annual state filings"
+      - "Operating agreement recommended"
+      
+  - code: "CORP"
+    name: "Corporation"
+    description: "A legal entity that is separate and distinct from its owners"
+    tax_implications:
+      - "Double taxation"
+      - "Corporate tax rates apply"
+    compliance_requirements:
+      - "Annual state filings"
+      - "Board of directors required"
+      - "Corporate bylaws required"
+      
+  - code: "PART"
+    name: "Partnership"
+    description: "A business owned by two or more people who share profits and losses"
+    tax_implications:
+      - "Pass-through taxation"
+      - "Partnership tax return required"
+    compliance_requirements:
+      - "Partnership agreement recommended"
+      - "Annual tax filings"
+
+transaction_categories:
+  revenue:
+    - code: "SALES"
+      name: "Sales Revenue"
+      description: "Income from primary business operations"
+      
+    - code: "SERVICE"
+      name: "Service Revenue"
+      description: "Income from service-based operations"
+      
+  expenses:
+    - code: "OPEX"
+      name: "Operating Expenses"
+      description: "Day-to-day business operating costs"
+      
+    - code: "CAPEX"
+      name: "Capital Expenses"
+      description: "Long-term asset purchases"
+
+compliance_frameworks:
+  - code: "HIPAA"
+    name: "Health Insurance Portability and Accountability Act"
+    description: "US healthcare data protection regulation"
+    requirements:
+      - "PHI protection"
+      - "Audit logging"
+      - "Access controls"
+      - "Breach notification"
+      
+  - code: "GDPR"
+    name: "General Data Protection Regulation"
+    description: "EU data protection regulation"
+    requirements:
+      - "Consent management"
+      - "Right to be forgotten"
+      - "Data portability"
+      - "Privacy by design"
+```
+
+---
+
+## 🔄 **INTEGRATION PATTERNS**
+
+### Python Script + YAML Config Integration
+
+#### Standard Integration Pattern
+```python
+# database_manager.py - Python CONFIG SCRIPT
+import yaml
+import os
+import psycopg2
+from typing import Dict, Any, Optional
+
+class DatabaseManager:
+    def __init__(self, config_file: str = 'database-connection.yaml'):
+        """Initialize database manager with YAML configuration"""
+        self.yaml_config = self._load_yaml_config(config_file)
+        self.database_config = self._build_database_config()
+        
+    def _load_yaml_config(self, config_file: str) -> Dict[str, Any]:
+        """Load YAML configuration file"""
+        try:
+            with open(config_file, 'r') as f:
+                return yaml.safe_load(f)
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Configuration file {config_file} not found")
+        except yaml.YAMLError as e:
+            raise ValueError(f"Invalid YAML in {config_file}: {e}")
+    
+    def _build_database_config(self) -> Dict[str, Any]:
+        """Build database configuration with environment overrides"""
+        config = self.yaml_config['database'].copy()
+        
+        # Add environment-specific overrides
+        config['password'] = os.getenv('DB_PASSWORD')
+        
+        # Environment-specific logic
+        if os.getenv('ENVIRONMENT') == 'production':
+            config['host'] = os.getenv('PROD_DB_HOST', config['host'])
+            config['ssl_mode'] = 'require'
+        else:
+            config['ssl_mode'] = config.get('ssl_mode', 'prefer')
+            
+        return config
+    
+    def connect(self) -> Optional[psycopg2.connection]:
+        """Establish database connection"""
+        try:
+            return psycopg2.connect(**self.database_config)
+        except Exception as e:
+            logging.error(f"Database connection failed: {e}")
+            return None
+    
+    def execute_query(self, query_name: str, params: Optional[List] = None) -> Optional[List]:
+        """Execute named query from YAML configuration"""
+        if 'queries' not in self.yaml_config:
+            raise ValueError("No queries defined in configuration")
+            
+        if query_name not in self.yaml_config['queries']:
+            raise ValueError(f"Query '{query_name}' not found in configuration")
+        
+        conn = self.connect()
+        if not conn:
+            return None
+            
+        try:
+            cursor = conn.cursor()
+            cursor.execute(self.yaml_config['queries'][query_name], params)
+            return cursor.fetchall()
+        except Exception as e:
+            logging.error(f"Query execution failed for '{query_name}': {e}")
+            raise
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+
+# Usage example
+if __name__ == "__main__":
+    db_manager = DatabaseManager('config/database-connection.yaml')
+    
+    # Execute query from YAML config
+    user_data = db_manager.execute_query('get_user_by_email', ['user@example.com'])
+    tenant_stats = db_manager.execute_query('get_tenant_stats', [tenant_hk])
+```
+
+#### Configuration Validation Pattern
+```python
+# config_validator.py
+import yaml
+import os
+from typing import List, Dict, Any
+
+class ConfigurationValidator:
+    def __init__(self):
+        self.errors = []
+        self.warnings = []
+    
+    def validate_python_config(self, config: Dict[str, Any]) -> List[str]:
+        """Validate Python configuration object"""
+        errors = []
+        
+        # Database configuration validation
+        if 'database' in config:
+            db_config = config['database']
+            
+            if not db_config.get('host'):
+                errors.append("Database host is required")
+                
+            port = db_config.get('port', 5432)
+            if not isinstance(port, int) or port < 1 or port > 65535:
+                errors.append(f"Invalid database port: {port}")
+                
+            if not os.getenv('DB_PASSWORD'):
+                errors.append("DB_PASSWORD environment variable is required")
+        
+        # Security configuration validation
+        if 'security' in config:
+            security_config = config['security']
+            
+            min_length = security_config.get('password_min_length', 0)
+            if min_length < 8:
+                errors.append("Password minimum length must be at least 8")
+                
+            timeout = security_config.get('session_timeout_minutes', 0)
+            if timeout < 5 or timeout > 480:  # 5 minutes to 8 hours
+                errors.append("Session timeout must be between 5 and 480 minutes")
+        
+        return errors
+    
+    def validate_yaml_config(self, yaml_file: str) -> List[str]:
+        """Validate YAML configuration file"""
+        errors = []
+        
+        try:
+            with open(yaml_file, 'r') as f:
+                config = yaml.safe_load(f)
+        except FileNotFoundError:
+            return [f"Configuration file {yaml_file} not found"]
+        except yaml.YAMLError as e:
+            return [f"Invalid YAML syntax in {yaml_file}: {e}"]
+        
+        # Validate required sections
+        required_sections = ['database', 'queries']
+        for section in required_sections:
+            if section not in config:
+                errors.append(f"Required section '{section}' missing from {yaml_file}")
+        
+        # Validate database section
+        if 'database' in config:
+            db_config = config['database']
+            required_db_fields = ['host', 'port', 'database', 'user']
+            for field in required_db_fields:
+                if field not in db_config:
+                    errors.append(f"Required database field '{field}' missing")
+        
+        # Validate queries section
+        if 'queries' in config:
+            queries = config['queries']
+            if not isinstance(queries, dict):
+                errors.append("Queries section must be a dictionary")
+            elif len(queries) == 0:
+                errors.append("At least one query must be defined")
+        
+        return errors
+    
+    def validate_environment_variables(self) -> List[str]:
+        """Validate required environment variables"""
+        errors = []
+        
+        required_env_vars = ['DB_PASSWORD']
+        for var in required_env_vars:
+            if not os.getenv(var):
+                errors.append(f"Required environment variable {var} is not set")
+        
+        # Validate environment-specific variables
+        environment = os.getenv('ENVIRONMENT', 'development')
+        if environment == 'production':
+            prod_vars = ['PROD_DB_HOST']
+            for var in prod_vars:
+                if not os.getenv(var):
+                    errors.append(f"Production environment variable {var} is not set")
+        
+        return errors
+
+# Usage example
+def validate_all_configurations():
+    """Validate all configuration files and settings"""
+    validator = ConfigurationValidator()
+    all_errors = []
+    
+    # Validate YAML configs
+    yaml_configs = [
+        'config/database-connection.yaml',
+        'config/database-queries.yaml',
+        'config/app-settings.yaml'
+    ]
+    
+    for yaml_file in yaml_configs:
+        errors = validator.validate_yaml_config(yaml_file)
+        if errors:
+            all_errors.extend([f"{yaml_file}: {error}" for error in errors])
+    
+    # Validate environment variables
+    env_errors = validator.validate_environment_variables()
+    all_errors.extend(env_errors)
+    
+    return all_errors
+```
+
+---
+
+## 📊 **CONFIGURATION DECISION MATRIX**
+
+### When to Use Each Configuration Type
+
+| **Use Case** | **Python Scripts** | **YAML Simple Configs** | **Environment Variables** | **JSON Configs** |
+|--------------|-------------------|-------------------------|---------------------------|------------------|
+| **Database Operations** | ✅ Primary choice | ✅ Query templates | ✅ Credentials | ❌ Not suitable |
+| **Environment Logic** | ✅ Primary choice | ❌ Static only | ✅ Overrides | ❌ Not suitable |
+| **Security Settings** | ✅ Validation logic | ✅ Static policies | ✅ Secrets | ⚠️ Limited use |
+| **SQL Query Storage** | ⚠️ Dynamic queries | ✅ Primary choice | ❌ Not suitable | ❌ Not suitable |
+| **API Integration** | ⚠️ Complex logic | ❌ Not suitable | ✅ API keys | ✅ Primary choice |
+| **Reference Data** | ❌ Overkill | ✅ Primary choice | ❌ Not suitable | ✅ Alternative |
+| **Feature Flags** | ✅ Complex logic | ✅ Static flags | ✅ Overrides | ✅ Alternative |
+| **Compliance Settings** | ✅ Validation | ✅ Static rules | ❌ Not suitable | ✅ Alternative |
+
+### Configuration Complexity Guidelines
+
+#### Simple Configuration (Use YAML)
+- Static database connection parameters
+- SQL query templates
+- Reference data and lookup tables
+- Basic application settings
+- Feature flags (on/off)
+
+#### Medium Complexity (Use Python + YAML)
+- Environment-specific database settings
+- Configuration with validation logic
+- Settings that require calculations
+- Dynamic query generation
+- Complex feature flag logic
+
+#### High Complexity (Use Python Scripts)
+- Database health analysis
+- Security auditing and compliance checking
+- Multi-environment deployment logic
+- Complex validation and error handling
+- Integration with external systems
+
+---
+
+## 🔐 **SECURITY AND COMPLIANCE STANDARDS**
+
+### Credential Management
+```python
+# Secure credential handling pattern
+import os
+from typing import Optional
+
+class SecureCredentialManager:
+    @staticmethod
+    def get_database_password() -> Optional[str]:
+        """Get database password from secure environment variable"""
+        password = os.getenv('DB_PASSWORD')
+        if not password:
+            raise ValueError("DB_PASSWORD environment variable is required")
+        return password
+    
+    @staticmethod
+    def get_api_key(service_name: str) -> Optional[str]:
+        """Get API key for specified service"""
+        key = os.getenv(f'{service_name.upper()}_API_KEY')
+        if not key:
+            raise ValueError(f"{service_name.upper()}_API_KEY environment variable is required")
+        return key
+    
+    @staticmethod
+    def validate_ssl_config(ssl_config: Dict[str, Any]) -> List[str]:
+        """Validate SSL configuration for security compliance"""
+        errors = []
+        
+        ssl_mode = ssl_config.get('mode', 'prefer')
+        if ssl_mode not in ['require', 'prefer', 'allow', 'disable']:
+            errors.append(f"Invalid SSL mode: {ssl_mode}")
+        
+        # In production, require SSL
+        if os.getenv('ENVIRONMENT') == 'production' and ssl_mode != 'require':
+            errors.append("Production environment must use SSL mode 'require'")
+        
+        return errors
+```
+
+### Configuration Audit Trail
+```yaml
+# config-audit.yaml
+audit_configuration:
+  enabled: true
+  log_file: "./logs/config-audit.log"
+  
+  tracked_changes:
+    - "database connection parameters"
+    - "security settings"
+    - "compliance configurations"
+    - "environment variable changes"
+  
+  notification_settings:
+    email_alerts: true
+    recipients:
+      - "admin@onevault.com"
+      - "security@onevault.com"
+    
+    alert_triggers:
+      - "production configuration changes"
+      - "security setting modifications"
+      - "credential rotation events"
+
+compliance_tracking:
+  hipaa:
+    configuration_review_frequency: "quarterly"
+    required_approvals: ["security_officer", "compliance_officer"]
+    
+  gdpr:
+    data_retention_review: "annually"
+    privacy_impact_assessment: "required_for_changes"
+```
+
+---
+
+## 📋 **VALIDATION AND TESTING STANDARDS**
+
+### Configuration Testing Framework
+```python
+# test_configuration.py
+import unittest
+import yaml
+import os
+from typing import Dict, Any
+
+class ConfigurationTestSuite(unittest.TestCase):
+    def setUp(self):
+        """Set up test environment"""
+        self.test_env_vars = {
+            'DB_PASSWORD': 'test_password',
+            'ENVIRONMENT': 'testing'
+        }
+        
+        # Set test environment variables
+        for key, value in self.test_env_vars.items():
+            os.environ[key] = value
+    
+    def tearDown(self):
+        """Clean up test environment"""
+        for key in self.test_env_vars.keys():
+            if key in os.environ:
+                del os.environ[key]
+    
+    def test_yaml_config_loading(self):
+        """Test YAML configuration file loading"""
+        config_files = [
+            'config/database-connection.yaml',
+            'config/app-settings.yaml'
+        ]
+        
+        for config_file in config_files:
+            with self.subTest(config_file=config_file):
+                try:
+                    with open(config_file, 'r') as f:
+                        config = yaml.safe_load(f)
+                    self.assertIsInstance(config, dict)
+                    self.assertGreater(len(config), 0)
+                except Exception as e:
+                    self.fail(f"Failed to load {config_file}: {e}")
+    
+    def test_database_config_validation(self):
+        """Test database configuration validation"""
+        from config import DATABASE_CONFIG
+        
+        required_fields = ['host', 'port', 'database', 'user']
+        for field in required_fields:
+            with self.subTest(field=field):
+                self.assertIn(field, DATABASE_CONFIG)
+                self.assertIsNotNone(DATABASE_CONFIG[field])
+    
+    def test_environment_variable_handling(self):
+        """Test environment variable processing"""
+        from config import get_environment_config
+        
+        config = get_environment_config()
+        self.assertIsInstance(config, dict)
+        
+        # Test that password comes from environment
+        self.assertEqual(config['database']['password'], 'test_password')
+    
+    def test_query_template_syntax(self):
+        """Test SQL query template syntax"""
+        with open('config/database-queries.yaml', 'r') as f:
+            queries_config = yaml.safe_load(f)
+        
+        queries = queries_config.get('queries', {})
+        for query_name, query_sql in queries.items():
+            with self.subTest(query_name=query_name):
+                self.assertIsInstance(query_sql, str)
+                self.assertGreater(len(query_sql.strip()), 0)
+                # Basic SQL syntax check
+                self.assertIn('SELECT', query_sql.upper())
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+### Configuration Validation Checklist
+```yaml
+# validation-checklist.yaml
+configuration_validation:
+  python_scripts:
+    - name: "Environment detection"
+      check: "ENVIRONMENT variable properly detected"
+      validation: "os.getenv('ENVIRONMENT') returns expected value"
+      
+    - name: "Database connection"
+      check: "Database connection parameters complete"
+      validation: "All required database fields present and valid"
+      
+    - name: "Error handling"
+      check: "Proper exception handling implemented"
+      validation: "try/catch blocks around critical operations"
+      
+    - name: "Logging configuration"
+      check: "Logging properly configured"
+      validation: "Log level and format appropriate for environment"
+  
+  yaml_configs:
+    - name: "YAML syntax"
+      check: "Valid YAML syntax"
+      validation: "yaml.safe_load() succeeds without errors"
+      
+    - name: "Required sections"
+      check: "All required configuration sections present"
+      validation: "database, queries, settings sections exist"
+      
+    - name: "Query templates"
+      check: "SQL query templates valid"
+      validation: "All queries contain valid SQL syntax"
+      
+    - name: "Reference data"
+      check: "Reference data complete and consistent"
+      validation: "All reference tables have required fields"
+  
+  environment_variables:
+    - name: "Required variables"
+      check: "All required environment variables set"
+      validation: "DB_PASSWORD and other critical vars present"
+      
+    - name: "Production variables"
+      check: "Production-specific variables set"
+      validation: "PROD_DB_HOST set when ENVIRONMENT=production"
+      
+    - name: "Security variables"
+      check: "Security-related variables properly configured"
+      validation: "API keys and secrets properly set"
+
+validation_automation:
+  pre_deployment:
+    - "Run configuration test suite"
+    - "Validate all YAML files"
+    - "Check environment variable requirements"
+    - "Verify database connectivity"
+  
+  continuous_monitoring:
+    - "Daily configuration validation"
+    - "Environment variable drift detection"
+    - "Configuration file integrity checks"
+    - "Security compliance validation"
+```
+
+---
+
+## 🎯 **IMPLEMENTATION GUIDELINES**
+
+### Configuration File Organization
+```
+project_root/
+├── config/
+│   ├── database/
+│   │   ├── database-connection.yaml
+│   │   ├── database-queries.yaml
+│   │   └── database-settings.yaml
+│   ├── application/
+│   │   ├── app-settings.yaml
+│   │   ├── app-security.yaml
+│   │   └── app-logging.yaml
+│   └── reference/
+│       ├── ref-entity-types.yaml
+│       ├── ref-transaction-types.yaml
+│       └── ref-compliance-frameworks.yaml
+├── scripts/
+│   ├── database/
+│   │   ├── investigate_database.py
+│   │   ├── audit_password_security.py
+│   │   └── universal_config_runner.py
+│   └── configuration/
+│       ├── config.py
+│       ├── config_validator.py
+│       └── environment_helper.py
+└── tests/
+    ├── test_configuration.py
+    ├── test_database_scripts.py
+    └── test_yaml_configs.py
+```
+
+### Migration Strategy
+```python
+# migration_strategy.py
+class ConfigurationMigration:
+    """Strategy for migrating from current to standardized configuration"""
+    
+    def __init__(self):
+        self.migration_steps = [
+            self.step_1_organize_existing_files,
+            self.step_2_extract_yaml_configs,
+            self.step_3_standardize_python_scripts,
+            self.step_4_implement_validation,
+            self.step_5_add_testing_framework
+        ]
+    
+    def step_1_organize_existing_files(self):
+        """Organize existing configuration files into standard structure"""
+        # Move existing Python scripts to appropriate directories
+        # Create config/ directory structure
+        # Identify configuration that can be extracted to YAML
+        pass
+    
+    def step_2_extract_yaml_configs(self):
+        """Extract static configuration to YAML files"""
+        # Extract database connection parameters
+        # Extract SQL query templates
+        # Extract reference data
+        # Extract application settings
+        pass
+    
+    def step_3_standardize_python_scripts(self):
+        """Standardize Python configuration scripts"""
+        # Add standard error handling
+        # Implement environment detection
+        # Add configuration validation
+        # Implement YAML config loading
+        pass
+    
+    def step_4_implement_validation(self):
+        """Implement configuration validation framework"""
+        # Add configuration validation functions
+        # Implement environment variable checking
+        # Add YAML syntax validation
+        # Create validation test suite
+        pass
+    
+    def step_5_add_testing_framework(self):
+        """Add comprehensive testing framework"""
+        # Create configuration test suite
+        # Add integration tests
+        # Implement continuous validation
+        # Add performance testing
+        pass
+    
+    def execute_migration(self):
+        """Execute complete migration strategy"""
+        for i, step in enumerate(self.migration_steps, 1):
+            print(f"Executing migration step {i}: {step.__name__}")
+            try:
+                step()
+                print(f"✅ Step {i} completed successfully")
+            except Exception as e:
+                print(f"❌ Step {i} failed: {e}")
+                raise
+        
+        print("🎉 Configuration migration completed successfully!")
+```
+
+---
+
+## 🎉 **SUMMARY AND BEST PRACTICES**
+
+### Configuration Management Principles
+
+#### **Python Configuration Scripts**
+- **Use for**: Complex logic, dynamic behavior, database operations
+- **Examples**: `universal_config_runner.py`, `config.py`, `investigate_database.py`
+- **Benefits**: Full programming capabilities, environment detection, validation logic
+- **Best practices**: Error handling, logging, environment awareness, validation
+
+#### **YAML Simple Configs**
+- **Use for**: Static settings, templates, human-readable data
+- **Examples**: `database-connection.yaml`, `queries.yaml`, `app-settings.yaml`
+- **Benefits**: Human-readable, version control friendly, easy to edit
+- **Best practices**: Clear structure, comments, validation schemas
+
+#### **Integration Patterns**
+- **Hybrid approach**: Python scripts load and enhance YAML configurations
+- **Validation**: Both Python and YAML configurations must be validated
+- **Security**: Credentials in environment variables, never in config files
+- **Testing**: Comprehensive test suite for all configuration types
+
+### Implementation Checklist
+- [ ] Organize configuration files into standard directory structure
+- [ ] Separate static configuration (YAML) from dynamic logic (Python)
+- [ ] Implement environment variable handling for secrets
+- [ ] Add comprehensive validation for all configuration types
+- [ ] Create testing framework for configuration validation
+- [ ] Document configuration schemas and examples
+- [ ] Implement configuration audit trail
+- [ ] Add security compliance checking
+- [ ] Create migration strategy for existing configurations
+- [ ] Establish configuration change management process
+
+This configuration management standard ensures consistency, security, and maintainability across all configuration aspects of the One Vault platform while supporting both current database operations and future application development needs. 

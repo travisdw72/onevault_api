@@ -1,0 +1,42 @@
+{
+  "// JSON - Simple, widely supported, but limited": "JSON Example",
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "one_vault",
+    "user": "postgres",
+    "connection_pool": {
+      "min_connections": 1,
+      "max_connections": 10,
+      "timeout_seconds": 30
+    }
+  },
+  "environments": {
+    "development": {
+      "debug": true,
+      "log_level": "DEBUG",
+      "auto_create_tables": true
+    },
+    "production": {
+      "debug": false,
+      "log_level": "INFO",
+      "auto_create_tables": false
+    }
+  },
+  "queries": {
+    "get_user_by_email": "SELECT * FROM auth.user_profile_s WHERE email = %s AND load_end_date IS NULL",
+    "get_tenant_stats": "SELECT COUNT(*) as user_count FROM auth.user_h WHERE tenant_hk = %s"
+  },
+  "security": {
+    "password_min_length": 12,
+    "session_timeout_minutes": 30,
+    "max_login_attempts": 5
+  },
+  "limitations": [
+    "No comments allowed (except this hack)",
+    "No multi-line strings without escaping",
+    "No environment variable substitution",
+    "No complex data types",
+    "No logic or calculations"
+  ]
+} 

@@ -1,0 +1,23 @@
+# Database Validation Tools Requirements
+# ====================================
+# Required Python packages for database script validation and organization tools
+
+# Database connectivity
+psycopg2-binary>=2.9.0  # PostgreSQL adapter for Python
+
+# Data processing and analysis  
+pathlib  # Path handling (built-in, but good to document)
+
+# Standard library packages used (documentation)
+# - os (built-in)
+# - sys (built-in) 
+# - re (built-in)
+# - json (built-in)
+# - datetime (built-in)
+# - typing (built-in)
+# - getpass (built-in)
+
+# Optional development tools
+# pytest>=7.0.0          # For testing (uncomment if needed)
+# black>=22.0.0           # Code formatting (uncomment if needed)
+# flake8>=4.0.0           # Linting (uncomment if needed) 

@@ -1,0 +1,9 @@
+{
+  "status": "FULLY_READY",
+  "confidence": "100%",
+  "issues": [],
+  "validation_date": "2025-06-18T10:07:46.845747",
+  "database": "one_vault",
+  "total_checks": 20,
+  "issues_count": 0
+}

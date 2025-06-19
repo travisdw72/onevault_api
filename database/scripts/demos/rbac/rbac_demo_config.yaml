@@ -1,0 +1,152 @@
+# RBAC Demo Configuration for One Vault Demo Barn Database
+# =======================================================
+
+database:
+  host: localhost
+  port: 5432
+  database: one_vault_demo_barn
+  user: postgres
+  # password will be prompted
+
+# System Admin Tenant Configuration
+system_admin:
+  tenant_name: "SYSTEM_ADMIN"
+  admin_email: "sysadmin@onevault.demo"
+  admin_password: "AdminSecure123!@#"
+  admin_first_name: "System"
+  admin_last_name: "Administrator"
+
+# Demo Business Tenant Configuration
+demo_tenant:
+  tenant_name: "ACME_CORP_DEMO"
+  admin_email: "admin@acmecorp.demo"
+  admin_password: "DemoAdmin123!@#"
+  admin_first_name: "Jane"
+  admin_last_name: "BusinessAdmin"
+
+# Role Definitions for RBAC Testing
+roles:
+  - role_bk: "MANAGER"
+    role_name: "Manager"
+    role_description: "Management access with reporting capabilities"
+    permissions: ["CREATE", "READ", "UPDATE", "VIEW_REPORTS"]
+    access_level: "MANAGEMENT"
+  
+  - role_bk: "EMPLOYEE"
+    role_name: "Employee" 
+    role_description: "Standard employee access"
+    permissions: ["CREATE", "READ", "UPDATE"]
+    access_level: "STANDARD"
+  
+  - role_bk: "VIEWER"
+    role_name: "Viewer"
+    role_description: "Read-only access for monitoring"
+    permissions: ["READ"]
+    access_level: "LIMITED"
+  
+  - role_bk: "CLIENT"
+    role_name: "Client"
+    role_description: "Client/Patient access to own data only"
+    permissions: ["READ"]
+    access_level: "PERSONAL"
+
+# Demo Users for RBAC Testing
+demo_users:
+  - email: "manager@acmecorp.demo"
+    password: "Manager123!@#"
+    first_name: "John"
+    last_name: "Manager"
+    role_bk: "MANAGER"
+    description: "Department Manager with reporting access"
+    user_type: "INTERNAL_STAFF"
+  
+  - email: "employee1@acmecorp.demo"
+    password: "Employee123!@#"
+    first_name: "Alice"
+    last_name: "Employee"
+    role_bk: "EMPLOYEE"
+    description: "Standard employee with operational access"
+    user_type: "INTERNAL_STAFF"
+  
+  - email: "employee2@acmecorp.demo"
+    password: "Employee456!@#"
+    first_name: "Bob"
+    last_name: "Worker"
+    role_bk: "EMPLOYEE"
+    description: "Standard employee with operational access"
+    user_type: "INTERNAL_STAFF"
+  
+  - email: "viewer@acmecorp.demo"
+    password: "Viewer123!@#"
+    first_name: "Carol"
+    last_name: "Viewer"
+    role_bk: "VIEWER"
+    description: "Read-only access for monitoring and auditing"
+    user_type: "INTERNAL_STAFF"
+  
+  - email: "client1@acmecorp.demo"
+    password: "Client123!@#"
+    first_name: "David"
+    last_name: "ClientUser"
+    role_bk: "CLIENT"
+    description: "External client with limited access"
+    user_type: "EXTERNAL_CLIENT"
+  
+  - email: "patient1@acmecorp.demo"
+    password: "Patient123!@#"
+    first_name: "Emma"
+    last_name: "PatientUser"
+    role_bk: "CLIENT"
+    description: "Healthcare patient with personal data access"
+    user_type: "PATIENT"
+
+# RBAC Test Scenarios
+rbac_tests:
+  - test_name: "User Role Assignment Verification"
+    description: "Verify all users have correct role assignments"
+    expected_users: 6  # 2 tenant admins + 4 demo users
+  
+  - test_name: "Role Hierarchy Verification"
+    description: "Verify role hierarchy and access levels"
+    expected_roles: 4  # MANAGER, EMPLOYEE, VIEWER, CLIENT
+  
+  - test_name: "Permission Matrix Verification"
+    description: "Verify permission assignments for each role"
+    permissions_to_test: ["CREATE", "READ", "UPDATE", "DELETE", "MANAGE_USERS", "VIEW_REPORTS"]
+  
+  - test_name: "Tenant Isolation Verification"
+    description: "Verify users can only access their tenant data"
+    cross_tenant_access_allowed: false
+
+# Compliance and Security Settings
+compliance:
+  password_requirements:
+    min_length: 12
+    require_uppercase: true
+    require_lowercase: true
+    require_numbers: true
+    require_special_chars: true
+  
+  audit_logging:
+    enabled: true
+    log_all_access: true
+    retention_days: 2555  # 7 years for compliance
+  
+  session_management:
+    timeout_minutes: 30
+    max_concurrent_sessions: 3
+    require_2fa: false  # For demo purposes
+
+# Output and Logging Configuration
+output:
+  log_file_prefix: "rbac_demo"
+  results_file_prefix: "rbac_demo_results"
+  include_timestamps: true
+  log_level: "INFO"
+  save_credentials: true  # For demo purposes only
+  
+setup_options:
+  create_sample_data: false
+  run_performance_tests: false
+  cleanup_on_error: true
+  verbose_output: true 

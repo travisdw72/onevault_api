@@ -1,0 +1,104 @@
+{
+  "investigation_date": "2025-06-18T09:58:56.065663",
+  "total_functions_found": 7,
+  "function_details": {
+    "audit_track_bridge": {
+      "arguments": "",
+      "return_type": "trigger",
+      "num_args": 0,
+      "description": null
+    },
+    "audit_track_default": {
+      "arguments": "",
+      "return_type": "trigger",
+      "num_args": 0,
+      "description": null,
+      "definition_preview": [
+        "CREATE OR REPLACE FUNCTION util.audit_track_default()",
+        " RETURNS trigger",
+        " LANGUAGE plpgsql",
+        "AS $function$",
+        "BEGIN",
+        "    RETURN NEW;",
+        "END;",
+        "$function$",
+        ""
+      ],
+      "working_patterns": []
+    },
+    "audit_track_dispatcher": {
+      "arguments": "",
+      "return_type": "trigger",
+      "num_args": 0,
+      "description": null
+    },
+    "audit_track_hub": {
+      "arguments": "",
+      "return_type": "trigger",
+      "num_args": 0,
+      "description": null,
+      "definition_preview": [
+        "CREATE OR REPLACE FUNCTION util.audit_track_hub()",
+        " RETURNS trigger",
+        " LANGUAGE plpgsql",
+        "AS $function$",
+        "DECLARE",
+        "    v_audit_event_hk BYTEA;",
+        "    v_tenant_hk BYTEA;",
+        "    v_audit_event_bk VARCHAR(255);",
+        "BEGIN",
+        "    -- Hub tables have tenant_hk directly",
+        "    v_tenant_hk := NEW.tenant_hk;",
+        "    ",
+        "    -- Generate audit event business key",
+        "    v_audit_event_bk := 'audit_hub_' || TG_TABLE_NAME || '_' || ",
+        "                        to_char(util.current_load_date(), 'YYMMDD_HH24MISS');",
+        "    ",
+        "    -- Create hash key from business key",
+        "    v_audit_event_hk := util.hash_binary(v_audit_event_bk);",
+        "    ",
+        "    -- Create audit event record"
+      ]
+    },
+    "audit_track_link": {
+      "arguments": "",
+      "return_type": "trigger",
+      "num_args": 0,
+      "description": null
+    },
+    "audit_track_reference": {
+      "arguments": "",
+      "return_type": "trigger",
+      "num_args": 0,
+      "description": null
+    },
+    "audit_track_satellite": {
+      "arguments": "",
+      "return_type": "trigger",
+      "num_args": 0,
+      "description": null,
+      "definition_preview": [
+        "CREATE OR REPLACE FUNCTION util.audit_track_satellite()",
+        " RETURNS trigger",
+        " LANGUAGE plpgsql",
+        "AS $function$",
+        "BEGIN",
+        "    -- Simplified implementation - just return NEW for now",
+        "    -- Full implementation would need to lookup tenant_hk from hub",
+        "    RETURN NEW;",
+        "END;",
+        "$function$",
+        ""
+      ],
+      "working_patterns": []
+    }
+  },
+  "recommendations": [
+    {
+      "function": "audit_track_default",
+      "issue": "No working patterns found",
+      "action": "Manual investigation needed"
+    }
+  ],
+  "status": "COMPLETE"
+}

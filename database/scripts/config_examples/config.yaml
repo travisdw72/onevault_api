@@ -1,0 +1,80 @@
+# YAML - Human readable, supports comments, multi-line strings
+# This is the most popular choice for configuration files
+
+database:
+  host: localhost
+  port: 5432
+  database: one_vault
+  user: postgres
+  # Environment variable substitution (with tools like envsubst)
+  password: ${DB_PASSWORD}
+  connection_pool:
+    min_connections: 1
+    max_connections: 10
+    timeout_seconds: 30
+
+environments:
+  development:
+    debug: true
+    log_level: DEBUG
+    auto_create_tables: true
+  production:
+    debug: false
+    log_level: INFO
+    auto_create_tables: false
+
+# Multi-line SQL queries are much cleaner in YAML
+queries:
+  get_user_by_email: |
+    SELECT 
+      up.first_name,
+      up.last_name,
+      up.email,
+      uas.username,
+      uas.last_login_date
+    FROM auth.user_profile_s up
+    JOIN auth.user_h uh ON up.user_hk = uh.user_hk
+    JOIN auth.user_auth_s uas ON uh.user_hk = uas.user_hk
+    WHERE up.email = %s 
+    AND up.load_end_date IS NULL
+    AND uas.load_end_date IS NULL
+
+  get_tenant_stats: |
+    SELECT 
+      COUNT(DISTINCT uh.user_hk) as user_count,
+      COUNT(DISTINCT sh.session_hk) as active_sessions,
+      MAX(uas.last_login_date) as last_activity
+    FROM auth.user_h uh
+    LEFT JOIN auth.user_session_l usl ON uh.user_hk = usl.user_hk
+    LEFT JOIN auth.session_h sh ON usl.session_hk = sh.session_hk
+    LEFT JOIN auth.user_auth_s uas ON uh.user_hk = uas.user_hk
+    WHERE uh.tenant_hk = %s
+    AND uas.load_end_date IS NULL
+
+security:
+  password_min_length: 12
+  session_timeout_minutes: 30
+  max_login_attempts: 5
+  # Complex nested structures are easy
+  password_requirements:
+    - uppercase: true
+    - lowercase: true
+    - numbers: true
+    - special_chars: true
+    - min_length: 12
+
+# Lists and arrays are clean
+supported_databases:
+  - postgresql
+  - mysql
+  - sqlite
+
+# Advantages of YAML:
+advantages:
+  - "Comments allowed everywhere"
+  - "Multi-line strings with | and >"
+  - "Environment variable support (with tools)"
+  - "Human readable and writable"
+  - "Supports complex data structures"
+  - "No escaping needed for quotes"
+  - "Industry standard for DevOps/CI/CD" 

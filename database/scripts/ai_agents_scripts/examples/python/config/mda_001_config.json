@@ -1,0 +1,66 @@
+{
+  "agent": {
+    "id": "MDA-001",
+    "name": "Medical Diagnosis Agent",
+    "version": "1.0.0",
+    "domain": "MEDICAL",
+    "description": "HIPAA-compliant AI agent for medical diagnosis using Bayesian inference"
+  },
+  "security": {
+    "certificate_path": "/etc/ssl/agents/mda-001/agent.crt",
+    "private_key_path": "/etc/ssl/agents/mda-001/agent.key",
+    "ca_certificate_path": "/etc/ssl/ca/ca.crt",
+    "zero_trust_gateway": "https://ztg.onevault.com",
+    "session_duration_minutes": 10,
+    "max_session_renewals": 3
+  },
+  "tenant": {
+    "tenant_hk": "a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456",
+    "organization": "OneVault Medical Services",
+    "compliance_level": "HIPAA_LEVEL_4"
+  },
+  "database": {
+    "host": "postgres.onevault.com",
+    "port": 5432,
+    "database": "one_vault",
+    "ssl_mode": "require",
+    "connection_pool_size": 5,
+    "query_timeout_seconds": 30
+  },
+  "medical_ai": {
+    "model_version": "medical_v2.1.0",
+    "confidence_threshold": 0.75,
+    "max_differential_diagnoses": 5,
+    "enable_drug_interaction_check": true,
+    "enable_allergy_screening": true,
+    "medical_knowledge_base": "/opt/medical_kb/icd10_mappings.json"
+  },
+  "permissions": {
+    "allowed_operations": [
+      "medical_data_read",
+      "diagnosis_write",
+      "patient_history_read",
+      "medical_imaging_analyze"
+    ],
+    "forbidden_domains": [
+      "EQUINE",
+      "MANUFACTURING", 
+      "FINANCIAL",
+      "CUSTOMER_SERVICE"
+    ],
+    "data_classification": "PHI_RESTRICTED"
+  },
+  "audit": {
+    "log_all_queries": true,
+    "log_diagnosis_reasoning": true,
+    "retention_period_years": 7,
+    "hipaa_audit_level": "COMPREHENSIVE"
+  },
+  "reasoning": {
+    "engine_type": "BAYESIAN_INFERENCE",
+    "use_clinical_guidelines": true,
+    "evidence_based_medicine": true,
+    "drug_database_integration": true,
+    "differential_diagnosis_depth": 3
+  }
+} 

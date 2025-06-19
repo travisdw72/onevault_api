@@ -1,0 +1,42 @@
+# Zero Trust AI Agents - Python Dependencies
+# Medical Diagnosis Agent (MDA-001) Requirements
+
+# Database connectivity
+psycopg2-binary==2.9.7
+SQLAlchemy==2.0.21
+
+# Security and cryptography
+cryptography==41.0.4
+PyJWT==2.8.0
+requests==2.31.0
+
+# Machine Learning and AI
+scikit-learn==1.3.0
+numpy==1.24.3
+pandas==2.0.3
+tensorflow==2.13.0
+torch==2.0.1
+transformers==4.33.2
+
+# Medical AI specific
+medpy==0.4.0
+pydicom==2.4.3
+SimpleITK==2.3.1
+
+# Data processing
+jsonschema==4.19.0
+pydantic==2.3.0
+
+# Logging and monitoring
+structlog==23.1.0
+prometheus-client==0.17.1
+
+# API and web services
+fastapi==0.103.1
+uvicorn==0.23.2
+httpx==0.24.1
+
+# Utilities
+python-dotenv==1.0.0
+click==8.1.7
+tqdm==4.66.1 

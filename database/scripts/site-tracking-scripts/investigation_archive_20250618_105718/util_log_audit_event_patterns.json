@@ -1,0 +1,61 @@
+{
+  "test_date": "2025-06-18T10:35:51.101484",
+  "function_name": "util.log_audit_event",
+  "successful_tests": [
+    {
+      "test_name": "Site Tracking Page View",
+      "parameters": [
+        "PAGE_VIEW",
+        "SITE_TRACKING",
+        "page:/dashboard",
+        "SYSTEM",
+        "{\"url\": \"/dashboard\", \"user_agent\": \"test\"}"
+      ],
+      "result": "{'message': 'Audit event logged successfully', 'success': True, 'audit_event_bk': 'PAGE_VIEW_SITE_TRACKING_page:/dashboard_1750268151.036642', 'audit_event_hk': '1c4bd74cc92b10810994ea340c781b3bf6bfd1bf9ba438c5c9b8caf98e701466'}",
+      "sql_pattern": "SELECT util.log_audit_event('PAGE_VIEW', 'SITE_TRACKING', 'page:/dashboard', 'SYSTEM', '{\"url\": \"/dashboard\", \"user_agent\": \"test\"}'::jsonb)"
+    },
+    {
+      "test_name": "API Rate Limit Hit",
+      "parameters": [
+        "RATE_LIMIT_EXCEEDED",
+        "API_SECURITY",
+        "endpoint:/api/track",
+        "API_GATEWAY",
+        "{\"ip\": \"192.168.1.1\", \"limit\": 100}"
+      ],
+      "result": "{'message': 'Audit event logged successfully', 'success': True, 'audit_event_bk': 'RATE_LIMIT_EXCEEDED_API_SECURITY_endpoint:/api/track_1750268151.093268', 'audit_event_hk': '0c6533bf9c7b672b065369e5370d6b8617da2be41e967100ae93f4e00b51b4cc'}",
+      "sql_pattern": "SELECT util.log_audit_event('RATE_LIMIT_EXCEEDED', 'API_SECURITY', 'endpoint:/api/track', 'API_GATEWAY', '{\"ip\": \"192.168.1.1\", \"limit\": 100}'::jsonb)"
+    },
+    {
+      "test_name": "Security Violation",
+      "parameters": [
+        "SUSPICIOUS_ACTIVITY",
+        "SECURITY",
+        "ip:192.168.1.100",
+        "SECURITY_MONITOR",
+        "{\"reason\": \"too_many_requests\", \"count\": 500}"
+      ],
+      "result": "{'message': 'Audit event logged successfully', 'success': True, 'audit_event_bk': 'SUSPICIOUS_ACTIVITY_SECURITY_ip:192.168.1.100_1750268151.096457', 'audit_event_hk': 'c5514359814999b9efe03453b8e2691cadcefb5ba348d86176227f005d1b648d'}",
+      "sql_pattern": "SELECT util.log_audit_event('SUSPICIOUS_ACTIVITY', 'SECURITY', 'ip:192.168.1.100', 'SECURITY_MONITOR', '{\"reason\": \"too_many_requests\", \"count\": 500}'::jsonb)"
+    }
+  ],
+  "usage_examples": [
+    {
+      "use_case": "Log API tracking attempt",
+      "code": "SELECT util.log_audit_event('API_TRACKING_ATTEMPT', 'SITE_TRACKING', 'endpoint:/api/track', 'API_GATEWAY', '{\"ip\": \"192.168.1.1\", \"user_agent\": \"Mozilla/5.0\"}'::jsonb)"
+    },
+    {
+      "use_case": "Log rate limit violation",
+      "code": "SELECT util.log_audit_event('RATE_LIMIT_EXCEEDED', 'API_SECURITY', 'ip:192.168.1.1', 'RATE_LIMITER', '{\"current_count\": 150, \"limit\": 100, \"window\": \"1 minute\"}'::jsonb)"
+    },
+    {
+      "use_case": "Log security violation",
+      "code": "SELECT util.log_audit_event('SECURITY_VIOLATION', 'SECURITY', 'ip:suspicious_ip', 'SECURITY_MONITOR', '{\"violation_type\": \"bot_detected\", \"score\": 0.95}'::jsonb)"
+    },
+    {
+      "use_case": "Log system error",
+      "code": "SELECT util.log_audit_event('SYSTEM_ERROR', 'SITE_TRACKING', 'function:api.track_event', 'SYSTEM', '{\"error\": \"Database connection failed\", \"retry_count\": 3}'::jsonb)"
+    }
+  ],
+  "recommendation": "USE_THIS_FUNCTION"
+}

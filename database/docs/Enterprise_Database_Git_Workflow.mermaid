@@ -1,0 +1,132 @@
+---
+title: Enterprise Database + Git Workflow - One Vault
+---
+graph TB
+    %% Developer Local Environment
+    subgraph DEV["👨‍💻 Developer Local Environment"]
+        START([Start Feature Development])
+        BRANCH[Create Git Feature Branch<br/>git checkout -b feature/analytics]
+        CREATE_MIG[Create Database Migration<br/>db_version_manager.py create 1.1.0]
+        EDIT_MIG[Edit Migration Files<br/>- Forward SQL<br/>- Rollback SQL]
+        CODE_DEV[Develop Application Code<br/>- Frontend Components<br/>- Backend APIs]
+        TEST_DRY[Test Migration (Dry Run)<br/>migrate --dry-run]
+        TEST_REAL[Apply Migration Locally<br/>migrate]
+        TEST_APP[Test Application<br/>- Frontend + Backend<br/>- Integration Tests]
+        TEST_ROLLBACK[Test Rollback Script<br/>Ensure it works!]
+    end
+
+    %% Git Repository 
+    subgraph GIT["🔄 Git Repository (Code Collaboration)"]
+        COMMIT[Commit All Changes<br/>- Migration SQL files<br/>- Application code<br/>- Tests]
+        PUSH[Push Feature Branch<br/>git push origin feature/analytics]
+        PR[Create Pull Request<br/>📋 Code Review Process]
+        REVIEW[Team Reviews<br/>✅ Code Quality<br/>✅ Migration Safety<br/>✅ Rollback Tested<br/>✅ Performance Impact]
+        MERGE_DEV[Merge to develop<br/>git merge feature/analytics]
+        MERGE_MAIN[Merge to main<br/>Production Ready]
+    end
+
+    %% Database Version Control System
+    subgraph DB_VC["🗄️ Database Version Control (Execution State)"]
+        TRACK_STATE[Track Migration State<br/>version_control.schema_migration_s]
+        EXEC_LOG[Execution Logging<br/>- Start/End Times<br/>- Success/Failure<br/>- Performance Metrics]
+        ENV_TRACK[Environment Tracking<br/>- Development<br/>- Staging<br/>- Production]
+        ROLLBACK_CAP[Rollback Capabilities<br/>- Tested Scripts<br/>- Impact Analysis]
+    end
+
+    %% CI/CD Pipeline
+    subgraph CICD["⚙️ CI/CD Pipeline (Automation)"]
+        AUTO_TEST[Automated Testing<br/>- Unit Tests<br/>- Integration Tests<br/>- Migration Tests]
+        STAGING_DEPLOY[Deploy to Staging<br/>- Database Migration<br/>- Application Deployment<br/>- Integration Testing]
+        PROD_DEPLOY[Deploy to Production<br/>- Maintenance Window<br/>- Database First<br/>- Application Second<br/>- Health Monitoring]
+    end
+
+    %% Environment Stages
+    subgraph ENVS["🌍 Environment Progression"]
+        LOCAL[Local Development<br/>💻 Developer Machine]
+        STAGING[Staging Environment<br/>🧪 Testing & Validation]
+        PRODUCTION[Production Environment<br/>🏭 Live Customer Data]
+    end
+
+    %% Data Vault 2.0 Database
+    subgraph DV2["📊 Data Vault 2.0 Database"]
+        HUBS[Hub Tables<br/>- Business Keys<br/>- Tenant Isolation]
+        SATS[Satellite Tables<br/>- Descriptive Data<br/>- Temporal Tracking]
+        LINKS[Link Tables<br/>- Relationships<br/>- Associations]
+        AUDIT[Audit Framework<br/>- HIPAA Compliance<br/>- Change Tracking]
+    end
+
+    %% Version Control Integration
+    subgraph INTEGRATION["🔗 Integration Points"]
+        FILES[Migration Files in Git<br/>- V1.1.0__Add_analytics.sql<br/>- V1.1.0__Add_analytics_rollback.sql]
+        STATE[Runtime State in DB<br/>- What's deployed where<br/>- Execution history<br/>- Performance data]
+        COORD[Coordinated Deployments<br/>- Code + Database together<br/>- Atomic deployments<br/>- Rollback coordination]
+    end
+
+    %% Workflow Connections
+    START --> BRANCH
+    BRANCH --> CREATE_MIG
+    CREATE_MIG --> EDIT_MIG
+    EDIT_MIG --> CODE_DEV
+    CODE_DEV --> TEST_DRY
+    TEST_DRY --> TEST_REAL
+    TEST_REAL --> TEST_APP
+    TEST_APP --> TEST_ROLLBACK
+    TEST_ROLLBACK --> COMMIT
+
+    COMMIT --> PUSH
+    PUSH --> PR
+    PR --> REVIEW
+    REVIEW --> MERGE_DEV
+    MERGE_DEV --> AUTO_TEST
+    AUTO_TEST --> STAGING_DEPLOY
+    STAGING_DEPLOY --> MERGE_MAIN
+    MERGE_MAIN --> PROD_DEPLOY
+
+    %% Database Integration
+    TEST_REAL --> TRACK_STATE
+    STAGING_DEPLOY --> ENV_TRACK
+    PROD_DEPLOY --> EXEC_LOG
+
+    %% Environment Flow
+    TEST_REAL --> LOCAL
+    STAGING_DEPLOY --> STAGING
+    PROD_DEPLOY --> PRODUCTION
+
+    %% Data Vault Integration
+    EDIT_MIG --> HUBS
+    EDIT_MIG --> SATS
+    EDIT_MIG --> LINKS
+    EXEC_LOG --> AUDIT
+
+    %% Integration Points
+    COMMIT --> FILES
+    TRACK_STATE --> STATE
+    PROD_DEPLOY --> COORD
+
+    %% Error Handling & Rollback
+    PROD_DEPLOY -->|If Issues| ROLLBACK_PROC[Rollback Procedure<br/>1. Database Rollback<br/>2. Application Rollback<br/>3. Verify Health]
+    ROLLBACK_PROC --> ROLLBACK_CAP
+
+    %% Monitoring & Validation
+    PRODUCTION --> MONITOR[Production Monitoring<br/>- Performance Metrics<br/>- Health Checks<br/>- Error Tracking]
+    MONITOR -->|Issues Detected| ROLLBACK_PROC
+
+    %% Compliance & Audit
+    AUDIT --> COMPLIANCE[Compliance Reporting<br/>- HIPAA Audit Trails<br/>- SOX Documentation<br/>- GDPR Data Lineage]
+
+    %% Styling
+    classDef devClass fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef gitClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef dbClass fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef cicdClass fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef envClass fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef dv2Class fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    classDef integrationClass fill:#fff8e1,stroke:#ff6f00,stroke-width:2px
+
+    class START,BRANCH,CREATE_MIG,EDIT_MIG,CODE_DEV,TEST_DRY,TEST_REAL,TEST_APP,TEST_ROLLBACK devClass
+    class COMMIT,PUSH,PR,REVIEW,MERGE_DEV,MERGE_MAIN gitClass
+    class TRACK_STATE,EXEC_LOG,ENV_TRACK,ROLLBACK_CAP dbClass
+    class AUTO_TEST,STAGING_DEPLOY,PROD_DEPLOY cicdClass
+    class LOCAL,STAGING,PRODUCTION envClass
+    class HUBS,SATS,LINKS,AUDIT dv2Class
+    class FILES,STATE,COORD integrationClass 

@@ -1,0 +1,305 @@
+{
+  "tables_with_triggers": {
+    "ai_monitoring.ai_analysis_h": [
+      {
+        "trigger_name": "trg_audit_ai_analysis_h",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_ai_analysis_h AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.ai_analysis_h FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "ai_monitoring.ai_analysis_results_s": [
+      {
+        "trigger_name": "trg_audit_ai_analysis_results_s",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_ai_analysis_results_s AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.ai_analysis_results_s FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "ai_monitoring.alert_details_s": [
+      {
+        "trigger_name": "trg_audit_alert_details_s",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_alert_details_s AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.alert_details_s FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "ai_monitoring.alert_h": [
+      {
+        "trigger_name": "trg_audit_alert_h",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_alert_h AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.alert_h FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "ai_monitoring.analysis_alert_l": [
+      {
+        "trigger_name": "trg_audit_analysis_alert_l",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_analysis_alert_l AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.analysis_alert_l FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "ai_monitoring.entity_analysis_l": [
+      {
+        "trigger_name": "trg_audit_entity_analysis_l",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_entity_analysis_l AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.entity_analysis_l FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "ai_monitoring.monitored_entity_details_s": [
+      {
+        "trigger_name": "trg_audit_monitored_entity_details_s",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_monitored_entity_details_s AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.monitored_entity_details_s FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "ai_monitoring.monitored_entity_h": [
+      {
+        "trigger_name": "trg_audit_monitored_entity_h",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_monitored_entity_h AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.monitored_entity_h FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "ai_monitoring.zt_access_policies_h": [
+      {
+        "trigger_name": "trg_audit_zt_access_policies_h",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_zt_access_policies_h AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.zt_access_policies_h FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "ai_monitoring.zt_access_policies_s": [
+      {
+        "trigger_name": "trg_audit_zt_access_policies_s",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_zt_access_policies_s AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.zt_access_policies_s FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "ai_monitoring.zt_security_events_h": [
+      {
+        "trigger_name": "trg_audit_zt_security_events_h",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_zt_security_events_h AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.zt_security_events_h FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "ai_monitoring.zt_security_events_s": [
+      {
+        "trigger_name": "trg_audit_zt_security_events_s",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_zt_security_events_s AFTER INSERT OR DELETE OR UPDATE ON ai_monitoring.zt_security_events_s FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "auth.tenant_h": [
+      {
+        "trigger_name": "trg_audit_tenant_h",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_tenant_h AFTER INSERT OR DELETE OR UPDATE ON auth.tenant_h FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "auth.user_h": [
+      {
+        "trigger_name": "trg_audit_user_h",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_user_h AFTER INSERT OR DELETE OR UPDATE ON auth.user_h FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "compliance.consent_audit_s": [
+      {
+        "trigger_name": "trg_audit_consent_audit_s",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_consent_audit_s AFTER INSERT OR DELETE OR UPDATE ON compliance.consent_audit_s FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "compliance.patient_consent_h": [
+      {
+        "trigger_name": "trg_audit_patient_consent_h",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_patient_consent_h AFTER INSERT OR DELETE OR UPDATE ON compliance.patient_consent_h FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "compliance.patient_consent_s": [
+      {
+        "trigger_name": "trg_audit_patient_consent_s",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_patient_consent_s AFTER INSERT OR DELETE OR UPDATE ON compliance.patient_consent_s FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ],
+    "compliance.patient_user_l": [
+      {
+        "trigger_name": "trg_audit_patient_user_l",
+        "function_name": "audit_track_dispatcher",
+        "enabled": true,
+        "definition": "CREATE TRIGGER trg_audit_patient_user_l AFTER INSERT OR DELETE OR UPDATE ON compliance.patient_user_l FOR EACH ROW EXECUTE FUNCTION util.audit_track_dispatcher()"
+      }
+    ]
+  },
+  "investigation_date": "2025-06-18T10:15:42.176952",
+  "total_tables_with_triggers": 18,
+  "coverage_stats": {
+    "Hub": {
+      "with_triggers": 2,
+      "without_triggers": 47
+    },
+    "Satellite": {
+      "with_triggers": 0,
+      "without_triggers": 61
+    },
+    "Link": {
+      "with_triggers": 0,
+      "without_triggers": 12
+    },
+    "Reference": {
+      "with_triggers": 0,
+      "without_triggers": 0
+    },
+    "Bridge": {
+      "with_triggers": 0,
+      "without_triggers": 0
+    },
+    "Other": {
+      "with_triggers": 0,
+      "without_triggers": 0
+    }
+  },
+  "tables_without_triggers": [
+    "audit.ai_compliance_h",
+    "audit.ai_security_event_h",
+    "audit.audit_event_h",
+    "audit.error_log_h",
+    "audit.security_event_h",
+    "audit.system_health_h",
+    "audit.ai_compliance_s",
+    "audit.ai_security_event_s",
+    "audit.audit_detail_s",
+    "audit.error_log_s",
+    "audit.security_event_s",
+    "audit.system_health_s",
+    "auth.api_token_h",
+    "auth.role_h",
+    "auth.security_policy_h",
+    "auth.security_tracking_h",
+    "auth.session_h",
+    "auth.user_session_h",
+    "auth.session_token_l",
+    "auth.user_role_l",
+    "auth.user_session_l",
+    "auth.user_token_l",
+    "auth.api_token_s",
+    "auth.ip_tracking_s",
+    "auth.role_definition_s",
+    "auth.security_policy_s",
+    "auth.session_state_s",
+    "auth.tenant_definition_s",
+    "auth.tenant_profile_s",
+    "auth.token_activity_s",
+    "auth.user_auth_s",
+    "auth.user_profile_s",
+    "auth.user_session_s",
+    "business.ai_alert_h",
+    "business.ai_business_intelligence_h",
+    "business.ai_deployment_status_h",
+    "business.ai_feature_pipeline_h",
+    "business.ai_interaction_h",
+    "business.ai_model_performance_h",
+    "business.ai_observation_h",
+    "business.ai_session_h",
+    "business.ai_training_execution_h",
+    "business.asset_h",
+    "business.business_entity_h",
+    "business.business_trip_h",
+    "business.intellectual_property_h",
+    "business.monitored_entity_h",
+    "business.monitoring_sensor_h",
+    "business.note_payable_h",
+    "business.service_contract_h",
+    "business.tax_record_h",
+    "business.ai_observation_alert_l",
+    "business.ai_session_interaction_l",
+    "business.asset_ownership_l",
+    "business.contract_parties_l",
+    "business.entity_relationship_l",
+    "business.user_ai_interaction_l",
+    "business.user_ai_observation_l",
+    "business.user_ai_session_l",
+    "business.ai_alert_details_s",
+    "business.ai_decision_engine_s",
+    "business.ai_deployment_status_s",
+    "business.ai_feature_pipeline_s",
+    "business.ai_interaction_details_s",
+    "business.ai_interaction_security_s",
+    "business.ai_learning_pattern_s",
+    "business.ai_model_performance_s",
+    "business.ai_observation_details_s",
+    "business.ai_recommendation_s",
+    "business.ai_session_details_s",
+    "business.ai_training_execution_s",
+    "business.asset_details_s",
+    "business.asset_ownership_terms_s",
+    "business.business_entity_profile_s",
+    "business.entity_relationship_details_s",
+    "business.ip_details_s",
+    "business.monitored_entity_details_s",
+    "business.monitoring_sensor_details_s",
+    "business.note_payable_terms_s",
+    "business.service_contract_terms_s",
+    "business.tax_record_details_s",
+    "business.trip_details_s",
+    "raw.external_data_h",
+    "raw.file_data_h",
+    "raw.login_attempt_h",
+    "raw.sensor_data_h",
+    "raw.user_input_h",
+    "raw.user_request_h",
+    "raw.external_data_s",
+    "raw.file_data_s",
+    "raw.login_attempt_s",
+    "raw.login_details_s",
+    "raw.sensor_data_s",
+    "raw.user_input_s",
+    "raw.user_request_details_s",
+    "staging.business_rule_h",
+    "staging.data_validation_h",
+    "staging.entity_resolution_h",
+    "staging.login_attempt_h",
+    "staging.standardization_h",
+    "staging.user_behavior_analysis_h",
+    "staging.user_creation_h",
+    "staging.user_input_validation_h",
+    "staging.business_rule_s",
+    "staging.data_validation_s",
+    "staging.entity_resolution_s",
+    "staging.login_status_s",
+    "staging.standardization_s",
+    "staging.user_behavior_analysis_s",
+    "staging.user_input_validation_s",
+    "staging.user_validation_s",
+    "util.ai_performance_h",
+    "util.cache_performance_h",
+    "util.query_performance_h",
+    "util.ai_performance_s",
+    "util.alert_notifications",
+    "util.cache_performance_s",
+    "util.query_performance_s",
+    "util.template_features",
+    "util.validation_results"
+  ],
+  "overall_coverage_percentage": 1.639344262295082,
+  "conclusion": "SELECTIVE trigger application - LIKELY MANUAL",
+  "automation_helper_functions": [
+    "create_audit_triggers",
+    "create_audit_triggers_safe",
+    "log_audit_event"
+  ]
+}

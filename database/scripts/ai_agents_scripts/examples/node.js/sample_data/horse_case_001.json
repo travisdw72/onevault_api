@@ -1,0 +1,100 @@
+{
+  "horseId": "HORSE_001_DEMO",
+  "case_description": "Sample equine case for ECA-001 testing",
+  "breed": "Thoroughbred",
+  "age": 8,
+  "gender": "Mare",
+  "weight_kg": 520,
+  "symptoms": [
+    "lameness",
+    "swelling",
+    "heat_in_hoof",
+    "reluctant_to_move",
+    "favoring_left_front"
+  ],
+  "vitalSigns": {
+    "heartRate": 44,
+    "respiratoryRate": 16,
+    "temperature": 100.8,
+    "bloodPressure": "Normal",
+    "capillaryRefillTime": 2
+  },
+  "behaviorObservations": [
+    "favoring_left_front_leg",
+    "reluctant_to_move_forward",
+    "shifting_weight_frequently",
+    "elevated_pulse_on_affected_limb",
+    "warm_to_touch_around_hoof"
+  ],
+  "medicalHistory": [
+    "previous_laminitis_episode_2021",
+    "routine_dental_work_2023",
+    "minor_colic_episode_2022"
+  ],
+  "vaccinationRecord": [
+    {
+      "vaccine": "Eastern_Western_Encephalitis",
+      "date": "2023-04-15",
+      "veterinarian": "Dr. Sarah Johnson, DVM",
+      "lot_number": "EWE-2023-045"
+    },
+    {
+      "vaccine": "Tetanus_Toxoid",
+      "date": "2023-04-15", 
+      "veterinarian": "Dr. Sarah Johnson, DVM",
+      "lot_number": "TT-2023-032"
+    },
+    {
+      "vaccine": "West_Nile_Virus",
+      "date": "2023-04-15",
+      "veterinarian": "Dr. Sarah Johnson, DVM", 
+      "lot_number": "WNV-2023-018"
+    },
+    {
+      "vaccine": "Rhinopneumonitis",
+      "date": "2023-02-10",
+      "veterinarian": "Dr. Mark Thompson, DVM",
+      "lot_number": "RHINO-2023-007"
+    }
+  ],
+  "currentMedications": [
+    "bute_paste_2g_daily",
+    "omeprazole_4mg_daily"
+  ],
+  "feedingSchedule": {
+    "hay_type": "timothy_grass",
+    "hay_amount_kg": 12,
+    "grain_type": "senior_feed",
+    "grain_amount_kg": 3,
+    "supplements": ["joint_supplement", "biotin"]
+  },
+  "exerciseRoutine": {
+    "normal_activity": "light_riding_training",
+    "hours_per_day": 2,
+    "days_per_week": 5,
+    "current_restriction": "box_rest_prescribed"
+  },
+  "environmentalFactors": {
+    "stall_type": "box_stall_with_bedding",
+    "turnout_hours": 0,
+    "footing": "deep_bedding",
+    "weather_conditions": "cool_dry"
+  },
+  "ownerObservations": {
+    "onset_timing": "noticed_2_days_ago",
+    "progression": "gradually_worsening", 
+    "owner_concerns": [
+      "visible_lameness_at_walk",
+      "reluctance_to_bear_weight",
+      "appears_uncomfortable"
+    ]
+  },
+  "vetExamFindings": {
+    "gait_assessment": "grade_2_lameness_left_front",
+    "hoof_tester_response": "positive_sole_pressure",
+    "digital_pulse": "strong_bounding_pulse_left_front",
+    "hoof_temperature": "elevated_left_front_hoof"
+  },
+  "urgencyLevel": "moderate",
+  "notes": "Horse showing classic signs of possible laminitis episode. Requires immediate veterinary attention and strict management protocol."
+} 

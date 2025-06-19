@@ -1,0 +1,84 @@
+# TOML - Tom's Obvious Minimal Language
+# Popular for Rust, Python packaging, and modern tools
+# Good balance between simplicity and features
+
+[database]
+host = "localhost"
+port = 5432
+database = "one_vault"
+user = "postgres"
+# password = "${DB_PASSWORD}"  # Environment variables need external tools
+
+[database.connection_pool]
+min_connections = 1
+max_connections = 10
+timeout_seconds = 30
+
+[environments.development]
+debug = true
+log_level = "DEBUG"
+auto_create_tables = true
+
+[environments.production]
+debug = false
+log_level = "INFO"
+auto_create_tables = false
+
+[security]
+password_min_length = 12
+session_timeout_minutes = 30
+max_login_attempts = 5
+
+# Arrays are clean in TOML
+supported_databases = ["postgresql", "mysql", "sqlite"]
+
+# Multi-line strings work well
+[queries]
+get_user_by_email = """
+SELECT 
+  up.first_name,
+  up.last_name,
+  up.email,
+  uas.username,
+  uas.last_login_date
+FROM auth.user_profile_s up
+JOIN auth.user_h uh ON up.user_hk = uh.user_hk
+JOIN auth.user_auth_s uas ON uh.user_hk = uas.user_hk
+WHERE up.email = %s 
+AND up.load_end_date IS NULL
+AND uas.load_end_date IS NULL
+"""
+
+get_tenant_stats = """
+SELECT 
+  COUNT(DISTINCT uh.user_hk) as user_count,
+  COUNT(DISTINCT sh.session_hk) as active_sessions,
+  MAX(uas.last_login_date) as last_activity
+FROM auth.user_h uh
+LEFT JOIN auth.user_session_l usl ON uh.user_hk = usl.user_hk
+LEFT JOIN auth.session_h sh ON usl.session_hk = sh.session_hk
+LEFT JOIN auth.user_auth_s uas ON uh.user_hk = uas.user_hk
+WHERE uh.tenant_hk = %s
+AND uas.load_end_date IS NULL
+"""
+
+# Nested structures work well
+[security.password_requirements]
+uppercase = true
+lowercase = true
+numbers = true
+special_chars = true
+min_length = 12
+
+[features]
+enable_debug_queries = false
+enable_performance_monitoring = true
+enable_audit_logging = true
+
+# TOML advantages:
+# - Comments allowed
+# - Multi-line strings
+# - Clear section structure
+# - Type safety (strings, integers, booleans, arrays)
+# - No complex escaping
+# - Growing popularity in modern tools 

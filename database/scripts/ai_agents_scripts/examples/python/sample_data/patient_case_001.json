@@ -1,0 +1,52 @@
+{
+  "patient_id": "PATIENT_001_DEMO",
+  "case_description": "Sample medical case for MDA-001 testing",
+  "symptoms": [
+    "fever",
+    "headache", 
+    "fatigue",
+    "nausea",
+    "joint_pain"
+  ],
+  "vital_signs": {
+    "temperature": 102.3,
+    "heart_rate": 95,
+    "blood_pressure": "130/85",
+    "respiratory_rate": 18,
+    "oxygen_saturation": 97
+  },
+  "lab_results": {
+    "white_blood_cell_count": 12500,
+    "c_reactive_protein": 25.3,
+    "erythrocyte_sedimentation_rate": 45
+  },
+  "medical_history": [
+    "hypertension",
+    "diabetes_type_2",
+    "previous_myocardial_infarction"
+  ],
+  "risk_factors": [
+    "age_over_65",
+    "diabetes",
+    "cardiovascular_disease",
+    "smoking_history"
+  ],
+  "current_medications": [
+    "metformin",
+    "lisinopril",
+    "atorvastatin"
+  ],
+  "allergies": [
+    "penicillin",
+    "shellfish"
+  ],
+  "demographic_info": {
+    "age": 68,
+    "gender": "M",
+    "weight_kg": 82,
+    "height_cm": 175
+  },
+  "onset_timing": "3 days ago",
+  "severity": "moderate",
+  "notes": "Patient reports symptoms started gradually and have been worsening"
+} 

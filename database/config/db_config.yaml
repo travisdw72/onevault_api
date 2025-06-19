@@ -1,0 +1,26 @@
+# One Vault Database Configuration
+database:
+  host: localhost
+  port: 5432
+  database: one_vault
+  user: postgres
+  # password comes from DB_PASSWORD environment variable
+
+# Migration settings
+migrations:
+  auto_backup: true
+  validate_before_deploy: true
+  require_rollback_script: true
+
+# Environment settings
+environments:
+  development:
+    auto_deploy: true
+    require_approval: false
+  staging:
+    auto_deploy: false
+    require_approval: true
+  production:
+    auto_deploy: false
+    require_approval: true
+    require_testing: true

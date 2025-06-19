@@ -1,0 +1,139 @@
+{
+  "timestamp": "2025-06-18T10:05:54.609886",
+  "database": "one_vault",
+  "tests_run": 23,
+  "tests_passed": 21,
+  "tests_failed": 2,
+  "critical_issues": [],
+  "warnings": [
+    "Potential conflicts in site_tracking_tables: 3 objects",
+    "Potential conflicts in site_tracking_functions: 7 objects"
+  ],
+  "recommendations": [
+    "Database is ready for site tracking deployment!",
+    "Run scripts in order: 01 \u2192 02 \u2192 03 \u2192 04 \u2192 05 \u2192 06",
+    "Review table name conflicts - may need to drop existing objects"
+  ],
+  "schema_status": {
+    "auth": {
+      "exists": true,
+      "required": true
+    },
+    "business": {
+      "exists": true,
+      "required": true
+    },
+    "raw": {
+      "exists": true,
+      "required": true
+    },
+    "staging": {
+      "exists": true,
+      "required": true
+    },
+    "api": {
+      "exists": true,
+      "required": true
+    },
+    "util": {
+      "exists": true,
+      "required": true
+    },
+    "audit": {
+      "exists": true,
+      "required": true
+    }
+  },
+  "prerequisite_status": {
+    "tenant_hub": {
+      "exists": true,
+      "critical": true,
+      "description": "Auth tenant hub table (required for tenant_hk references)"
+    },
+    "util_functions": {
+      "exists": true,
+      "critical": true,
+      "description": "Utility functions for Data Vault 2.0 operations"
+    },
+    "audit_schema": {
+      "exists": true,
+      "critical": false,
+      "description": "Audit schema for logging API activities"
+    }
+  },
+  "conflict_status": {
+    "site_tracking_tables": {
+      "conflicts_found": 3,
+      "conflicts": [
+        "auth.ip_tracking_s",
+        "auth.security_tracking_h",
+        "automation.entity_tracking"
+      ]
+    },
+    "site_tracking_functions": {
+      "conflicts_found": 7,
+      "conflicts": [
+        "util.audit_track_bridge",
+        "util.audit_track_default",
+        "util.audit_track_dispatcher",
+        "util.audit_track_hub",
+        "util.audit_track_link",
+        "util.audit_track_reference",
+        "util.audit_track_satellite"
+      ]
+    },
+    "api_endpoints": {
+      "conflicts_found": 0,
+      "conflicts": []
+    }
+  },
+  "script_readiness": {
+    "00_integration_strategy.sql": {
+      "exists": true,
+      "readable": true,
+      "size_bytes": 5550,
+      "errors": []
+    },
+    "01_create_raw_layer.sql": {
+      "exists": true,
+      "readable": true,
+      "size_bytes": 8111,
+      "errors": []
+    },
+    "02_create_staging_layer.sql": {
+      "exists": true,
+      "readable": true,
+      "size_bytes": 14608,
+      "errors": []
+    },
+    "03_create_business_hubs.sql": {
+      "exists": true,
+      "readable": true,
+      "size_bytes": 13211,
+      "errors": []
+    },
+    "04_create_business_links.sql": {
+      "exists": true,
+      "readable": true,
+      "size_bytes": 26729,
+      "errors": []
+    },
+    "05_create_business_satellites.sql": {
+      "exists": true,
+      "readable": true,
+      "size_bytes": 41532,
+      "errors": []
+    },
+    "06_create_api_layer.sql": {
+      "exists": true,
+      "readable": true,
+      "size_bytes": 28620,
+      "errors": []
+    }
+  },
+  "overall_status": "READY",
+  "test_tenant": {
+    "tenant_hk": "947e31a5ac426eb4fd93fb0545f7f3c30929f987d14813789f994abba1654c12",
+    "tenant_bk": "test-tenant-enhanced"
+  }
+}

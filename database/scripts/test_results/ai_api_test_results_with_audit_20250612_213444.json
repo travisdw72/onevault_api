@@ -1,0 +1,1721 @@
+{
+  "test_session_id": "test_session_20250612_213348_qo522i",
+  "start_time": "2025-06-12T21:33:48.230293",
+  "database_validation": {
+    "check_ai_functions_exist": {
+      "success": true,
+      "result_count": 13,
+      "results": [
+        {
+          "routine_name": "ai_acknowledge_alert",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_chat_history",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_create_session",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_get_active_alerts",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_get_observation_analytics",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_get_observations",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_log_observation",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_monitoring_acknowledge_alert",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_monitoring_get_alerts",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_monitoring_get_entity_timeline",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_monitoring_ingest",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_monitoring_system_health",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        },
+        {
+          "routine_name": "ai_secure_chat",
+          "routine_type": "FUNCTION",
+          "data_type": "jsonb",
+          "has_definition": true
+        }
+      ]
+    },
+    "check_ai_tables_exist": {
+      "success": true,
+      "result_count": 25,
+      "results": [
+        {
+          "table_schema": "ai_monitoring",
+          "table_name": "ai_analysis_h",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "ai_monitoring",
+          "table_name": "ai_analysis_results_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "ai_monitoring",
+          "table_name": "alert_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "ai_monitoring",
+          "table_name": "monitored_entity_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ai_alert_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ai_alert_h",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ai_interaction_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ai_interaction_h",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ai_interaction_security_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ai_observation_alert_l",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ai_observation_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ai_observation_h",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ai_session_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ai_session_h",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ai_session_interaction_l",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "asset_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "entity_relationship_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "ip_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "monitored_entity_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "monitoring_sensor_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "tax_record_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "trip_details_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "user_ai_interaction_l",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "user_ai_observation_l",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "business",
+          "table_name": "user_ai_session_l",
+          "table_type": "BASE TABLE"
+        }
+      ]
+    },
+    "get_ai_session_structure": {
+      "success": true,
+      "result_count": 0,
+      "results": []
+    },
+    "check_recent_ai_activity": {
+      "success": false,
+      "error": "relation \"ai.conversation_h\" does not exist\nLINE 6:         FROM ai.conversation_h \n                     ^\n",
+      "error_code": "42P01"
+    },
+    "validate_ai_monitoring_schema": {
+      "success": true,
+      "result_count": 12,
+      "results": [
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "ai_analysis_h",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        },
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "ai_analysis_results_s",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        },
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "alert_details_s",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        },
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "alert_h",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        },
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "analysis_alert_l",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        },
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "entity_analysis_l",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        },
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "monitored_entity_details_s",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        },
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "monitored_entity_h",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        },
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "zt_access_policies_h",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        },
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "zt_access_policies_s",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        },
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "zt_security_events_h",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        },
+        {
+          "schemaname": "ai_monitoring",
+          "tablename": "zt_security_events_s",
+          "tableowner": "postgres",
+          "hasindexes": true,
+          "hasrules": false,
+          "hastriggers": true
+        }
+      ]
+    },
+    "check_audit_tables_exist": {
+      "success": true,
+      "result_count": 4,
+      "results": [
+        {
+          "table_schema": "audit",
+          "table_name": "audit_detail_s",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "audit",
+          "table_name": "audit_event_h",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "audit",
+          "table_name": "error_log_h",
+          "table_type": "BASE TABLE"
+        },
+        {
+          "table_schema": "audit",
+          "table_name": "error_log_s",
+          "table_type": "BASE TABLE"
+        }
+      ]
+    },
+    "validate_audit_event_structure": {
+      "success": true,
+      "result_count": 44,
+      "results": [
+        {
+          "column_name": "ai_security_event_hk",
+          "data_type": "bytea",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "ai_security_event_bk",
+          "data_type": "character varying",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "tenant_hk",
+          "data_type": "bytea",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "load_date",
+          "data_type": "timestamp with time zone",
+          "is_nullable": "YES",
+          "column_default": "util.current_load_date()"
+        },
+        {
+          "column_name": "record_source",
+          "data_type": "character varying",
+          "is_nullable": "NO",
+          "column_default": "util.get_record_source()"
+        },
+        {
+          "column_name": "ai_security_event_hk",
+          "data_type": "bytea",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "load_date",
+          "data_type": "timestamp with time zone",
+          "is_nullable": "NO",
+          "column_default": "util.current_load_date()"
+        },
+        {
+          "column_name": "load_end_date",
+          "data_type": "timestamp with time zone",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "hash_diff",
+          "data_type": "bytea",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "event_type",
+          "data_type": "character varying",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "severity_level",
+          "data_type": "character varying",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "event_timestamp",
+          "data_type": "timestamp with time zone",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "user_context",
+          "data_type": "jsonb",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "violation_details",
+          "data_type": "jsonb",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "action_taken",
+          "data_type": "character varying",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "investigation_status",
+          "data_type": "character varying",
+          "is_nullable": "YES",
+          "column_default": "'pending'::character varying"
+        },
+        {
+          "column_name": "resolution_notes",
+          "data_type": "text",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "record_source",
+          "data_type": "character varying",
+          "is_nullable": "NO",
+          "column_default": "util.get_record_source()"
+        },
+        {
+          "column_name": "audit_event_hk",
+          "data_type": "bytea",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "audit_event_bk",
+          "data_type": "character varying",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "tenant_hk",
+          "data_type": "bytea",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "load_date",
+          "data_type": "timestamp with time zone",
+          "is_nullable": "YES",
+          "column_default": "util.current_load_date()"
+        },
+        {
+          "column_name": "record_source",
+          "data_type": "character varying",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "security_event_hk",
+          "data_type": "bytea",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "security_event_bk",
+          "data_type": "character varying",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "tenant_hk",
+          "data_type": "bytea",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "load_date",
+          "data_type": "timestamp with time zone",
+          "is_nullable": "YES",
+          "column_default": "util.current_load_date()"
+        },
+        {
+          "column_name": "record_source",
+          "data_type": "character varying",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "security_event_hk",
+          "data_type": "bytea",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "load_date",
+          "data_type": "timestamp with time zone",
+          "is_nullable": "NO",
+          "column_default": "util.current_load_date()"
+        },
+        {
+          "column_name": "load_end_date",
+          "data_type": "timestamp with time zone",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "hash_diff",
+          "data_type": "bytea",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "event_type",
+          "data_type": "character varying",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "event_severity",
+          "data_type": "character varying",
+          "is_nullable": "NO",
+          "column_default": "'INFO'::character varying"
+        },
+        {
+          "column_name": "event_description",
+          "data_type": "text",
+          "is_nullable": "NO",
+          "column_default": null
+        },
+        {
+          "column_name": "source_ip_address",
+          "data_type": "inet",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "user_agent",
+          "data_type": "text",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "affected_user_hk",
+          "data_type": "bytea",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "affected_session_hk",
+          "data_type": "bytea",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "threat_level",
+          "data_type": "character varying",
+          "is_nullable": "YES",
+          "column_default": "'LOW'::character varying"
+        },
+        {
+          "column_name": "investigation_status",
+          "data_type": "character varying",
+          "is_nullable": "YES",
+          "column_default": "'PENDING'::character varying"
+        },
+        {
+          "column_name": "investigation_notes",
+          "data_type": "text",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "event_metadata",
+          "data_type": "jsonb",
+          "is_nullable": "YES",
+          "column_default": null
+        },
+        {
+          "column_name": "record_source",
+          "data_type": "character varying",
+          "is_nullable": "NO",
+          "column_default": null
+        }
+      ]
+    },
+    "check_recent_audit_activity": {
+      "success": false,
+      "error": "column reference \"load_date\" is ambiguous\nLINE 4:             MAX(load_date) as last_audit_event,\n                        ^\n",
+      "error_code": "42702"
+    },
+    "validate_ai_audit_integration": {
+      "success": true,
+      "result_count": 1,
+      "results": [
+        {
+          "ai_related_events": 0,
+          "last_ai_event": null
+        }
+      ]
+    },
+    "validate_audit_retention_policy": {
+      "success": true,
+      "result_count": 2,
+      "results": [
+        {
+          "table_name": "audit_detail_s",
+          "total_records": 17,
+          "oldest_record": "2025-06-01 20:03:38.827152-07:00",
+          "newest_record": "2025-06-10 14:58:15.590502-07:00",
+          "records_beyond_retention": 0
+        },
+        {
+          "table_name": "audit_event_h",
+          "total_records": 17,
+          "oldest_record": "2025-06-01 20:03:38.827152-07:00",
+          "newest_record": "2025-06-10 14:58:15.590502-07:00",
+          "records_beyond_retention": 0
+        }
+      ]
+    }
+  },
+  "test_categories": {
+    "core_ai_chat": {
+      "category_name": "core_ai_chat",
+      "total_tests": 3,
+      "successful_tests": 0,
+      "failed_tests": 3,
+      "audit_validation_summary": {
+        "tests_with_audit_validation": 3,
+        "audit_validations_passed": 0,
+        "audit_validations_failed": 3
+      },
+      "test_results": [
+        {
+          "test_name": "ai_secure_chat_basic",
+          "description": "Test basic AI chat functionality",
+          "function": "api.ai_secure_chat",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:08.129099",
+          "success": false,
+          "response": {
+            "message": "Question is required",
+            "success": false,
+            "error_code": "MISSING_QUESTION",
+            "_test_metadata": {
+              "execution_time_ms": 10.48,
+              "function_called": "api.ai_secure_chat",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_chat_request",
+              "ai_response_generated"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "ai_chat_request",
+              "ai_response_generated"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "ai_chat_request",
+                "ai_response_generated"
+              ],
+              "expected_events": [
+                "ai_chat_request",
+                "ai_response_generated"
+              ]
+            }
+          ],
+          "execution_time_ms": 2011.11,
+          "end_time": "2025-06-12T21:34:10.140213"
+        },
+        {
+          "test_name": "ai_create_session_valid",
+          "description": "Create new AI chat session",
+          "function": "api.ai_create_session",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:10.140213",
+          "success": false,
+          "response": {
+            "message": "User ID and Tenant ID are required",
+            "success": false,
+            "error_code": "MISSING_PARAMETERS",
+            "_test_metadata": {
+              "execution_time_ms": 0.0,
+              "function_called": "api.ai_create_session",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_session_created",
+              "user_context_logged"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "ai_session_created",
+              "user_context_logged"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "ai_session_created",
+                "user_context_logged"
+              ],
+              "expected_events": [
+                "ai_session_created",
+                "user_context_logged"
+              ]
+            }
+          ],
+          "execution_time_ms": 2003.63,
+          "end_time": "2025-06-12T21:34:12.143848"
+        },
+        {
+          "test_name": "ai_chat_history_retrieval",
+          "description": "Retrieve AI chat history for user",
+          "function": "api.ai_chat_history",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:12.143848",
+          "success": false,
+          "response": {
+            "message": "User ID and Tenant ID are required",
+            "success": false,
+            "error_code": "MISSING_PARAMETERS",
+            "_test_metadata": {
+              "execution_time_ms": 0.0,
+              "function_called": "api.ai_chat_history",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_history_accessed",
+              "data_retrieval_logged"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "ai_history_accessed",
+              "data_retrieval_logged"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "audit_events_found": 0,
+              "event_types_found": [],
+              "recent_events": [],
+              "interaction_ids": [],
+              "validation_timestamp": "2025-06-12T21:34:14.148573"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "ai_history_accessed",
+                "data_retrieval_logged"
+              ],
+              "expected_events": [
+                "ai_history_accessed",
+                "data_retrieval_logged"
+              ]
+            }
+          ],
+          "execution_time_ms": 2004.73,
+          "end_time": "2025-06-12T21:34:14.148573"
+        }
+      ],
+      "start_time": "2025-06-12T21:34:08.129099",
+      "end_time": "2025-06-12T21:34:14.148573",
+      "success_rate": 0.0
+    },
+    "ai_observations": {
+      "category_name": "ai_observations",
+      "total_tests": 5,
+      "successful_tests": 0,
+      "failed_tests": 5,
+      "audit_validation_summary": {
+        "tests_with_audit_validation": 5,
+        "audit_validations_passed": 0,
+        "audit_validations_failed": 5
+      },
+      "test_results": [
+        {
+          "test_name": "ai_log_observation_business",
+          "description": "Log business observation through AI system",
+          "function": "api.ai_log_observation",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:14.148573",
+          "success": false,
+          "response": {
+            "message": "Missing required parameters: tenantId, observationType, severityLevel",
+            "success": false,
+            "error_code": "MISSING_PARAMETERS",
+            "_test_metadata": {
+              "execution_time_ms": 0.0,
+              "function_called": "api.ai_log_observation",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_observation_logged",
+              "business_data_analyzed"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "business_data_analyzed",
+              "ai_observation_logged"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "audit_events_found": 0,
+              "event_types_found": [],
+              "recent_events": [],
+              "observation_ids": [],
+              "entity_ids": [],
+              "validation_timestamp": "2025-06-12T21:34:16.153121"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "business_data_analyzed",
+                "ai_observation_logged"
+              ],
+              "expected_events": [
+                "ai_observation_logged",
+                "business_data_analyzed"
+              ]
+            }
+          ],
+          "execution_time_ms": 2004.55,
+          "end_time": "2025-06-12T21:34:16.153121"
+        },
+        {
+          "test_name": "ai_get_observations_filtered",
+          "description": "Retrieve filtered AI observations",
+          "function": "api.ai_get_observations",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:16.155686",
+          "success": false,
+          "response": {
+            "message": "Invalid tenant ID",
+            "success": false,
+            "error_code": "INVALID_TENANT",
+            "_test_metadata": {
+              "execution_time_ms": 0.0,
+              "function_called": "api.ai_get_observations",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_observations_retrieved",
+              "filtered_data_access"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "filtered_data_access",
+              "ai_observations_retrieved"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "filtered_data_access",
+                "ai_observations_retrieved"
+              ],
+              "expected_events": [
+                "ai_observations_retrieved",
+                "filtered_data_access"
+              ]
+            }
+          ],
+          "execution_time_ms": 2002.02,
+          "end_time": "2025-06-12T21:34:18.157709"
+        },
+        {
+          "test_name": "ai_get_active_alerts_dashboard",
+          "description": "Get active alerts for dashboard display",
+          "function": "api.ai_get_active_alerts",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:18.157709",
+          "success": false,
+          "response": {
+            "message": "Invalid tenant ID",
+            "success": false,
+            "error_code": "INVALID_TENANT",
+            "_test_metadata": {
+              "execution_time_ms": 0.0,
+              "function_called": "api.ai_get_active_alerts",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_alerts_accessed",
+              "dashboard_data_retrieved"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "dashboard_data_retrieved",
+              "ai_alerts_accessed"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "dashboard_data_retrieved",
+                "ai_alerts_accessed"
+              ],
+              "expected_events": [
+                "ai_alerts_accessed",
+                "dashboard_data_retrieved"
+              ]
+            }
+          ],
+          "execution_time_ms": 2002.82,
+          "end_time": "2025-06-12T21:34:20.160526"
+        },
+        {
+          "test_name": "ai_acknowledge_alert_workflow",
+          "description": "Acknowledge alert and update status",
+          "function": "api.ai_acknowledge_alert",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:20.161727",
+          "success": false,
+          "response": {
+            "message": "Missing required parameters: alertId, acknowledgedBy, tenantId",
+            "success": false,
+            "error_code": "MISSING_PARAMETERS",
+            "_test_metadata": {
+              "execution_time_ms": 1.0,
+              "function_called": "api.ai_acknowledge_alert",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_alert_acknowledged",
+              "alert_status_changed"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "alert_status_changed",
+              "ai_alert_acknowledged"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "alert_status_changed",
+                "ai_alert_acknowledged"
+              ],
+              "expected_events": [
+                "ai_alert_acknowledged",
+                "alert_status_changed"
+              ]
+            }
+          ],
+          "execution_time_ms": 2001.41,
+          "end_time": "2025-06-12T21:34:22.163136"
+        },
+        {
+          "test_name": "ai_get_observation_analytics_insights",
+          "description": "Get comprehensive observation analytics",
+          "function": "api.ai_get_observation_analytics",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:22.164151",
+          "success": false,
+          "response": {
+            "message": "Invalid tenant ID",
+            "success": false,
+            "error_code": "INVALID_TENANT",
+            "_test_metadata": {
+              "execution_time_ms": 1.0,
+              "function_called": "api.ai_get_observation_analytics",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_analytics_generated",
+              "comprehensive_analysis_performed"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "comprehensive_analysis_performed",
+              "ai_analytics_generated"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "comprehensive_analysis_performed",
+                "ai_analytics_generated"
+              ],
+              "expected_events": [
+                "ai_analytics_generated",
+                "comprehensive_analysis_performed"
+              ]
+            }
+          ],
+          "execution_time_ms": 2002.5,
+          "end_time": "2025-06-12T21:34:24.166646"
+        }
+      ],
+      "start_time": "2025-06-12T21:34:14.148573",
+      "end_time": "2025-06-12T21:34:24.166646",
+      "success_rate": 0.0
+    },
+    "ai_monitoring": {
+      "category_name": "ai_monitoring",
+      "total_tests": 5,
+      "successful_tests": 0,
+      "failed_tests": 5,
+      "audit_validation_summary": {
+        "tests_with_audit_validation": 5,
+        "audit_validations_passed": 0,
+        "audit_validations_failed": 5
+      },
+      "test_results": [
+        {
+          "test_name": "ai_monitoring_ingest_data",
+          "description": "Ingest monitoring data through AI system",
+          "function": "api.ai_monitoring_ingest",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:24.166646",
+          "success": false,
+          "response": {
+            "message": "Missing required parameters: token, entity_bk, monitoring_data",
+            "success": false,
+            "timestamp": "2025-06-12T21:34:24.169616-07:00",
+            "error_code": "MISSING_PARAMETERS",
+            "_test_metadata": {
+              "execution_time_ms": 0.0,
+              "function_called": "api.ai_monitoring_ingest",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_monitoring_data_ingested",
+              "system_metrics_processed"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "system_metrics_processed",
+              "ai_monitoring_data_ingested"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "system_metrics_processed",
+                "ai_monitoring_data_ingested"
+              ],
+              "expected_events": [
+                "ai_monitoring_data_ingested",
+                "system_metrics_processed"
+              ]
+            }
+          ],
+          "execution_time_ms": 2004.33,
+          "end_time": "2025-06-12T21:34:26.170977"
+        },
+        {
+          "test_name": "ai_monitoring_get_alerts_management",
+          "description": "Get monitoring alerts for management dashboard",
+          "function": "api.ai_monitoring_get_alerts",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:26.170977",
+          "success": false,
+          "response": {
+            "error": "QUERY_FAILED",
+            "message": "Failed to retrieve alerts",
+            "success": false,
+            "_test_metadata": {
+              "execution_time_ms": 4.54,
+              "function_called": "api.ai_monitoring_get_alerts",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_monitoring_alerts_accessed",
+              "management_dashboard_viewed"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "ai_monitoring_alerts_accessed",
+              "management_dashboard_viewed"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "ai_monitoring_alerts_accessed",
+                "management_dashboard_viewed"
+              ],
+              "expected_events": [
+                "ai_monitoring_alerts_accessed",
+                "management_dashboard_viewed"
+              ]
+            }
+          ],
+          "execution_time_ms": 2005.15,
+          "end_time": "2025-06-12T21:34:28.176127"
+        },
+        {
+          "test_name": "ai_monitoring_acknowledge_alert_system",
+          "description": "Acknowledge monitoring system alert",
+          "function": "api.ai_monitoring_acknowledge_alert",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:28.178317",
+          "success": false,
+          "response": {
+            "error": "INVALID_REQUEST",
+            "message": "Missing required fields: auth_token, alert_id",
+            "success": false,
+            "_test_metadata": {
+              "execution_time_ms": 0.0,
+              "function_called": "api.ai_monitoring_acknowledge_alert",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_monitoring_alert_acknowledged",
+              "system_admin_action"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "ai_monitoring_alert_acknowledged",
+              "system_admin_action"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "ai_monitoring_alert_acknowledged",
+                "system_admin_action"
+              ],
+              "expected_events": [
+                "ai_monitoring_alert_acknowledged",
+                "system_admin_action"
+              ]
+            }
+          ],
+          "execution_time_ms": 2005.34,
+          "end_time": "2025-06-12T21:34:30.183659"
+        },
+        {
+          "test_name": "ai_monitoring_get_entity_timeline_analysis",
+          "description": "Get entity timeline for analysis",
+          "function": "api.ai_monitoring_get_entity_timeline",
+          "test_type": "functional",
+          "start_time": "2025-06-12T21:34:30.184660",
+          "success": false,
+          "response": {
+            "error": "TIMELINE_QUERY_FAILED",
+            "message": "Failed to retrieve entity timeline",
+            "success": false,
+            "_test_metadata": {
+              "execution_time_ms": 3.22,
+              "function_called": "api.ai_monitoring_get_entity_timeline",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_timeline_analysis_performed",
+              "entity_history_accessed"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "ai_timeline_analysis_performed",
+              "entity_history_accessed"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "ai_timeline_analysis_performed",
+                "entity_history_accessed"
+              ],
+              "expected_events": [
+                "ai_timeline_analysis_performed",
+                "entity_history_accessed"
+              ]
+            }
+          ],
+          "execution_time_ms": 2007.44,
+          "end_time": "2025-06-12T21:34:32.192105"
+        },
+        {
+          "test_name": "ai_monitoring_system_health_check",
+          "description": "Check AI monitoring system health",
+          "function": "api.ai_monitoring_system_health",
+          "test_type": "health_check",
+          "start_time": "2025-06-12T21:34:32.197143",
+          "success": false,
+          "response": {
+            "error": "HEALTH_CHECK_FAILED",
+            "message": "System health check failed",
+            "success": false,
+            "_test_metadata": {
+              "execution_time_ms": 2.1,
+              "function_called": "api.ai_monitoring_system_health",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_system_health_checked",
+              "performance_metrics_accessed"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "performance_metrics_accessed",
+              "ai_system_health_checked"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "performance_metrics_accessed",
+                "ai_system_health_checked"
+              ],
+              "expected_events": [
+                "ai_system_health_checked",
+                "performance_metrics_accessed"
+              ]
+            }
+          ],
+          "execution_time_ms": 2007.01,
+          "end_time": "2025-06-12T21:34:34.204155"
+        }
+      ],
+      "start_time": "2025-06-12T21:34:24.166646",
+      "end_time": "2025-06-12T21:34:34.206255",
+      "success_rate": 0.0
+    },
+    "audit_trail_validation": {
+      "category_name": "audit_trail_validation",
+      "total_tests": 3,
+      "successful_tests": 0,
+      "failed_tests": 3,
+      "audit_validation_summary": {
+        "tests_with_audit_validation": 3,
+        "audit_validations_passed": 0,
+        "audit_validations_failed": 3
+      },
+      "test_results": [
+        {
+          "test_name": "ai_audit_trail_comprehensive",
+          "description": "Test comprehensive audit trail logging for AI operations",
+          "function": "api.ai_secure_chat",
+          "test_type": "audit_validation",
+          "start_time": "2025-06-12T21:34:34.208262",
+          "success": false,
+          "response": {
+            "message": "Question is required",
+            "success": false,
+            "error_code": "MISSING_QUESTION",
+            "_test_metadata": {
+              "execution_time_ms": 4.74,
+              "function_called": "api.ai_secure_chat",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_chat_request",
+              "sensitive_data_access",
+              "financial_data_processed",
+              "compliance_check_performed",
+              "ai_response_generated",
+              "audit_trail_created"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "compliance_check_performed",
+              "audit_trail_created",
+              "sensitive_data_access",
+              "ai_chat_request",
+              "financial_data_processed",
+              "ai_response_generated"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "compliance_check_performed",
+                "audit_trail_created",
+                "sensitive_data_access",
+                "ai_chat_request",
+                "financial_data_processed",
+                "ai_response_generated"
+              ],
+              "expected_events": [
+                "ai_chat_request",
+                "sensitive_data_access",
+                "financial_data_processed",
+                "compliance_check_performed",
+                "ai_response_generated",
+                "audit_trail_created"
+              ]
+            }
+          ],
+          "execution_time_ms": 2010.29,
+          "end_time": "2025-06-12T21:34:36.218553"
+        },
+        {
+          "test_name": "ai_audit_data_access_tracking",
+          "description": "Test audit trail for data access patterns",
+          "function": "api.ai_get_observations",
+          "test_type": "audit_validation",
+          "start_time": "2025-06-12T21:34:36.221551",
+          "success": false,
+          "response": {
+            "message": "Invalid tenant ID",
+            "success": false,
+            "error_code": "INVALID_TENANT",
+            "_test_metadata": {
+              "execution_time_ms": 4.11,
+              "function_called": "api.ai_get_observations",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_data_access_requested",
+              "entity_data_queried",
+              "sensitive_metrics_accessed",
+              "compliance_reason_logged",
+              "data_access_completed"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "data_access_completed",
+              "ai_data_access_requested",
+              "entity_data_queried",
+              "compliance_reason_logged",
+              "sensitive_metrics_accessed"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "data_access_completed",
+                "ai_data_access_requested",
+                "entity_data_queried",
+                "compliance_reason_logged",
+                "sensitive_metrics_accessed"
+              ],
+              "expected_events": [
+                "ai_data_access_requested",
+                "entity_data_queried",
+                "sensitive_metrics_accessed",
+                "compliance_reason_logged",
+                "data_access_completed"
+              ]
+            }
+          ],
+          "execution_time_ms": 2006.3,
+          "end_time": "2025-06-12T21:34:38.227850"
+        },
+        {
+          "test_name": "ai_audit_user_activity_tracking",
+          "description": "Test audit trail for user activity tracking",
+          "function": "api.ai_create_session",
+          "test_type": "audit_validation",
+          "start_time": "2025-06-12T21:34:38.231767",
+          "success": false,
+          "response": {
+            "message": "User ID and Tenant ID are required",
+            "success": false,
+            "error_code": "MISSING_PARAMETERS",
+            "_test_metadata": {
+              "execution_time_ms": 1.0,
+              "function_called": "api.ai_create_session",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_session_creation_requested",
+              "user_identity_verified",
+              "privilege_level_validated",
+              "session_metadata_logged",
+              "compliance_flags_set",
+              "audit_session_linked"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "user_identity_verified",
+              "audit_session_linked",
+              "ai_session_creation_requested",
+              "compliance_flags_set",
+              "privilege_level_validated",
+              "session_metadata_logged"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "user_identity_verified",
+                "audit_session_linked",
+                "ai_session_creation_requested",
+                "compliance_flags_set",
+                "privilege_level_validated",
+                "session_metadata_logged"
+              ],
+              "expected_events": [
+                "ai_session_creation_requested",
+                "user_identity_verified",
+                "privilege_level_validated",
+                "session_metadata_logged",
+                "compliance_flags_set",
+                "audit_session_linked"
+              ]
+            }
+          ],
+          "execution_time_ms": 2002.33,
+          "end_time": "2025-06-12T21:34:40.234098"
+        }
+      ],
+      "start_time": "2025-06-12T21:34:34.207256",
+      "end_time": "2025-06-12T21:34:40.236139",
+      "success_rate": 0.0
+    },
+    "error_handling": {
+      "category_name": "error_handling",
+      "total_tests": 2,
+      "successful_tests": 0,
+      "failed_tests": 2,
+      "audit_validation_summary": {
+        "tests_with_audit_validation": 2,
+        "audit_validations_passed": 0,
+        "audit_validations_failed": 2
+      },
+      "test_results": [
+        {
+          "test_name": "ai_chat_invalid_session",
+          "description": "Test AI chat with invalid session token",
+          "function": "api.ai_secure_chat",
+          "test_type": "error_handling",
+          "start_time": "2025-06-12T21:34:40.240177",
+          "success": false,
+          "response": {
+            "message": "Question is required",
+            "success": false,
+            "error_code": "MISSING_QUESTION",
+            "_test_metadata": {
+              "execution_time_ms": 3.71,
+              "function_called": "api.ai_secure_chat",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_invalid_session_attempt",
+              "authentication_failure"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "authentication_failure",
+              "ai_invalid_session_attempt"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "validation_error": "column ads.event_type does not exist\nLINE 3:                         ads.event_type,\n                                ^\n"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "authentication_failure",
+                "ai_invalid_session_attempt"
+              ],
+              "expected_events": [
+                "ai_invalid_session_attempt",
+                "authentication_failure"
+              ]
+            }
+          ],
+          "execution_time_ms": 2007.13,
+          "end_time": "2025-06-12T21:34:42.247312"
+        },
+        {
+          "test_name": "ai_observation_missing_data",
+          "description": "Test observation logging with missing required data",
+          "function": "api.ai_log_observation",
+          "test_type": "error_handling",
+          "start_time": "2025-06-12T21:34:42.249312",
+          "success": false,
+          "response": {
+            "message": "Missing required parameters: tenantId, observationType, severityLevel",
+            "success": false,
+            "error_code": "MISSING_PARAMETERS",
+            "_test_metadata": {
+              "execution_time_ms": 1.0,
+              "function_called": "api.ai_log_observation",
+              "test_session_id": "test_session_20250612_213348_qo522i"
+            }
+          },
+          "audit_validation": {
+            "audit_validation_performed": true,
+            "expected_events": [
+              "ai_validation_failure",
+              "incomplete_data_rejected"
+            ],
+            "events_found": [],
+            "events_missing": [
+              "ai_validation_failure",
+              "incomplete_data_rejected"
+            ],
+            "audit_trail_complete": false,
+            "audit_details": {
+              "audit_events_found": 0,
+              "event_types_found": [],
+              "recent_events": [],
+              "observation_ids": [],
+              "entity_ids": [],
+              "validation_timestamp": "2025-06-12T21:34:44.254641"
+            },
+            "compliance_validated": false
+          },
+          "errors": [
+            {
+              "error_type": "audit_validation_failure",
+              "missing_events": [
+                "ai_validation_failure",
+                "incomplete_data_rejected"
+              ],
+              "expected_events": [
+                "ai_validation_failure",
+                "incomplete_data_rejected"
+              ]
+            }
+          ],
+          "execution_time_ms": 2005.33,
+          "end_time": "2025-06-12T21:34:44.254641"
+        }
+      ],
+      "start_time": "2025-06-12T21:34:40.240177",
+      "end_time": "2025-06-12T21:34:44.255539",
+      "success_rate": 0.0
+    }
+  },
+  "overall_summary": {
+    "total_categories": 5,
+    "total_tests": 18,
+    "successful_tests": 0,
+    "failed_tests": 18,
+    "overall_success_rate": 0.0,
+    "total_execution_time": "0:00:56.026583"
+  },
+  "audit_trail_summary": {
+    "audit_validation_enabled": true,
+    "total_tests_with_audit_validation": 18,
+    "audit_validations_passed": 0,
+    "audit_validations_failed": 18,
+    "audit_success_rate": 0.0
+  },
+  "end_time": "2025-06-12T21:34:44.256876"
+}

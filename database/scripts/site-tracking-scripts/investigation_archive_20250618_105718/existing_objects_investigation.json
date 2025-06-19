@@ -1,0 +1,69 @@
+{
+  "auth.ip_tracking_s": {
+    "exists": true,
+    "purpose": "Security IP tracking - monitors IP addresses for suspicious activity",
+    "records": 0,
+    "integration_potential": "HIGH - Could integrate for bot detection and rate limiting"
+  },
+  "auth.security_tracking_h": {
+    "exists": true,
+    "purpose": "Security tracking hub - likely for auth security events",
+    "records": 0,
+    "integration_potential": "MEDIUM - Could use for security event correlation"
+  },
+  "automation.entity_tracking": {
+    "exists": true,
+    "purpose": "Business entity automation tracking",
+    "records": 0,
+    "integration_potential": "LOW - Different domain (automation vs web tracking)"
+  },
+  "util.audit_track_functions": {
+    "exists": true,
+    "count": 7,
+    "functions": {
+      "audit_track_bridge": {
+        "type": "FUNCTION",
+        "purpose": "Data Vault 2.0 audit tracking function",
+        "integration_potential": "HIGH - Data Vault 2.0 audit functions"
+      },
+      "audit_track_default": {
+        "type": "FUNCTION",
+        "purpose": "Data Vault 2.0 audit tracking function",
+        "integration_potential": "HIGH - Data Vault 2.0 audit functions"
+      },
+      "audit_track_dispatcher": {
+        "type": "FUNCTION",
+        "purpose": "Data Vault 2.0 audit tracking function",
+        "integration_potential": "HIGH - Data Vault 2.0 audit functions"
+      },
+      "audit_track_hub": {
+        "type": "FUNCTION",
+        "purpose": "-- Generate audit event business key",
+        "integration_potential": "HIGH - Data Vault 2.0 audit functions"
+      },
+      "audit_track_link": {
+        "type": "FUNCTION",
+        "purpose": "-- Generate audit event business key",
+        "integration_potential": "HIGH - Data Vault 2.0 audit functions"
+      },
+      "audit_track_reference": {
+        "type": "FUNCTION",
+        "purpose": "Data Vault 2.0 audit tracking function",
+        "integration_potential": "HIGH - Data Vault 2.0 audit functions"
+      },
+      "audit_track_satellite": {
+        "type": "FUNCTION",
+        "purpose": "Data Vault 2.0 audit tracking function",
+        "integration_potential": "HIGH - Data Vault 2.0 audit functions"
+      }
+    },
+    "integration_potential": "HIGH - These are Data Vault 2.0 audit functions we should use"
+  },
+  "recommendations": [
+    "INTEGRATE: Use auth.ip_tracking_s for web tracking security",
+    "INTEGRATE: Use auth.security_tracking_h for security events",
+    "USE: util.audit_track_* functions are our audit standards",
+    "SEPARATE: automation.entity_tracking is different domain"
+  ],
+  "investigation_date": "2025-06-18T09:35:42.399501"
+}

@@ -1,0 +1,134 @@
+---
+title: Database Version Control Architecture Comparison
+---
+graph TB
+    subgraph COMPARISON["🏗️ Architecture Comparison"]
+        
+        subgraph GIT_ONLY["❌ Git-Only Approach (Limited)"]
+            GO_FILES[SQL Files in Git<br/>📄 Migration scripts<br/>📄 Schema definitions]
+            GO_ISSUES[❌ Issues:<br/>• No execution state tracking<br/>• No runtime validation<br/>• Environment drift<br/>• Manual rollback<br/>• No performance monitoring]
+        end
+        
+        subgraph DB_ONLY["❌ Database-Only Approach (Limited)"]
+            DO_EXEC[Database Execution<br/>🗄️ Migration tracking<br/>🗄️ State management]
+            DO_ISSUES[❌ Issues:<br/>• No code collaboration<br/>• Limited branching<br/>• Harder code reviews<br/>• No Git integration<br/>• Manual coordination]
+        end
+        
+        subgraph HYBRID["✅ One Vault Hybrid Approach (Enterprise)"]
+            
+            subgraph GIT_LAYER["🔄 Git Layer (Collaboration)"]
+                GIT_BRANCH[Feature Branching<br/>git checkout -b feature/analytics]
+                GIT_REVIEW[Code Reviews<br/>Pull Request Process]
+                GIT_MERGE[Merge Strategies<br/>develop → main]
+                GIT_TAG[Release Tags<br/>v1.1.0 coordination]
+            end
+            
+            subgraph DB_LAYER["🗄️ Database Layer (Execution)"]
+                DB_TRACK[Migration Tracking<br/>version_control.schema_migration_s]
+                DB_EXEC[Execution State<br/>SUCCESS/FAILURE/ROLLBACK]
+                DB_ENV[Environment Management<br/>dev → staging → production]
+                DB_PERF[Performance Monitoring<br/>execution_time_ms]
+            end
+            
+            subgraph INTEGRATION["🔗 Integration Benefits"]
+                COORD[Coordinated Deployments<br/>Code + Database together]
+                AUDIT[Complete Audit Trail<br/>Git history + DB execution]
+                ROLLBACK[Tested Rollback<br/>Git revert + DB rollback]
+                COMPLIANCE[Enterprise Compliance<br/>HIPAA + SOX + GDPR]
+            end
+        end
+    end
+    
+    subgraph ENTERPRISE["🏢 Enterprise Requirements"]
+        REQ_COLLAB[Team Collaboration<br/>Multiple developers<br/>Code reviews<br/>Branching strategies]
+        REQ_DEPLOY[Safe Deployments<br/>Multi-environment<br/>Rollback capabilities<br/>Performance monitoring]
+        REQ_COMPLIANCE[Compliance & Audit<br/>Change tracking<br/>Approval workflows<br/>Regulatory requirements]
+        REQ_SCALE[Scalability<br/>Large teams<br/>Complex applications<br/>High availability]
+    end
+    
+    subgraph YOUR_VAULT["🏆 Your One Vault Implementation"]
+        
+        subgraph CURRENT_FEATURES["✅ Current Features"]
+            FEAT_DV2[Data Vault 2.0<br/>382 tables<br/>29 schemas<br/>97% health score]
+            FEAT_TENANT[Multi-Tenant<br/>Complete isolation<br/>Secure by design]
+            FEAT_COMPLIANCE[Compliance Ready<br/>HIPAA/GDPR/SOX<br/>Audit framework]
+            FEAT_PERF[Performance Optimized<br/>Strategic indexing<br/>351 functions]
+        end
+        
+        subgraph TOOLS_PROVIDED["🛠️ Tools Provided"]
+            TOOL_VERSION[Database Version Manager<br/>db_version_manager.py]
+            TOOL_ENHANCED[Enhanced Version Control<br/>enhanced_database_version_control.sql]
+            TOOL_MIGRATION[Migration Templates<br/>Forward + Rollback scripts]
+            TOOL_SNAPSHOT[Schema Snapshots<br/>Point-in-time comparison]
+        end
+        
+        subgraph WORKFLOW_READY["🚀 Workflow Ready"]
+            WORK_GIT[Git Integration<br/>Feature branches<br/>Pull requests<br/>Code reviews]
+            WORK_DB[Database Execution<br/>State tracking<br/>Environment management<br/>Performance monitoring]
+            WORK_CICD[CI/CD Ready<br/>Automated testing<br/>Pipeline integration<br/>Deployment automation]
+            WORK_ENTERPRISE[Enterprise Grade<br/>Approval workflows<br/>Compliance reporting<br/>Rollback procedures]
+        end
+    end
+    
+    %% Comparison Connections
+    GO_FILES --> GO_ISSUES
+    DO_EXEC --> DO_ISSUES
+    
+    %% Hybrid Layer Connections
+    GIT_BRANCH --> GIT_REVIEW
+    GIT_REVIEW --> GIT_MERGE
+    GIT_MERGE --> GIT_TAG
+    
+    DB_TRACK --> DB_EXEC
+    DB_EXEC --> DB_ENV
+    DB_ENV --> DB_PERF
+    
+    GIT_TAG --> COORD
+    DB_PERF --> COORD
+    COORD --> AUDIT
+    AUDIT --> ROLLBACK
+    ROLLBACK --> COMPLIANCE
+    
+    %% Enterprise Requirements
+    REQ_COLLAB --> GIT_LAYER
+    REQ_DEPLOY --> DB_LAYER
+    REQ_COMPLIANCE --> INTEGRATION
+    REQ_SCALE --> INTEGRATION
+    
+    %% Your Implementation
+    FEAT_DV2 --> TOOLS_PROVIDED
+    FEAT_TENANT --> TOOLS_PROVIDED
+    FEAT_COMPLIANCE --> TOOLS_PROVIDED
+    FEAT_PERF --> TOOLS_PROVIDED
+    
+    TOOL_VERSION --> WORK_GIT
+    TOOL_ENHANCED --> WORK_DB
+    TOOL_MIGRATION --> WORK_CICD
+    TOOL_SNAPSHOT --> WORK_ENTERPRISE
+    
+    %% Integration Points
+    HYBRID --> YOUR_VAULT
+    ENTERPRISE --> YOUR_VAULT
+    
+    %% Benefits Flow
+    WORK_GIT --> BENEFITS[🎯 Benefits Achieved<br/>• Best of both worlds<br/>• Enterprise compliance<br/>• Team collaboration<br/>• Safe deployments<br/>• Complete audit trails<br/>• Scalable architecture]
+    WORK_DB --> BENEFITS
+    WORK_CICD --> BENEFITS
+    WORK_ENTERPRISE --> BENEFITS
+    
+    %% Styling
+    classDef limitedClass fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef gitClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef dbClass fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef integrationClass fill:#fff8e1,stroke:#ff6f00,stroke-width:2px
+    classDef enterpriseClass fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px
+    classDef vaultClass fill:#f1f8e9,stroke:#2e7d32,stroke-width:3px
+    classDef benefitsClass fill:#fff3e0,stroke:#e65100,stroke-width:3px
+    
+    class GO_FILES,GO_ISSUES,DO_EXEC,DO_ISSUES limitedClass
+    class GIT_BRANCH,GIT_REVIEW,GIT_MERGE,GIT_TAG gitClass
+    class DB_TRACK,DB_EXEC,DB_ENV,DB_PERF dbClass
+    class COORD,AUDIT,ROLLBACK,COMPLIANCE integrationClass
+    class REQ_COLLAB,REQ_DEPLOY,REQ_COMPLIANCE,REQ_SCALE enterpriseClass
+    class FEAT_DV2,FEAT_TENANT,FEAT_COMPLIANCE,FEAT_PERF,TOOL_VERSION,TOOL_ENHANCED,TOOL_MIGRATION,TOOL_SNAPSHOT,WORK_GIT,WORK_DB,WORK_CICD,WORK_ENTERPRISE vaultClass
+    class BENEFITS benefitsClass 

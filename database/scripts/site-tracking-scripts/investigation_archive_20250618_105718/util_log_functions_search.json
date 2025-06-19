@@ -1,0 +1,59 @@
+{
+  "search_date": "2025-06-18T10:31:20.970443",
+  "found_functions": [
+    {
+      "pattern": "log_audit_event",
+      "schema": "util",
+      "function_name": "log_audit_event",
+      "full_name": "util.log_audit_event",
+      "arguments": "p_event_type text, p_resource_type text, p_resource_id text, p_actor text, p_event_details jsonb DEFAULT '{}'::jsonb",
+      "return_type": "jsonb",
+      "num_args": 5,
+      "description": null
+    },
+    {
+      "pattern": "log_audit",
+      "schema": "util",
+      "function_name": "log_audit_event",
+      "full_name": "util.log_audit_event",
+      "arguments": "p_event_type text, p_resource_type text, p_resource_id text, p_actor text, p_event_details jsonb DEFAULT '{}'::jsonb",
+      "return_type": "jsonb",
+      "num_args": 5,
+      "description": null
+    },
+    {
+      "pattern": "create_audit",
+      "schema": "util",
+      "function_name": "create_audit_triggers",
+      "full_name": "util.create_audit_triggers",
+      "arguments": "p_schema_name text",
+      "return_type": "void",
+      "num_args": 1,
+      "description": null
+    },
+    {
+      "pattern": "create_audit",
+      "schema": "util",
+      "function_name": "create_audit_triggers_safe",
+      "full_name": "util.create_audit_triggers_safe",
+      "arguments": "p_schema_name text",
+      "return_type": "void",
+      "num_args": 1,
+      "description": null
+    },
+    {
+      "pattern": "audit_event",
+      "schema": "util",
+      "function_name": "log_audit_event",
+      "full_name": "util.log_audit_event",
+      "arguments": "p_event_type text, p_resource_type text, p_resource_id text, p_actor text, p_event_details jsonb DEFAULT '{}'::jsonb",
+      "return_type": "jsonb",
+      "num_args": 5,
+      "description": null
+    }
+  ],
+  "working_functions": [],
+  "total_patterns_searched": 8,
+  "total_functions_found": 5,
+  "working_functions_count": 0
+}
