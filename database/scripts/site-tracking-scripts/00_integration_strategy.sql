@@ -192,3 +192,14 @@ SELECT * FROM util.site_tracking_integration_guide ORDER BY integration_type;
 -- Success message
 SELECT '🎉 Integration strategy validated successfully!' as status;
 SELECT 'Ready to deploy site tracking with util.log_audit_event approach!' as next_step; 
+
+-- test
+SELECT util.log_audit_event(
+    'INTEGRATION_VALIDATION',
+    'SITE_TRACKING',
+    'script:00_integration_strategy',
+    'DEPLOYMENT_SYSTEM',
+    jsonb_build_object(
+        'validation_type', 'integration_test',
+        'approach', 'util.log_audit_event',
+        'timestamp', CURRENT_TIMESTAMP
