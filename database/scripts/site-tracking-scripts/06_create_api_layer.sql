@@ -7,7 +7,7 @@
 -- This reduces the code by 90% while providing better functionality!
 -- ============================================================================
 
-\echo '🚀 Creating Site Tracking API Layer with util.log_audit_event...'
+--  '🚀 Creating Site Tracking API Layer with util.log_audit_event...'
 
 -- ============================================================================
 -- API SCHEMA
@@ -16,7 +16,7 @@
 -- Create API schema if it doesn't exist
 CREATE SCHEMA IF NOT EXISTS api;
 
-\echo '✅ API schema created/verified'
+--  '✅ API schema created/verified'
 
 -- ============================================================================
 -- RATE LIMITING FUNCTION (Simplified)
@@ -109,7 +109,7 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-\echo '✅ Rate limiting function created with util.log_audit_event integration'
+--  '✅ Rate limiting function created with util.log_audit_event integration'
 
 -- ============================================================================
 -- SECURITY SCORING FUNCTION
@@ -196,7 +196,7 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-\echo '✅ Security scoring function created'
+--  '✅ Security scoring function created'
 
 -- ============================================================================
 -- TRACKING ATTEMPT LOGGING FUNCTION (Simplified)
@@ -360,7 +360,7 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-\echo '✅ Tracking attempt logging function created'
+--  '✅ Tracking attempt logging function created'
 
 -- ============================================================================
 -- MAIN SITE TRACKING API FUNCTION
@@ -404,44 +404,31 @@ BEGIN
         p_ip_address::text || p_page_url || p_event_type || CURRENT_TIMESTAMP::text
     );
     
-    -- Store the actual tracking event in raw layer
+    -- Store the actual tracking event in raw layer (using correct table structure)
     INSERT INTO raw.site_tracking_events_r (
-        event_hk,
-        event_bk,
+        raw_event_id,
         tenant_hk,
-        load_date,
-        record_source
-    ) VALUES (
-        v_event_hk,
-        'EVENT_' || encode(v_event_hk, 'hex'),
-        (SELECT tenant_hk FROM auth.tenant_h ORDER BY load_date ASC LIMIT 1),
-        util.current_load_date(),
-        util.get_record_source()
-    );
-    
-    INSERT INTO raw.site_tracking_events_s (
-        event_hk,
-        load_date,
-        hash_diff,
-        ip_address,
+        api_key_hk,
+        received_timestamp,
+        client_ip,
         user_agent,
-        page_url,
-        event_type,
-        event_timestamp,
-        event_data,
-        session_id,
+        raw_payload,
+        batch_id,
         record_source
     ) VALUES (
-        v_event_hk,
-        util.current_load_date(),
-        util.hash_binary(p_page_url || p_event_type || CURRENT_TIMESTAMP::text),
+        DEFAULT, -- auto-increment
+        (SELECT tenant_hk FROM auth.tenant_h ORDER BY load_date ASC LIMIT 1),
+        NULL, -- No API key for direct calls
+        CURRENT_TIMESTAMP,
         p_ip_address,
         p_user_agent,
-        p_page_url,
-        p_event_type,
-        CURRENT_TIMESTAMP,
-        p_event_data,
-        encode(v_event_hk, 'hex'), -- Use event hash as session ID for now
+        jsonb_build_object(
+            'event_type', p_event_type,
+            'page_url', p_page_url,
+            'event_data', p_event_data,
+            'timestamp', CURRENT_TIMESTAMP
+        ),
+        'API_' || encode(v_event_hk, 'hex'),
         util.get_record_source()
     );
     
@@ -457,7 +444,7 @@ BEGIN
             'ip_address', p_ip_address::text,
             'user_agent', p_user_agent,
             'event_data', p_event_data,
-            'storage_tables', jsonb_build_array('raw.site_tracking_events_r', 'raw.site_tracking_events_s'),
+            'storage_tables', jsonb_build_array('raw.site_tracking_events_r'),
             'event_hk', encode(v_event_hk, 'hex')
         )
     ) INTO v_audit_result;
@@ -495,7 +482,7 @@ EXCEPTION WHEN OTHERS THEN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-\echo '✅ Main site tracking API function created'
+--  '✅ Main site tracking API function created'
 
 -- ============================================================================
 -- API PERMISSIONS AND SECURITY
@@ -542,7 +529,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 GRANT EXECUTE ON FUNCTION api.get_tracking_status() TO PUBLIC;
 
-\echo '✅ API permissions and status function created'
+--  '✅ API permissions and status function created'
 
 -- ============================================================================
 -- VALIDATION AND TESTING
@@ -576,28 +563,28 @@ BEGIN
     END IF;
 END $$;
 
-\echo ''
-\echo '🎉 SITE TRACKING API LAYER COMPLETED!'
-\echo '=================================================='
-\echo '✅ Created simplified API functions using util.log_audit_event'
-\echo '✅ 90% reduction in audit code complexity'
-\echo '✅ Automatic Data Vault 2.0 compliance'
-\echo '✅ Perfect tenant isolation'
-\echo '✅ Comprehensive error handling'
-\echo '✅ Security monitoring and rate limiting'
-\echo ''
-\echo '📋 Functions created:'
-\echo '   • api.check_rate_limit() - Rate limiting with audit logging'
-\echo '   • api.calculate_security_score() - Security analysis'
-\echo '   • api.log_tracking_attempt() - Request logging and validation'
-\echo '   • api.track_site_event() - Main tracking API'
-\echo '   • api.get_tracking_status() - API status monitoring'
-\echo ''
-\echo '🔧 All functions use util.log_audit_event for:'
-\echo '   • Automatic audit trail creation'
-\echo '   • Data Vault 2.0 compliance'
-\echo '   • Tenant isolation'
-\echo '   • Error logging and monitoring'
-\echo ''
-\echo '✅ API Layer deployment complete!'
-\echo '==================================================' 
+--  ''
+--  '🎉 SITE TRACKING API LAYER COMPLETED!'
+--  '=================================================='
+--  '✅ Created simplified API functions using util.log_audit_event'
+--  '✅ 90% reduction in audit code complexity'
+--  '✅ Automatic Data Vault 2.0 compliance'
+--  '✅ Perfect tenant isolation'
+--  '✅ Comprehensive error handling'
+--  '✅ Security monitoring and rate limiting'
+--  ''
+--  '📋 Functions created:'
+--  '   • api.check_rate_limit() - Rate limiting with audit logging'
+--  '   • api.calculate_security_score() - Security analysis'
+--  '   • api.log_tracking_attempt() - Request logging and validation'
+--  '   • api.track_site_event() - Main tracking API'
+--  '   • api.get_tracking_status() - API status monitoring'
+--  ''
+--  '🔧 All functions use util.log_audit_event for:'
+--  '   • Automatic audit trail creation'
+--  '   • Data Vault 2.0 compliance'
+--  '   • Tenant isolation'
+--  '   • Error logging and monitoring'
+--  ''
+--  '✅ API Layer deployment complete!'
+--  '==================================================' 

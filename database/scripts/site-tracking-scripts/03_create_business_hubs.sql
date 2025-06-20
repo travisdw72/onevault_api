@@ -114,9 +114,9 @@ ON business.site_page_h(site_page_bk);
 CREATE INDEX IF NOT EXISTS idx_site_page_h_load_date 
 ON business.site_page_h(load_date);
 
--- Text search index for page URLs
-CREATE INDEX IF NOT EXISTS idx_site_page_h_bk_text 
-ON business.site_page_h USING gin(to_tsvector('english', site_page_bk));
+-- Text search index for page URLs (DISABLED: to_tsvector not IMMUTABLE)
+-- CREATE INDEX IF NOT EXISTS idx_site_page_h_bk_text 
+-- ON business.site_page_h USING gin(to_tsvector('english', site_page_bk));
 
 -- =====================================================
 -- HUB 5: Business Item Hub (Universal)
@@ -148,9 +148,9 @@ ON business.business_item_h(business_item_bk);
 CREATE INDEX IF NOT EXISTS idx_business_item_h_load_date 
 ON business.business_item_h(load_date);
 
--- Text search index for item names
-CREATE INDEX IF NOT EXISTS idx_business_item_h_bk_text 
-ON business.business_item_h USING gin(to_tsvector('english', business_item_bk));
+-- Text search index for item names (DISABLED: to_tsvector not IMMUTABLE)
+-- CREATE INDEX IF NOT EXISTS idx_business_item_h_bk_text 
+-- ON business.business_item_h USING gin(to_tsvector('english', business_item_bk));
 
 -- =====================================================
 -- HUB MANAGEMENT FUNCTIONS

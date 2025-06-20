@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS script_tracking.script_execution_s (
     
     -- User and Session Information
     executed_by VARCHAR(100) NOT NULL,
-    session_user VARCHAR(100),
+    db_session_user VARCHAR(100),                -- FIXED: renamed from session_user (reserved keyword)
     application_name VARCHAR(255),
     client_hostname VARCHAR(255),
     client_port INTEGER,
@@ -293,7 +293,7 @@ BEGIN
         v_current_record.script_category,
         v_current_record.execution_timestamp,
         v_current_record.executed_by,
-        v_current_record.session_user,
+        v_current_record.db_session_user,        -- FIXED: updated column reference
         v_current_record.application_name,
         v_current_record.client_hostname,
         v_current_record.client_port,

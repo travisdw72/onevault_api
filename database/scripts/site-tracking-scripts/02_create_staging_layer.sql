@@ -83,9 +83,9 @@ ON staging.site_tracking_events_s(event_timestamp);
 CREATE INDEX IF NOT EXISTS idx_site_tracking_events_s_validation_status 
 ON staging.site_tracking_events_s(validation_status);
 
--- Composite index for efficient tenant + date queries
-CREATE INDEX IF NOT EXISTS idx_site_tracking_events_s_tenant_date 
-ON staging.site_tracking_events_s(tenant_hk, DATE_TRUNC('day', event_timestamp));
+-- Composite index for efficient tenant + date queries (FIXED: removed DATE_TRUNC function)
+CREATE INDEX IF NOT EXISTS idx_site_tracking_events_s_tenant_timestamp 
+ON staging.site_tracking_events_s(tenant_hk, event_timestamp);
 
 -- Main ETL function: Raw -> Staging validation and enrichment
 CREATE OR REPLACE FUNCTION staging.validate_and_enrich_event(

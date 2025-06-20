@@ -1,0 +1,89 @@
+{
+  "ai_agents_functions": [
+    {
+      "routine_name": "calculate_behavioral_score",
+      "routine_type": "FUNCTION",
+      "return_type": "jsonb",
+      "specific_name": "calculate_behavioral_score_152094"
+    },
+    {
+      "routine_name": "collect_performance_metrics",
+      "routine_type": "FUNCTION",
+      "return_type": "jsonb",
+      "specific_name": "collect_performance_metrics_153107"
+    },
+    {
+      "routine_name": "conduct_consensus_round",
+      "routine_type": "FUNCTION",
+      "return_type": "jsonb",
+      "specific_name": "conduct_consensus_round_152332"
+    },
+    {
+      "routine_name": "equine_care_reasoning",
+      "routine_type": "FUNCTION",
+      "return_type": "jsonb",
+      "specific_name": "equine_care_reasoning_151622"
+    },
+    {
+      "routine_name": "establish_behavioral_baseline",
+      "routine_type": "FUNCTION",
+      "return_type": "jsonb",
+      "specific_name": "establish_behavioral_baseline_152092"
+    },
+    {
+      "routine_name": "initiate_orchestration_session",
+      "routine_type": "FUNCTION",
+      "return_type": "jsonb",
+      "specific_name": "initiate_orchestration_session_152330"
+    },
+    {
+      "routine_name": "manufacturing_optimization_reasoning",
+      "routine_type": "FUNCTION",
+      "return_type": "jsonb",
+      "specific_name": "manufacturing_optimization_reasoning_151624"
+    },
+    {
+      "routine_name": "medical_diagnosis_reasoning",
+      "routine_type": "FUNCTION",
+      "return_type": "jsonb",
+      "specific_name": "medical_diagnosis_reasoning_151620"
+    },
+    {
+      "routine_name": "perform_system_health_check",
+      "routine_type": "FUNCTION",
+      "return_type": "jsonb",
+      "specific_name": "perform_system_health_check_153105"
+    },
+    {
+      "routine_name": "process_threat_feed_update",
+      "routine_type": "FUNCTION",
+      "return_type": "jsonb",
+      "specific_name": "process_threat_feed_update_152557"
+    },
+    {
+      "routine_name": "trigger_automated_response",
+      "routine_type": "FUNCTION",
+      "return_type": "jsonb",
+      "specific_name": "trigger_automated_response_152559"
+    },
+    {
+      "routine_name": "update_alert_duration",
+      "routine_type": "FUNCTION",
+      "return_type": "trigger",
+      "specific_name": "update_alert_duration_153126"
+    }
+  ],
+  "user_agent_builder": {
+    "tables": [],
+    "functions": [],
+    "is_implemented": false
+  },
+  "implementation_summary": {
+    "overall_score": 0,
+    "status": "\u274c MINIMAL IMPLEMENTATION",
+    "recommendation": "Mostly just table structure - proceed with full step1-9 implementation",
+    "scores": {
+      "user_builder": 0
+    }
+  }
+}

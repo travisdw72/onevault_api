@@ -40,9 +40,9 @@ ON raw.site_tracking_events_r(tenant_hk);
 CREATE INDEX IF NOT EXISTS idx_site_tracking_events_r_tenant_status 
 ON raw.site_tracking_events_r(tenant_hk, processing_status);
 
--- Partition-friendly index for high-volume tracking
-CREATE INDEX IF NOT EXISTS idx_site_tracking_events_r_tenant_month 
-ON raw.site_tracking_events_r(tenant_hk, DATE_TRUNC('month', received_timestamp));
+-- Time-based index for high-volume tracking (SIMPLIFIED: no function expressions)
+CREATE INDEX IF NOT EXISTS idx_site_tracking_events_r_tenant_timestamp 
+ON raw.site_tracking_events_r(tenant_hk, received_timestamp);
 
 -- Raw data ingestion function - simple event landing
 CREATE OR REPLACE FUNCTION raw.ingest_tracking_event(
@@ -65,14 +65,15 @@ BEGIN
         RAISE EXCEPTION 'Event data cannot be null or empty';
     END IF;
     
-    -- Generate batch ID for processing correlation
-    v_batch_id := 'BATCH_' || to_char(CURRENT_TIMESTAMP, 'YYYYMMDD_HH24MISS') || '_' || 
-                  substring(encode(util.hash_binary(encode(p_tenant_hk, 'hex') || CURRENT_TIMESTAMP::text), 'hex'), 1, 8);
+    -- Generate batch ID for processing correlation using our standard approach
+    v_batch_id := 'BATCH_' || to_char(util.current_load_date(), 'YYYYMMDD_HH24MISS') || '_' || 
+                  substring(encode(util.hash_binary(encode(p_tenant_hk, 'hex') || util.current_load_date()::text), 'hex'), 1, 8);
     
     -- Insert raw event
     INSERT INTO raw.site_tracking_events_r (
         tenant_hk, 
         api_key_hk,
+        received_timestamp,
         client_ip, 
         user_agent, 
         raw_payload, 
@@ -81,12 +82,29 @@ BEGIN
     ) VALUES (
         p_tenant_hk, 
         p_api_key_hk,
+        util.current_load_date(),
         p_client_ip, 
         p_user_agent, 
         p_event_data, 
         v_batch_id,
-        'site_tracker'
+        util.get_record_source()
     ) RETURNING raw_event_id INTO v_raw_event_id;
+    
+    -- Log audit event using our existing infrastructure
+    PERFORM util.log_audit_event(
+        'SITE_TRACKING_EVENT_INGESTED',
+        'RAW_DATA_INGESTION',
+        'raw.site_tracking_events_r',
+        util.get_record_source(),
+        jsonb_build_object(
+            'raw_event_id', v_raw_event_id,
+            'tenant_hk', encode(p_tenant_hk, 'hex'),
+            'batch_id', v_batch_id,
+            'event_type', p_event_data->>'evt_type',
+            'client_ip', p_client_ip::text,
+            'timestamp', util.current_load_date()
+        )
+    );
     
     -- Trigger async processing notification
     PERFORM pg_notify('process_tracking_events', jsonb_build_object(
@@ -94,14 +112,28 @@ BEGIN
         'tenant_hk', encode(p_tenant_hk, 'hex'),
         'batch_id', v_batch_id,
         'event_type', p_event_data->>'evt_type',
-        'timestamp', CURRENT_TIMESTAMP
+        'timestamp', util.current_load_date()
     )::text);
     
     -- Return the raw event ID for tracking
     RETURN v_raw_event_id;
     
 EXCEPTION WHEN OTHERS THEN
-    -- Log error and re-raise with context
+    -- Log error using our audit system
+    PERFORM util.log_audit_event(
+        'SITE_TRACKING_EVENT_INGESTION_ERROR',
+        'RAW_DATA_ERROR',
+        'raw.site_tracking_events_r',
+        util.get_record_source(),
+        jsonb_build_object(
+            'tenant_hk', encode(p_tenant_hk, 'hex'),
+            'error_message', SQLERRM,
+            'error_state', SQLSTATE,
+            'timestamp', util.current_load_date()
+        )
+    );
+    
+    -- Re-raise with context
     RAISE EXCEPTION 'Failed to ingest tracking event for tenant %: %', encode(p_tenant_hk, 'hex'), SQLERRM;
 END;
 $$ LANGUAGE plpgsql;
@@ -206,5 +238,25 @@ COMMENT ON TABLE raw.site_tracking_events_r IS
 COMMENT ON FUNCTION raw.ingest_tracking_event IS 
 'Primary function for ingesting single tracking events into the raw landing zone. Uses tenant_hk for proper multi-tenant isolation.';
 
--- Raw layer implementation complete
-SELECT 'Raw layer for universal site tracking created successfully!' as status; 
+-- Log successful deployment using our audit system
+DO $$
+BEGIN
+    PERFORM util.log_audit_event(
+        'SITE_TRACKING_RAW_LAYER_DEPLOYED',
+        'SCHEMA_DEPLOYMENT',
+        'raw.site_tracking_events_r',
+        util.get_record_source(),
+        jsonb_build_object(
+            'deployment_type', 'raw_layer_creation',
+            'fix_applied', 'date_trunc_index_issue_resolved',
+            'tables_created', ARRAY['raw.site_tracking_events_r'],
+            'functions_created', ARRAY['raw.ingest_tracking_event', 'raw.ingest_tracking_events_batch', 'raw.get_processing_stats'],
+            'timestamp', util.current_load_date()
+        )
+    );
+END;
+$$;
+
+-- Raw layer implementation complete with fixes
+SELECT 'Raw layer for universal site tracking created successfully! (Fixed DATE_TRUNC issue)' as status;
+SELECT 'Integrated with util.log_audit_event for enterprise audit compliance' as integration_status; 

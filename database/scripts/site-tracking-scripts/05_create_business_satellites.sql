@@ -205,9 +205,9 @@ ON business.site_event_details_s(conversion_funnel_stage);
 CREATE INDEX IF NOT EXISTS idx_site_event_details_s_item_type 
 ON business.site_event_details_s(business_item_type);
 
--- Text search index for event labels and search terms
-CREATE INDEX IF NOT EXISTS idx_site_event_details_s_text_search 
-ON business.site_event_details_s USING gin(to_tsvector('english', COALESCE(event_label, '') || ' ' || COALESCE(search_term, '')));
+-- Text search index for event labels and search terms (DISABLED: to_tsvector not IMMUTABLE)
+-- CREATE INDEX IF NOT EXISTS idx_site_event_details_s_text_search 
+-- ON business.site_event_details_s USING gin(to_tsvector('english', COALESCE(event_label, '') || ' ' || COALESCE(search_term, '')));
 
 -- =====================================================
 -- SATELLITE 4: Site Page Details
@@ -282,9 +282,9 @@ ON business.site_page_details_s(conversion_rate);
 CREATE INDEX IF NOT EXISTS idx_site_page_details_s_page_value 
 ON business.site_page_details_s(page_value_score);
 
--- Text search index for page content
-CREATE INDEX IF NOT EXISTS idx_site_page_details_s_text_search 
-ON business.site_page_details_s USING gin(to_tsvector('english', COALESCE(page_title, '') || ' ' || COALESCE(seo_description, '')));
+-- Text search index for page content (DISABLED: to_tsvector not IMMUTABLE)
+-- CREATE INDEX IF NOT EXISTS idx_site_page_details_s_text_search 
+-- ON business.site_page_details_s USING gin(to_tsvector('english', COALESCE(page_title, '') || ' ' || COALESCE(seo_description, '')));
 
 -- =====================================================
 -- SATELLITE 5: Business Item Details
@@ -367,9 +367,9 @@ ON business.business_item_details_s(conversion_rate);
 CREATE INDEX IF NOT EXISTS idx_business_item_details_s_total_revenue 
 ON business.business_item_details_s(total_revenue);
 
--- Text search index for item content
-CREATE INDEX IF NOT EXISTS idx_business_item_details_s_text_search 
-ON business.business_item_details_s USING gin(to_tsvector('english', COALESCE(item_name, '') || ' ' || COALESCE(item_description, '') || ' ' || array_to_string(tags, ' ')));
+-- Text search index for item content (DISABLED: to_tsvector not IMMUTABLE)
+-- CREATE INDEX IF NOT EXISTS idx_business_item_details_s_text_search 
+-- ON business.business_item_details_s USING gin(to_tsvector('english', COALESCE(item_name, '') || ' ' || COALESCE(item_description, '') || ' ' || array_to_string(tags, ' ')));
 
 -- =====================================================
 -- SATELLITE DATA MANAGEMENT FUNCTIONS
@@ -603,7 +603,7 @@ DECLARE
 BEGIN
     -- Process validated staging events
     FOR v_staging_event IN 
-        SELECT * FROM staging.site_events_staging 
+        SELECT * FROM staging.site_tracking_events_s 
         WHERE validation_status = 'VALID'
         AND staging_event_id NOT IN (
             SELECT DISTINCT COALESCE(
