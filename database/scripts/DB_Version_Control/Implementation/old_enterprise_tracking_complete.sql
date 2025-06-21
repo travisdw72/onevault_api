@@ -15,7 +15,7 @@
 -- NEW CODE: SELECT * FROM auth.login_user_tracking(email, password, tenant);
 -- OLD CODE STILL WORKS! No changes required to existing code!
 
-CREATE OR REPLACE FUNCTION auth.login_user_tracking(
+CREATE OR REPLACE FUNCTION auth.login_user_tracking_example(
     p_email VARCHAR(255),
     p_password TEXT,
     p_tenant_id VARCHAR(255)

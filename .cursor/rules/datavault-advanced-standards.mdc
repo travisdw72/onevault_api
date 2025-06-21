@@ -1,7 +1,7 @@
 ---
-description: 
+description: Advanced Data Vault 2.0 Patterns - Optional Enhancements for Scale & Specialized Use Cases
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 # Advanced Data Vault 2.0 Patterns
 ## Optional Enhancements for Scale & Specialized Use Cases

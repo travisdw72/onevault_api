@@ -1,0 +1,31 @@
+# Python Dependencies for System Operations Deployment Testing
+# Production Database Deployment Testing Framework
+
+# Database connectivity
+psycopg2-binary==2.9.7
+
+# JSON handling (built-in, but explicitly listed for clarity)
+# json - built-in module
+
+# Date/time handling (built-in, but explicitly listed for clarity)  
+# datetime - built-in module
+
+# Type hints (built-in in Python 3.9+)
+# typing - built-in module
+
+# System and OS operations (built-in)
+# os - built-in module
+# sys - built-in module
+
+# Additional testing utilities (optional)
+pytest==7.4.0           # For advanced testing if needed
+pytest-mock==3.11.1     # For mocking database connections in tests
+
+# Development dependencies (optional for enhanced testing)
+coverage==7.2.7         # Code coverage reporting
+flake8==6.0.0           # Code linting
+black==23.7.0           # Code formatting
+
+# Documentation dependencies (optional)
+sphinx==7.1.2           # Documentation generation
+sphinx-rtd-theme==1.3.0 # ReadTheDocs theme 
