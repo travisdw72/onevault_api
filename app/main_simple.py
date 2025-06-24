@@ -11,41 +11,7 @@ from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-# Import from simplified config that doesn't need Node.js
-try:
-    from .core.config_simple import settings, customer_config_manager
-except ImportError:
-    # Fallback if import fails
-    from pydantic_settings import BaseSettings
-    from pydantic import Field
-    from typing import List
-    
-    class Settings(BaseSettings):
-        APP_NAME: str = Field(default="OneVault Platform")
-        APP_VERSION: str = Field(default="1.0.0")
-        LOG_LEVEL: str = Field(default="INFO")
-        CORS_ORIGINS: List[str] = Field(default=["*"])
-    
-    class SimpleCustomerConfigManager:
-        def __init__(self):
-            self.customer_configs = {
-                "one_spa": {
-                    "customer": {"name": "The One Spa Oregon", "industry": "Health & Wellness"},
-                    "compliance": {"hipaa": True, "gdpr": False}
-                }
-            }
-        
-        def get_customer_config(self, customer_id: str):
-            return self.customer_configs.get(customer_id)
-        
-        def is_valid_customer(self, customer_id: str):
-            return customer_id in self.customer_configs
-        
-        def get_all_customer_ids(self):
-            return list(self.customer_configs.keys())
-    
-    settings = Settings()
-    customer_config_manager = SimpleCustomerConfigManager()
+from .core.config_simple import settings, customer_config_manager
 
 # Configure logging
 logging.basicConfig(
