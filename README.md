@@ -91,4 +91,5 @@ Proprietary - OneVault Platform
 
 *OneVault - Empowering businesses with intelligent data solutions*
 
-<!-- Deployment trigger: 2024-12-28 --> 
+<!-- Deployment trigger: 2024-12-28 -->
+<!-- Force deployment with minimal dependencies: 754d01d --> 
