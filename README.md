@@ -1,6 +1,6 @@
 # OneVault API
 
-Multi-tenant business analytics and site tracking API built with FastAPI and Data Vault 2.0 architecture.
+A secure, multi-tenant API for the OneVault business optimization platform.
 
 ## Features
 
@@ -67,7 +67,8 @@ Required for deployment:
 
 - `SYSTEM_DATABASE_URL` - PostgreSQL connection string
 - `SECRET_KEY` - Application secret key
-- `DEBUG` - Set to false for production
+- `DEBUG` - Set to "false" for production
+- `CORS_ORIGINS` - Allowed CORS origins (JSON array)
 
 ## Architecture
 
@@ -84,4 +85,10 @@ For API access and customer onboarding, contact: travis@theonespaoregon.com
 
 ## License
 
-Proprietary - OneVault Platform 
+Proprietary - OneVault Platform
+
+---
+
+*OneVault - Empowering businesses with intelligent data solutions*
+
+<!-- Deployment trigger: 2024-12-28 --> 
