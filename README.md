@@ -4,11 +4,11 @@ Multi-tenant business analytics and site tracking API built with FastAPI and Dat
 
 ## Features
 
-- 🏢 **Multi-tenant isolation** - Complete data separation per customer
-- 📊 **Site tracking** - Universal analytics for any business type
-- 🔒 **Enterprise security** - HIPAA/GDPR compliant
-- ⚡ **High performance** - Built on FastAPI with async support
-- 🎯 **Industry agnostic** - Works for healthcare, retail, services, etc.
+🏢 **Multi-tenant isolation** - Complete data separation per customer  
+📊 **Site tracking** - Universal analytics for any business type  
+🔒 **Enterprise security** - HIPAA/GDPR compliant  
+⚡ **High performance** - Built on FastAPI with async support  
+🎯 **Industry agnostic** - Works for healthcare, retail, services, etc.
 
 ## Quick Start
 
@@ -40,8 +40,8 @@ Deploy your own instance:
 
 ```bash
 # Clone and install
-git clone https://github.com/theonespaoregon/onevault-api.git
-cd onevault-api
+git clone https://github.com/travisdw72/onevault_api.git
+cd onevault_api
 pip install -r requirements.txt
 
 # Set environment variables
@@ -58,7 +58,7 @@ vercel
 ## API Endpoints
 
 - `POST /api/v1/track` - Track site events
-- `GET /health` - Health check
+- `GET /health` - Health check  
 - `GET /api/v1/platform/info` - Platform capabilities
 
 ## Environment Variables
@@ -67,13 +67,14 @@ Required for deployment:
 
 - `SYSTEM_DATABASE_URL` - PostgreSQL connection string
 - `SECRET_KEY` - Application secret key
-- `DEBUG` - Set to `false` for production
+- `DEBUG` - Set to false for production
 
 ## Architecture
 
 Built on Data Vault 2.0 methodology for:
+
 - Complete audit trails
-- Historical data tracking
+- Historical data tracking  
 - Scalable multi-tenant design
 - Regulatory compliance (HIPAA, GDPR)
 
