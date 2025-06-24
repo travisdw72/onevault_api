@@ -204,20 +204,17 @@ async def track_site_event(
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # Call the database function
+        # Call the database function with correct parameters
         cursor.execute("""
             SELECT api.track_site_event(
-                %s, %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s
             )
         """, (
-            token,  # p_api_token
-            customer_id,  # p_customer_id
-            event_data.get('session_id'),  # p_session_id
-            event_data.get('page_url'),  # p_page_url
-            event_data.get('event_type', 'page_view'),  # p_event_type
-            json.dumps(event_data.get('event_data', {})),  # p_event_data
-            event_data.get('user_agent'),  # p_user_agent
-            request.client.host if request.client else None  # p_ip_address
+            request.client.host if request.client else '127.0.0.1',  # p_ip_address (INET)
+            request.headers.get('User-Agent', 'Unknown'),  # p_user_agent (TEXT)
+            event_data.get('page_url'),  # p_page_url (TEXT)
+            event_data.get('event_type', 'page_view'),  # p_event_type (VARCHAR)
+            json.dumps(event_data.get('event_data', {}))  # p_event_data (JSONB)
         ))
         
         result = cursor.fetchone()
@@ -226,11 +223,11 @@ async def track_site_event(
         conn.close()
         
         if result and result[0]:
-            response_data = result[0]
+            response_data = result[0]  # This is already a dict from JSONB
             return {
-                "success": response_data.get('p_success', False),
-                "message": response_data.get('p_message', 'Event tracked'),
-                "event_id": response_data.get('p_event_id'),
+                "success": response_data.get('success', False),
+                "message": response_data.get('message', 'Event tracked'),
+                "event_id": response_data.get('event_id'),
                 "timestamp": datetime.utcnow().isoformat()
             }
         else:
