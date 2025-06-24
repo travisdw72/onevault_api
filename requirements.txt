@@ -2,21 +2,21 @@
 # ====================================
 
 # Core FastAPI dependencies
-fastapi==0.104.1
-uvicorn==0.24.0
+fastapi>=0.104.0,<0.105.0
+uvicorn[standard]>=0.24.0,<0.25.0
 
 # Database
-psycopg2-binary==2.9.9
+psycopg2-binary>=2.9.0,<3.0.0
 
 # Security and validation
-pydantic==2.5.0
-python-dotenv==1.0.0
+pydantic>=2.5.0,<3.0.0
+python-dotenv>=1.0.0,<2.0.0
 
 # HTTP client
-httpx==0.25.2
+httpx>=0.25.0,<0.26.0
 
 # Utilities
-email-validator==2.1.0
+email-validator>=2.1.0,<3.0.0
 
 # Data processing
 pandas==2.1.4
@@ -30,4 +30,4 @@ pytest==7.4.3
 pytest-asyncio==0.21.1
 
 # Production server
-gunicorn==21.2.0 
+gunicorn>=21.2.0,<22.0.0 
