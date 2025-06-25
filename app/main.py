@@ -136,6 +136,25 @@ async def detailed_health_check():
             detail=f"Service unhealthy: {str(e)}"
         )
 
+@app.get("/health/customer/{customer_id}")
+async def customer_health_check(customer_id: str):
+    """Customer-specific health check"""
+    if customer_id == "one_spa":
+        return {
+            "status": "healthy",
+            "customer_id": customer_id,
+            "service": settings.APP_NAME,
+            "customer_status": "active",
+            "features_enabled": [
+                "site_tracking",
+                "analytics",
+                "data_vault_storage"
+            ],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    else:
+        raise HTTPException(status_code=404, detail=f"Customer {customer_id} not found")
+
 @app.get("/health/db")
 async def health_check_database():
     """Check database connectivity and function availability"""
@@ -177,25 +196,6 @@ async def health_check_database():
             "error": str(e),
             "timestamp": datetime.utcnow().isoformat()
         }
-
-@app.get("/health/customer/{customer_id}")
-async def customer_health_check(customer_id: str):
-    """Customer-specific health check"""
-    if customer_id == "one_spa":
-        return {
-            "status": "healthy",
-            "customer_id": customer_id,
-            "service": settings.APP_NAME,
-            "customer_status": "active",
-            "features_enabled": [
-                "site_tracking",
-                "analytics",
-                "data_vault_storage"
-            ],
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    else:
-        raise HTTPException(status_code=404, detail=f"Customer {customer_id} not found")
 
 # Authentication endpoints
 @app.post("/api/v1/auth/login")
@@ -313,8 +313,7 @@ async def platform_info():
                 "site_tracking",
                 "multi_tenant_isolation",
                 "data_vault_2_0",
-                "hipaa_compliance",
-                "authentication"
+                "hipaa_compliance"
             ]
         },
         "timestamp": datetime.utcnow().isoformat()
@@ -337,16 +336,12 @@ async def get_customer_config(
                 "features": {
                     "site_tracking": True,
                     "analytics": True,
-                    "reporting": True,
-                    "authentication": True
+                    "reporting": True
                 },
                 "endpoints": {
                     "tracking": "/api/v1/track",
                     "analytics": "/api/v1/analytics",
-                    "reports": "/api/v1/reports",
-                    "auth_login": "/api/v1/auth/login",
-                    "auth_complete": "/api/v1/auth/complete-login",
-                    "auth_validate": "/api/v1/auth/validate"
+                    "reports": "/api/v1/reports"
                 }
             },
             "timestamp": datetime.utcnow().isoformat()
@@ -362,73 +357,52 @@ async def track_site_event(
     customer_id: str = Depends(validate_customer_header),
     token: str = Depends(validate_auth_token)
 ):
-    """Track site events for customer"""
+    """Track site events for customers"""
     try:
+        # Connect to database
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # Enhanced tracking data with customer context
-        tracking_data = {
-            "customer_id": customer_id,
-            "event_data": event_data,
-            "ip_address": request.client.host if request.client else "127.0.0.1",
-            "user_agent": request.headers.get('User-Agent', 'Unknown'),
-            "timestamp": datetime.utcnow().isoformat(),
-            "request_headers": dict(request.headers)
-        }
+        # Call the database function with correct parameters
+        cursor.execute("""
+            SELECT api.track_site_event(
+                %s, %s, %s, %s, %s
+            )
+        """, (
+            request.client.host if request.client else '127.0.0.1',  # p_ip_address (INET)
+            request.headers.get('User-Agent', 'Unknown'),  # p_user_agent (TEXT)
+            event_data.get('page_url'),  # p_page_url (TEXT)
+            event_data.get('event_type', 'page_view'),  # p_event_type (VARCHAR)
+            json.dumps(event_data.get('event_data', {}))  # p_event_data (JSONB)
+        ))
         
-        # Call the database function
-        cursor.execute("SELECT api.track_site_event(%s)", (json.dumps(tracking_data),))
         result = cursor.fetchone()
-        
+        conn.commit()
         cursor.close()
         conn.close()
         
         if result and result[0]:
-            return result[0]
-        else:
-            # Fallback response if function doesn't exist yet
+            response_data = result[0]  # This is already a dict from JSONB
             return {
-                "success": True,
-                "message": "Event tracked successfully",
-                "customer_id": customer_id,
+                "success": response_data.get('success', False),
+                "message": response_data.get('message', 'Event tracked'),
+                "event_id": response_data.get('event_id'),
                 "timestamp": datetime.utcnow().isoformat()
             }
+        else:
+            raise HTTPException(status_code=500, detail="Failed to track event")
             
     except psycopg2.Error as e:
-        if "function api.track_site_event" in str(e):
-            # Fallback if function doesn't exist
-            return {
-                "success": True,
-                "message": "Event received (database function pending)",
-                "customer_id": customer_id,
-                "timestamp": datetime.utcnow().isoformat()
-            }
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Authentication or tracking failed")
 
-# Error handlers
+# Error handler
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc: HTTPException):
-    """Custom 404 handler"""
     return JSONResponse(
         status_code=404,
-        content={
-            "error": "Not Found",
-            "message": f"The requested endpoint {request.url.path} was not found",
-            "available_endpoints": [
-                "/health",
-                "/health/detailed", 
-                "/health/db",
-                "/api/v1/platform/info",
-                "/api/v1/customer/config",
-                "/api/v1/track",
-                "/api/v1/auth/login",
-                "/api/v1/auth/complete-login",
-                "/api/v1/auth/validate"
-            ]
-        }
+        content={"detail": "Not Found"}
     )
 
 # For local development
