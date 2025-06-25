@@ -200,7 +200,7 @@ async def health_check_database():
 # Authentication endpoints
 @app.post("/api/v1/auth/login")
 async def login(request: Request, login_data: LoginRequest):
-    """Authenticate user and return session information"""
+    """User authentication endpoint"""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -297,6 +297,95 @@ async def validate_session(request: Request, validate_data: ValidateSessionReque
         if "function api.auth_validate_session" in str(e):
             raise HTTPException(status_code=501, detail="Session validation function not available in database")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
+# Legacy PHP-style endpoints for frontend compatibility
+@app.post("/api/auth/validate.php")
+async def validate_session_php(request: Request, validate_data: ValidateSessionRequest):
+    """Legacy PHP-style session validation endpoint for frontend compatibility"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Prepare request data for database function
+        request_data = {
+            "session_token": validate_data.session_token,
+            "ip_address": request.client.host if request.client else "127.0.0.1",
+            "user_agent": request.headers.get('User-Agent', 'Unknown')
+        }
+        
+        # Call the database function
+        cursor.execute("SELECT api.auth_validate_session(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            return result[0]  # Return the JSONB response directly
+        else:
+            raise HTTPException(status_code=500, detail="Session validation function returned no result")
+            
+    except psycopg2.Error as e:
+        if "function api.auth_validate_session" in str(e):
+            raise HTTPException(status_code=501, detail="Session validation function not available in database")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
+class RefreshSessionRequest(BaseModel):
+    session_token: str
+
+@app.post("/api/auth/refresh.php")
+async def refresh_session_php(request: Request, refresh_data: RefreshSessionRequest):
+    """Legacy PHP-style session refresh endpoint for frontend compatibility"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # First validate the current session
+        validate_request_data = {
+            "session_token": refresh_data.session_token,
+            "ip_address": request.client.host if request.client else "127.0.0.1",
+            "user_agent": request.headers.get('User-Agent', 'Unknown')
+        }
+        
+        # Call the validation function first
+        cursor.execute("SELECT api.auth_validate_session(%s)", (json.dumps(validate_request_data),))
+        validation_result = cursor.fetchone()
+        
+        if not validation_result or not validation_result[0]:
+            cursor.close()
+            conn.close()
+            raise HTTPException(status_code=401, detail="Invalid session token")
+        
+        validation_data = validation_result[0]
+        
+        # If validation successful, return the same session (refresh logic can be enhanced later)
+        if validation_data.get('success', False):
+            cursor.close()
+            conn.close()
+            return {
+                "success": True,
+                "message": "Session refreshed successfully",
+                "data": {
+                    "session_token": refresh_data.session_token,
+                    "user_data": validation_data.get('data', {}),
+                    "expires_at": datetime.utcnow().isoformat() + "Z"
+                }
+            }
+        else:
+            cursor.close()
+            conn.close()
+            raise HTTPException(status_code=401, detail="Session validation failed")
+            
+    except psycopg2.Error as e:
+        if "function api.auth_validate_session" in str(e):
+            raise HTTPException(status_code=501, detail="Session validation function not available in database")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    except HTTPException:
+        raise  # Re-raise HTTP exceptions
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
 
