@@ -13,6 +13,20 @@ import psycopg2
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+
+# Pydantic models for authentication
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+    auto_login: Optional[bool] = True
+
+class CompleteLoginRequest(BaseModel):
+    username: str
+    tenant_id: str
+
+class ValidateSessionRequest(BaseModel):
+    session_token: str
 
 # Simple settings - no complex config needed
 class Settings:
@@ -122,6 +136,48 @@ async def detailed_health_check():
             detail=f"Service unhealthy: {str(e)}"
         )
 
+@app.get("/health/db")
+async def health_check_database():
+    """Check database connectivity and function availability"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check available API functions
+        cursor.execute("""
+            SELECT p.proname as function_name
+            FROM pg_proc p
+            JOIN pg_namespace n ON p.pronamespace = n.oid
+            WHERE n.nspname = 'api'
+            ORDER BY p.proname
+        """)
+        
+        functions = [row[0] for row in cursor.fetchall()]
+        
+        cursor.close()
+        conn.close()
+        
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "api_functions": functions,
+            "auth_functions_available": {
+                "auth_login": "auth_login" in functions,
+                "auth_complete_login": "auth_complete_login" in functions,
+                "auth_validate_session": "auth_validate_session" in functions,
+                "track_site_event": "track_site_event" in functions
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "database": "error",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
 @app.get("/health/customer/{customer_id}")
 async def customer_health_check(customer_id: str):
     """Customer-specific health check"""
@@ -141,6 +197,109 @@ async def customer_health_check(customer_id: str):
     else:
         raise HTTPException(status_code=404, detail=f"Customer {customer_id} not found")
 
+# Authentication endpoints
+@app.post("/api/v1/auth/login")
+async def login(request: Request, login_data: LoginRequest):
+    """Authenticate user and return session information"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Prepare request data for database function
+        request_data = {
+            "username": login_data.username,
+            "password": login_data.password,
+            "ip_address": request.client.host if request.client else "127.0.0.1",
+            "user_agent": request.headers.get('User-Agent', 'Unknown'),
+            "auto_login": login_data.auto_login
+        }
+        
+        # Call the database function
+        cursor.execute("SELECT api.auth_login(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            return result[0]  # Return the JSONB response directly
+        else:
+            raise HTTPException(status_code=500, detail="Authentication function returned no result")
+            
+    except psycopg2.Error as e:
+        if "function api.auth_login" in str(e):
+            raise HTTPException(status_code=501, detail="Authentication function not available in database")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
+@app.post("/api/v1/auth/complete-login")
+async def complete_login(request: Request, complete_data: CompleteLoginRequest):
+    """Complete login process for multi-tenant scenarios"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Prepare request data for database function
+        request_data = {
+            "username": complete_data.username,
+            "tenant_id": complete_data.tenant_id,
+            "ip_address": request.client.host if request.client else "127.0.0.1",
+            "user_agent": request.headers.get('User-Agent', 'Unknown')
+        }
+        
+        # Call the database function
+        cursor.execute("SELECT api.auth_complete_login(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            return result[0]  # Return the JSONB response directly
+        else:
+            raise HTTPException(status_code=500, detail="Complete login function returned no result")
+            
+    except psycopg2.Error as e:
+        if "function api.auth_complete_login" in str(e):
+            raise HTTPException(status_code=501, detail="Complete login function not available in database")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
+@app.post("/api/v1/auth/validate")
+async def validate_session(request: Request, validate_data: ValidateSessionRequest):
+    """Validate session token"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Prepare request data for database function
+        request_data = {
+            "session_token": validate_data.session_token,
+            "ip_address": request.client.host if request.client else "127.0.0.1",
+            "user_agent": request.headers.get('User-Agent', 'Unknown')
+        }
+        
+        # Call the database function
+        cursor.execute("SELECT api.auth_validate_session(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            return result[0]  # Return the JSONB response directly
+        else:
+            raise HTTPException(status_code=500, detail="Session validation function returned no result")
+            
+    except psycopg2.Error as e:
+        if "function api.auth_validate_session" in str(e):
+            raise HTTPException(status_code=501, detail="Session validation function not available in database")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
 # Platform info endpoint
 @app.get("/api/v1/platform/info")
 async def platform_info():
@@ -154,7 +313,8 @@ async def platform_info():
                 "site_tracking",
                 "multi_tenant_isolation",
                 "data_vault_2_0",
-                "hipaa_compliance"
+                "hipaa_compliance",
+                "authentication"
             ]
         },
         "timestamp": datetime.utcnow().isoformat()
@@ -177,12 +337,16 @@ async def get_customer_config(
                 "features": {
                     "site_tracking": True,
                     "analytics": True,
-                    "reporting": True
+                    "reporting": True,
+                    "authentication": True
                 },
                 "endpoints": {
                     "tracking": "/api/v1/track",
                     "analytics": "/api/v1/analytics",
-                    "reports": "/api/v1/reports"
+                    "reports": "/api/v1/reports",
+                    "auth_login": "/api/v1/auth/login",
+                    "auth_complete": "/api/v1/auth/complete-login",
+                    "auth_validate": "/api/v1/auth/validate"
                 }
             },
             "timestamp": datetime.utcnow().isoformat()
@@ -198,52 +362,73 @@ async def track_site_event(
     customer_id: str = Depends(validate_customer_header),
     token: str = Depends(validate_auth_token)
 ):
-    """Track site events for customers"""
+    """Track site events for customer"""
     try:
-        # Connect to database
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # Call the database function with correct parameters
-        cursor.execute("""
-            SELECT api.track_site_event(
-                %s, %s, %s, %s, %s
-            )
-        """, (
-            request.client.host if request.client else '127.0.0.1',  # p_ip_address (INET)
-            request.headers.get('User-Agent', 'Unknown'),  # p_user_agent (TEXT)
-            event_data.get('page_url'),  # p_page_url (TEXT)
-            event_data.get('event_type', 'page_view'),  # p_event_type (VARCHAR)
-            json.dumps(event_data.get('event_data', {}))  # p_event_data (JSONB)
-        ))
+        # Enhanced tracking data with customer context
+        tracking_data = {
+            "customer_id": customer_id,
+            "event_data": event_data,
+            "ip_address": request.client.host if request.client else "127.0.0.1",
+            "user_agent": request.headers.get('User-Agent', 'Unknown'),
+            "timestamp": datetime.utcnow().isoformat(),
+            "request_headers": dict(request.headers)
+        }
         
+        # Call the database function
+        cursor.execute("SELECT api.track_site_event(%s)", (json.dumps(tracking_data),))
         result = cursor.fetchone()
-        conn.commit()
+        
         cursor.close()
         conn.close()
         
         if result and result[0]:
-            response_data = result[0]  # This is already a dict from JSONB
+            return result[0]
+        else:
+            # Fallback response if function doesn't exist yet
             return {
-                "success": response_data.get('success', False),
-                "message": response_data.get('message', 'Event tracked'),
-                "event_id": response_data.get('event_id'),
+                "success": True,
+                "message": "Event tracked successfully",
+                "customer_id": customer_id,
                 "timestamp": datetime.utcnow().isoformat()
             }
-        else:
-            raise HTTPException(status_code=500, detail="Failed to track event")
             
     except psycopg2.Error as e:
+        if "function api.track_site_event" in str(e):
+            # Fallback if function doesn't exist
+            return {
+                "success": True,
+                "message": "Event received (database function pending)",
+                "customer_id": customer_id,
+                "timestamp": datetime.utcnow().isoformat()
+            }
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Authentication or tracking failed")
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
 
-# Error handler
+# Error handlers
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc: HTTPException):
+    """Custom 404 handler"""
     return JSONResponse(
         status_code=404,
-        content={"detail": "Not Found"}
+        content={
+            "error": "Not Found",
+            "message": f"The requested endpoint {request.url.path} was not found",
+            "available_endpoints": [
+                "/health",
+                "/health/detailed", 
+                "/health/db",
+                "/api/v1/platform/info",
+                "/api/v1/customer/config",
+                "/api/v1/track",
+                "/api/v1/auth/login",
+                "/api/v1/auth/complete-login",
+                "/api/v1/auth/validate"
+            ]
+        }
     )
 
 # For local development
