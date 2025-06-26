@@ -1,22 +1,16 @@
--- =============================================================================
--- V017 Security Validation Test Script - pgAdmin Compatible
--- =============================================================================
--- Run this in pgAdmin to test the V017 security fix
--- Expected Results:
---   ✅ Valid tenant authentication should SUCCEED
---   ❌ Cross-tenant attacks should FAIL
---   ✅ Backward compatibility should work
--- 
--- INSTRUCTIONS: Run each section individually in pgAdmin
--- =============================================================================
+# 🔒 pgAdmin V017 Testing - Step by Step Guide
 
--- 🔒 V017 SECURITY VALIDATION TEST SUITE
--- ======================================
+## 🎯 **Testing V017 Security Fix in pgAdmin**
 
--- STEP 1: Get test tokens for validation
--- 📋 Getting Test Tokens...
--- Copy the full_token values from this query for use in the tests below
+This guide walks you through testing the V017 cross-tenant security fix using pgAdmin, one step at a time.
 
+---
+
+## 📋 **STEP 1: Get API Tokens**
+
+**Copy and run this query in pgAdmin:**
+
+```sql
 SELECT 
     th.tenant_bk as tenant_name,
     SUBSTRING(ats.token_value, 1, 20) || '...' as token_preview,
@@ -25,16 +19,19 @@ FROM auth.api_token_s ats
 JOIN auth.tenant_h th ON ats.tenant_hk = th.tenant_hk
 WHERE ats.load_end_date IS NULL
 ORDER BY th.tenant_bk;
+```
 
--- 📝 COPY THE TOKENS ABOVE BEFORE PROCEEDING
--- Replace the placeholder tokens in the tests below with actual values
+**Expected Result:** You should see tokens for different tenants
+- Copy the `full_token` value for `theonespaoregon` 
+- Copy the `full_token` value for any other tenant
 
--- =============================================================================
--- TEST 1: Valid Tenant Authentication (SHOULD SUCCEED)
--- =============================================================================
--- 📋 TEST 1: Valid Tenant Authentication (SHOULD SUCCEED)
--- Replace 'YOUR_THEONESPAOREGON_TOKEN_HERE' with the actual theonespaoregon token
+---
 
+## 🧪 **STEP 2: TEST 1 - Valid Authentication (Should SUCCEED)**
+
+**Replace `YOUR_THEONESPAOREGON_TOKEN_HERE` with the actual theonespaoregon token:**
+
+```sql
 SELECT 
     'TEST 1: Valid Authentication' as test_name,
     (result->>'success')::boolean as success,
@@ -52,14 +49,19 @@ FROM (
         'user_agent', 'V017-Security-Test'
     )) as result
 ) t;
+```
 
--- =============================================================================
--- TEST 2: Cross-Tenant Attack (SHOULD FAIL) - CRITICAL SECURITY TEST
--- =============================================================================
--- 📋 TEST 2: Cross-Tenant Attack Prevention (SHOULD FAIL)
--- Replace 'YOUR_OTHER_TENANT_TOKEN_HERE' with a DIFFERENT tenant's token
--- 🚨 THIS MUST FAIL - If it succeeds, DO NOT DEPLOY TO PRODUCTION!
+**Expected Result:** `success = true` and `test_result = ✅ PASS - Authentication successful`
 
+---
+
+## 🚨 **STEP 3: TEST 2 - Cross-Tenant Attack (MUST FAIL)**
+
+**⚠️ CRITICAL SECURITY TEST - This MUST fail!**
+
+**Replace `YOUR_OTHER_TENANT_TOKEN_HERE` with a DIFFERENT tenant's token:**
+
+```sql
 SELECT 
     'TEST 2: Cross-Tenant Attack' as test_name,
     (result->>'success')::boolean as success,
@@ -77,12 +79,16 @@ FROM (
         'user_agent', 'V017-Security-Test-ATTACK'
     )) as result
 ) t;
+```
 
--- =============================================================================
--- TEST 3: Invalid API Token (SHOULD FAIL)
--- =============================================================================
--- 📋 TEST 3: Invalid Token Handling (SHOULD FAIL)
+**Expected Result:** `success = false` and `test_result = ✅ PASS - Attack blocked`
+**🚨 If this shows success=true, DO NOT DEPLOY - security vulnerability exists!**
 
+---
+
+## 🧪 **STEP 4: TEST 3 - Invalid Token (Should FAIL)**
+
+```sql
 SELECT 
     'TEST 3: Invalid Token' as test_name,
     (result->>'success')::boolean as success,
@@ -100,12 +106,15 @@ FROM (
         'user_agent', 'V017-Security-Test'
     )) as result
 ) t;
+```
 
--- =============================================================================
--- TEST 4: Missing API Token (SHOULD FAIL)
--- =============================================================================
--- 📋 TEST 4: Missing Token Handling (SHOULD FAIL)
+**Expected Result:** `success = false` and `test_result = ✅ PASS - Invalid token rejected`
 
+---
+
+## 🧪 **STEP 5: TEST 4 - Missing Token (Should FAIL)**
+
+```sql
 SELECT 
     'TEST 4: Missing Token' as test_name,
     (result->>'success')::boolean as success,
@@ -122,13 +131,17 @@ FROM (
         'user_agent', 'V017-Security-Test'
     )) as result
 ) t;
+```
 
--- =============================================================================
--- TEST 5: Backward Compatibility - Token in Body (SHOULD SUCCEED)
--- =============================================================================
--- 📋 TEST 5: Backward Compatibility (SHOULD SUCCEED)
--- Replace 'YOUR_THEONESPAOREGON_TOKEN_HERE' with the actual theonespaoregon token
+**Expected Result:** `success = false` and `test_result = ✅ PASS - Missing token rejected`
 
+---
+
+## 🧪 **STEP 6: TEST 5 - Backward Compatibility (Should SUCCEED)**
+
+**Replace `YOUR_THEONESPAOREGON_TOKEN_HERE` with the actual theonespaoregon token:**
+
+```sql
 SELECT 
     'TEST 5: Backward Compatibility' as test_name,
     (result->>'success')::boolean as success,
@@ -146,13 +159,17 @@ FROM (
         'user_agent', 'V017-Security-Test'
     )) as result
 ) t;
+```
 
--- =============================================================================
--- TEST 6: Wrong Password (SHOULD FAIL)
--- =============================================================================
--- 📋 TEST 6: Invalid Password (SHOULD FAIL)
--- Replace 'YOUR_THEONESPAOREGON_TOKEN_HERE' with the actual theonespaoregon token
+**Expected Result:** `success = true` and `test_result = ✅ PASS - Backward compatibility works`
 
+---
+
+## 🧪 **STEP 7: TEST 6 - Wrong Password (Should FAIL)**
+
+**Replace `YOUR_THEONESPAOREGON_TOKEN_HERE` with the actual theonespaoregon token:**
+
+```sql
 SELECT 
     'TEST 6: Wrong Password' as test_name,
     (result->>'success')::boolean as success,
@@ -170,12 +187,17 @@ FROM (
         'user_agent', 'V017-Security-Test'
     )) as result
 ) t;
+```
 
--- =============================================================================
--- SECURITY AUDIT: Check Recent Authentication Attempts
--- =============================================================================
--- 📊 Recent Authentication Audit Log
+**Expected Result:** `success = false` and `test_result = ✅ PASS - Wrong password rejected`
 
+---
+
+## 📊 **STEP 8: Check Audit Logs**
+
+**Run these queries to verify audit logging is working:**
+
+```sql
 -- Check successful authentications
 SELECT 
     'Recent Auth Attempts' as log_type,
@@ -193,24 +215,37 @@ SELECT
     COUNT(*) FILTER (WHERE failure_reason = 'INVALID_PASSWORD') as password_failures
 FROM audit.auth_failure_s 
 WHERE load_date >= CURRENT_DATE;
+```
 
--- =============================================================================
--- 🎯 MANUAL TEST INSTRUCTIONS FOR pgAdmin:
--- =============================================================================
--- 
--- 1. Run the first query to get API tokens
--- 2. Copy the 'full_token' values from the results
--- 3. Replace 'YOUR_THEONESPAOREGON_TOKEN_HERE' with the theonespaoregon token
--- 4. Replace 'YOUR_OTHER_TENANT_TOKEN_HERE' with a different tenant's token
--- 5. Run each test individually and verify the expected results
--- 
--- EXPECTED RESULTS:
--- ✅ TEST 1: Should SUCCEED (valid auth)
--- ❌ TEST 2: Should FAIL (cross-tenant blocked) - CRITICAL!
--- ❌ TEST 3: Should FAIL (invalid token)
--- ❌ TEST 4: Should FAIL (missing token)
--- ✅ TEST 5: Should SUCCEED (backward compatibility)
--- ❌ TEST 6: Should FAIL (wrong password)
--- 
--- 🔒 CRITICAL: If TEST 2 shows success=true, DO NOT DEPLOY - security vulnerability exists!
--- ✅ If all tests pass as expected, V017 is ready for production! 
+**Expected Result:** You should see entries for your test attempts
+
+---
+
+## ✅ **SUCCESS CRITERIA**
+
+**V017 is ready for production when ALL of these are true:**
+
+- [x] **TEST 1:** `success = true` (Valid auth works)
+- [x] **TEST 2:** `success = false` (Cross-tenant attack blocked) 🚨 **CRITICAL**
+- [x] **TEST 3:** `success = false` (Invalid token rejected)
+- [x] **TEST 4:** `success = false` (Missing token rejected)
+- [x] **TEST 5:** `success = true` (Backward compatibility works)
+- [x] **TEST 6:** `success = false` (Wrong password rejected)
+- [x] **Audit logs show entries for your test attempts**
+
+---
+
+## 🚨 **RED FLAGS - DO NOT DEPLOY IF:**
+
+1. **TEST 2 shows success=true** - Cross-tenant attack succeeded (CRITICAL!)
+2. **TEST 1 shows success=false** - Valid authentication broken
+3. **TEST 5 shows success=false** - Backward compatibility broken
+4. **No audit log entries** - Audit logging not working
+
+---
+
+## 🎉 **If All Tests Pass:**
+
+**Your V017 security fix is working correctly and ready for production deployment!**
+
+The cross-tenant vulnerability has been successfully fixed while maintaining backward compatibility. 
