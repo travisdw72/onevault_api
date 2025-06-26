@@ -1,0 +1,113 @@
+{
+  "test_run_info": {
+    "api_base_url": "https://onevault-api.onrender.com",
+    "customer_id": "one_spa",
+    "test_timestamp": "2025-06-24T20:39:14.857195",
+    "total_tests": 8,
+    "passed_tests": 7,
+    "failed_tests": 1
+  },
+  "test_results": [
+    {
+      "test_name": "Basic Connectivity",
+      "success": true,
+      "timestamp": "2025-06-24T20:39:12.751448",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "healthy",
+          "service": "OneVault Platform",
+          "timestamp": "2025-06-24T20:39:12.908468",
+          "version": "1.0.0"
+        },
+        "response_time_ms": 443.909
+      },
+      "error": null
+    },
+    {
+      "test_name": "Detailed Health Check",
+      "success": true,
+      "timestamp": "2025-06-24T20:39:13.081771",
+      "details": {
+        "platform_status": "healthy",
+        "database_status": null,
+        "features": null,
+        "supported_industries": null,
+        "compliance_frameworks": null
+      },
+      "error": null
+    },
+    {
+      "test_name": "Customer Health Check",
+      "success": true,
+      "timestamp": "2025-06-24T20:39:13.386526",
+      "details": {
+        "customer_id": "one_spa",
+        "customer_name": null,
+        "status": "healthy",
+        "database_status": null,
+        "industry": null,
+        "monthly_cost": null
+      },
+      "error": null
+    },
+    {
+      "test_name": "Platform Info",
+      "success": true,
+      "timestamp": "2025-06-24T20:39:13.683294",
+      "details": {
+        "platform_name": "OneVault",
+        "version": "1.0.0",
+        "architecture": "multi-tenant",
+        "features": [
+          "site_tracking",
+          "multi_tenant_isolation",
+          "data_vault_2_0",
+          "hipaa_compliance"
+        ]
+      },
+      "error": null
+    },
+    {
+      "test_name": "Customer Configuration",
+      "success": true,
+      "timestamp": "2025-06-24T20:39:13.947832",
+      "details": {
+        "customer_id": "one_spa",
+        "has_config": false,
+        "config_summary": {}
+      },
+      "error": null
+    },
+    {
+      "test_name": "Site Tracking Authentication",
+      "success": false,
+      "timestamp": "2025-06-24T20:39:14.279307",
+      "details": {
+        "status_code": 500,
+        "response_text": "{\"detail\":\"Database error: function api.track_site_event(unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown) does not exist\\nLINE 2:             SELECT api.track_site_event(\\n                           ^\\nHINT:  No function matches the given name and argument types. You might need to add explicit type casts.\\n\"}"
+      },
+      "error": "HTTP 500: Authentication or tracking failed"
+    },
+    {
+      "test_name": "Invalid Authentication Handling",
+      "success": true,
+      "timestamp": "2025-06-24T20:39:14.576964",
+      "details": {
+        "status_code": 401,
+        "correctly_rejected": true
+      },
+      "error": null
+    },
+    {
+      "test_name": "Missing Customer Header Handling",
+      "success": true,
+      "timestamp": "2025-06-24T20:39:14.840929",
+      "details": {
+        "status_code": 400,
+        "correctly_rejected": true
+      },
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "test_run_info": {
+    "api_base_url": "https://onevault-api.onrender.com",
+    "customer_id": "one_spa",
+    "test_timestamp": "2025-06-24T19:54:46.085555",
+    "total_tests": 8,
+    "passed_tests": 3,
+    "failed_tests": 5
+  },
+  "test_results": [
+    {
+      "test_name": "Basic Connectivity",
+      "success": true,
+      "timestamp": "2025-06-24T19:54:44.233704",
+      "details": {
+        "status_code": 200,
+        "response_data": {
+          "status": "healthy",
+          "service": "OneVault API",
+          "timestamp": "2025-06-24T19:54:44.374268",
+          "version": "1.0.0"
+        },
+        "response_time_ms": 249.83700000000002
+      },
+      "error": null
+    },
+    {
+      "test_name": "Detailed Health Check",
+      "success": false,
+      "timestamp": "2025-06-24T19:54:44.495257",
+      "details": {
+        "status_code": 404
+      },
+      "error": "HTTP 404: {\"detail\":\"Not Found\"}"
+    },
+    {
+      "test_name": "Customer Health Check",
+      "success": false,
+      "timestamp": "2025-06-24T19:54:44.744035",
+      "details": {
+        "status_code": 404
+      },
+      "error": "HTTP 404: {\"detail\":\"Not Found\"}"
+    },
+    {
+      "test_name": "Platform Info",
+      "success": true,
+      "timestamp": "2025-06-24T19:54:44.995878",
+      "details": {
+        "platform_name": "OneVault",
+        "version": "1.0.0",
+        "architecture": "multi-tenant",
+        "features": [
+          "site_tracking",
+          "multi_tenant_isolation",
+          "data_vault_2_0",
+          "hipaa_compliance"
+        ]
+      },
+      "error": null
+    },
+    {
+      "test_name": "Customer Configuration",
+      "success": false,
+      "timestamp": "2025-06-24T19:54:45.243842",
+      "details": {
+        "status_code": 404
+      },
+      "error": "HTTP 404: {\"detail\":\"Not Found\"}"
+    },
+    {
+      "test_name": "Site Tracking Authentication",
+      "success": false,
+      "timestamp": "2025-06-24T19:54:45.563786",
+      "details": {
+        "status_code": 500,
+        "response_text": "{\"detail\":\"Database error: function api.track_site_event(unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown) does not exist\\nLINE 2:             SELECT api.track_site_event(\\n                           ^\\nHINT:  No function matches the given name and argument types. You might need to add explicit type casts.\\n\"}"
+      },
+      "error": "HTTP 500: Authentication or tracking failed"
+    },
+    {
+      "test_name": "Invalid Authentication Handling",
+      "success": false,
+      "timestamp": "2025-06-24T19:54:45.818389",
+      "details": {
+        "status_code": 500
+      },
+      "error": "Invalid token was accepted - security issue!"
+    },
+    {
+      "test_name": "Missing Customer Header Handling",
+      "success": true,
+      "timestamp": "2025-06-24T19:54:46.079994",
+      "details": {
+        "status_code": 400,
+        "correctly_rejected": true
+      },
+      "error": null
+    }
+  ]
+}

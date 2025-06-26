@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneVault API Frontend Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f7;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #1d1d1f;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #d2d2d7;
+            border-radius: 8px;
+            background-color: #fbfbfd;
+        }
+        .test-button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .test-button:hover {
+            background: #0051d0;
+        }
+        .test-button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .config {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 OneVault API Frontend Test</h1>
+        
+        <div class="config">
+            <h3>Configuration</h3>
+            <strong>API Base URL:</strong> https://onevault-api.onrender.com<br>
+            <strong>Customer ID:</strong> one_spa<br>
+            <strong>Test Time:</strong> <span id="test-time"></span>
+        </div>
+
+        <div class="test-section">
+            <h3>🔗 Connectivity Tests</h3>
+            <button class="test-button" onclick="testHealthCheck()">Basic Health Check</button>
+            <button class="test-button" onclick="testDetailedHealth()">Detailed Health</button>
+            <button class="test-button" onclick="testCustomerHealth()">Customer Health</button>
+            <button class="test-button" onclick="testPlatformInfo()">Platform Info</button>
+            <div id="connectivity-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🎯 Site Tracking Test</h3>
+            <p><strong>⚠️ Note:</strong> This will test the main tracking endpoint with your actual token.</p>
+            <button class="test-button" onclick="testSiteTracking()">Test Site Tracking</button>
+            <button class="test-button" onclick="testInvalidAuth()">Test Invalid Auth</button>
+            <div id="tracking-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Test Summary</h3>
+            <button class="test-button" onclick="runAllTests()">Run All Tests</button>
+            <button class="test-button" onclick="clearResults()">Clear Results</button>
+            <div id="summary-results"></div>
+        </div>
+    </div>
+
+    <script>
+        // OneVault API Configuration
+        const API_CONFIG = {
+            baseUrl: 'https://onevault-api.onrender.com',
+            apiToken: 'ovt_prod_7113cf25b40905d0adee776765aabd511f87bc6c94766b83e81e8063d00f483f',
+            customerId: 'one_spa'
+        };
+
+        // Test tracking
+        let testResults = [];
+
+        // Initialize
+        document.getElementById('test-time').textContent = new Date().toLocaleString();
+
+        // Utility functions
+        function addResult(containerId, type, title, content) {
+            const container = document.getElementById(containerId);
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = `<strong>${title}</strong><pre>${content}</pre>`;
+            container.appendChild(resultDiv);
+        }
+
+        function logTestResult(testName, success, details) {
+            testResults.push({
+                testName,
+                success,
+                details,
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        // Test functions
+        async function testHealthCheck() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addResult('connectivity-results', 'success', 'Basic Health Check - PASSED', JSON.stringify(data, null, 2));
+                    logTestResult('Basic Health Check', true, data);
+                } else {
+                    addResult('connectivity-results', 'error', 'Basic Health Check - FAILED', `HTTP ${response.status}: ${JSON.stringify(data, null, 2)}`);
+                    logTestResult('Basic Health Check', false, data);
+                }
+            } catch (error) {
+                addResult('connectivity-results', 'error', 'Basic Health Check - ERROR', error.message);
+                logTestResult('Basic Health Check', false, error.message);
+            }
+        }
+
+        async function testDetailedHealth() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}/health/detailed`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addResult('connectivity-results', 'success', 'Detailed Health Check - PASSED', JSON.stringify(data, null, 2));
+                    logTestResult('Detailed Health Check', true, data);
+                } else {
+                    addResult('connectivity-results', 'error', 'Detailed Health Check - FAILED', `HTTP ${response.status}: ${JSON.stringify(data, null, 2)}`);
+                    logTestResult('Detailed Health Check', false, data);
+                }
+            } catch (error) {
+                addResult('connectivity-results', 'error', 'Detailed Health Check - ERROR', error.message);
+                logTestResult('Detailed Health Check', false, error.message);
+            }
+        }
+
+        async function testCustomerHealth() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}/health/customer/${API_CONFIG.customerId}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addResult('connectivity-results', 'success', 'Customer Health Check - PASSED', JSON.stringify(data, null, 2));
+                    logTestResult('Customer Health Check', true, data);
+                } else {
+                    addResult('connectivity-results', 'error', 'Customer Health Check - FAILED', `HTTP ${response.status}: ${JSON.stringify(data, null, 2)}`);
+                    logTestResult('Customer Health Check', false, data);
+                }
+            } catch (error) {
+                addResult('connectivity-results', 'error', 'Customer Health Check - ERROR', error.message);
+                logTestResult('Customer Health Check', false, error.message);
+            }
+        }
+
+        async function testPlatformInfo() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}/api/v1/platform/info`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addResult('connectivity-results', 'success', 'Platform Info - PASSED', JSON.stringify(data, null, 2));
+                    logTestResult('Platform Info', true, data);
+                } else {
+                    addResult('connectivity-results', 'error', 'Platform Info - FAILED', `HTTP ${response.status}: ${JSON.stringify(data, null, 2)}`);
+                    logTestResult('Platform Info', false, data);
+                }
+            } catch (error) {
+                addResult('connectivity-results', 'error', 'Platform Info - ERROR', error.message);
+                logTestResult('Platform Info', false, error.message);
+            }
+        }
+
+        async function testSiteTracking() {
+            try {
+                const payload = {
+                    session_id: `frontend_test_${Date.now()}`,
+                    page_url: window.location.href,
+                    event_type: 'frontend_connection_test',
+                    event_data: {
+                        test_run: true,
+                        timestamp: new Date().toISOString(),
+                        source: 'frontend_test',
+                        user_agent: navigator.userAgent,
+                        screen_resolution: `${screen.width}x${screen.height}`
+                    },
+                    referrer_url: document.referrer || null
+                };
+
+                const response = await fetch(`${API_CONFIG.baseUrl}/api/v1/track`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_CONFIG.apiToken}`,
+                        'X-Customer-ID': API_CONFIG.customerId,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    addResult('tracking-results', 'success', '🎉 Site Tracking - WORKING!', `Event successfully tracked!\n\nResponse:\n${JSON.stringify(data, null, 2)}\n\nPayload sent:\n${JSON.stringify(payload, null, 2)}`);
+                    logTestResult('Site Tracking', true, data);
+                } else {
+                    addResult('tracking-results', 'error', 'Site Tracking - FAILED', `HTTP ${response.status}: ${JSON.stringify(data, null, 2)}\n\nPayload sent:\n${JSON.stringify(payload, null, 2)}`);
+                    logTestResult('Site Tracking', false, data);
+                }
+            } catch (error) {
+                addResult('tracking-results', 'error', 'Site Tracking - ERROR', error.message);
+                logTestResult('Site Tracking', false, error.message);
+            }
+        }
+
+        async function testInvalidAuth() {
+            try {
+                const payload = {
+                    session_id: 'invalid_test',
+                    page_url: 'https://test.com',
+                    event_type: 'test'
+                };
+
+                const response = await fetch(`${API_CONFIG.baseUrl}/api/v1/track`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer invalid_token_test',
+                        'X-Customer-ID': API_CONFIG.customerId,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                
+                if (response.status === 401 || response.status === 403) {
+                    addResult('tracking-results', 'success', 'Invalid Auth Test - PASSED', `Correctly rejected invalid token with HTTP ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}`);
+                    logTestResult('Invalid Auth Test', true, data);
+                } else {
+                    addResult('tracking-results', 'error', 'Invalid Auth Test - FAILED', `Security issue: Invalid token was accepted! HTTP ${response.status}\n\nResponse:\n${JSON.stringify(data, null, 2)}`);
+                    logTestResult('Invalid Auth Test', false, data);
+                }
+            } catch (error) {
+                addResult('tracking-results', 'error', 'Invalid Auth Test - ERROR', error.message);
+                logTestResult('Invalid Auth Test', false, error.message);
+            }
+        }
+
+        async function runAllTests() {
+            clearResults();
+            testResults = [];
+            
+            addResult('summary-results', 'info', 'Running All Tests...', 'Please wait while all tests complete...');
+            
+            // Run all tests sequentially
+            await testHealthCheck();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testDetailedHealth();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testCustomerHealth();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testPlatformInfo();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testSiteTracking();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testInvalidAuth();
+            
+            // Generate summary
+            const totalTests = testResults.length;
+            const passedTests = testResults.filter(t => t.success).length;
+            const failedTests = totalTests - passedTests;
+            const successRate = ((passedTests / totalTests) * 100).toFixed(1);
+            
+            const summary = `
+Test Summary:
+=============
+Total Tests: ${totalTests}
+Passed: ${passedTests}
+Failed: ${failedTests}
+Success Rate: ${successRate}%
+
+${failedTests === 0 ? '🎉 ALL TESTS PASSED!' : '⚠️  Some tests failed - check results above'}
+
+${failedTests > 0 ? 'Failed Tests:\n' + testResults.filter(t => !t.success).map(t => `- ${t.testName}`).join('\n') : ''}
+
+Detailed Results:
+${JSON.stringify(testResults, null, 2)}
+            `;
+            
+            document.getElementById('summary-results').innerHTML = '';
+            addResult('summary-results', failedTests === 0 ? 'success' : 'error', 'Test Summary', summary);
+        }
+
+        function clearResults() {
+            document.getElementById('connectivity-results').innerHTML = '';
+            document.getElementById('tracking-results').innerHTML = '';
+            document.getElementById('summary-results').innerHTML = '';
+        }
+
+        // Add some helpful information
+        window.addEventListener('load', () => {
+            addResult('summary-results', 'info', 'Frontend Test Ready', `
+This test page will validate your OneVault API connection from the browser.
+
+Key Test: "Test Site Tracking" - This tests the main endpoint your website will use.
+
+If Site Tracking shows "WORKING!" - your API is ready to use!
+
+Browser: ${navigator.userAgent}
+Test Page URL: ${window.location.href}
+            `);
+        });
+    </script>
+</body>
+</html> 

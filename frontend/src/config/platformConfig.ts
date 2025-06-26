@@ -109,7 +109,7 @@ const isDevelopment = () => {
 // Platform configuration
 export const platformConfig: IPlatformConfig = {
   api: {
-    baseUrl: getEnvVar('REACT_APP_API_BASE_URL', 'http://localhost:8000/api/v1'),
+    baseUrl: getEnvVar('VITE_API_BASE_URL', 'https://onevault-api.onrender.com'),
     version: 'v1',
     timeout: 30000,
     retryAttempts: 3

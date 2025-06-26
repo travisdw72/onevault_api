@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OneVault API Test</title>
+</head>
+<body>
+    <h1>OneVault API Test</h1>
+    <button onclick="testAPI()">Test API Connection</button>
+    <div id="result"></div>
+
+    <script>
+    async function testAPI() {
+        const apiUrl = 'https://your-deployed-url.vercel.app'; // Replace with your actual URL
+        
+        try {
+            // Test the root endpoint first
+            const response = await fetch(`${apiUrl}/`);
+            const data = await response.json();
+            
+            document.getElementById('result').innerHTML = `
+                <h3>✅ API is working!</h3>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        } catch (error) {
+            document.getElementById('result').innerHTML = `
+                <h3>❌ API Error</h3>
+                <pre>${error.message}</pre>
+            `;
+        }
+    }
+    </script>
+</body>
+</html> 
