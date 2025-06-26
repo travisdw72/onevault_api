@@ -1,0 +1,2000 @@
+{
+  "schemas": [
+    {
+      "name": "api",
+      "owner": "postgres",
+      "permissions": "postgres=UC/postgres,app_api_user=U/postgres,onevault_readonly=U/postgres,onevault_implementation=UC/postgres"
+    },
+    {
+      "name": "archive",
+      "owner": "postgres",
+      "permissions": null
+    },
+    {
+      "name": "audit",
+      "owner": "postgres",
+      "permissions": "postgres=UC/postgres,app_audit_user=U/postgres,onevault_readonly=U/postgres,onevault_implementation=UC/postgres,=U/postgres"
+    },
+    {
+      "name": "auth",
+      "owner": "postgres",
+      "permissions": "postgres=UC/postgres,app_api_user=U/postgres,onevault_readonly=U/postgres,onevault_implementation=UC/postgres"
+    },
+    {
+      "name": "business",
+      "owner": "postgres",
+      "permissions": "postgres=UC/postgres,app_business_user=U/postgres,app_api_user=U/postgres"
+    },
+    {
+      "name": "config",
+      "owner": "postgres",
+      "permissions": null
+    },
+    {
+      "name": "debug",
+      "owner": "postgres",
+      "permissions": null
+    },
+    {
+      "name": "infomart",
+      "owner": "postgres",
+      "permissions": null
+    },
+    {
+      "name": "metadata",
+      "owner": "postgres",
+      "permissions": null
+    },
+    {
+      "name": "public",
+      "owner": "pg_database_owner",
+      "permissions": "pg_database_owner=UC/pg_database_owner,=U/pg_database_owner,onevault_readonly=U/pg_database_owner,onevault_implementation=UC/pg_database_owner"
+    },
+    {
+      "name": "raw",
+      "owner": "postgres",
+      "permissions": "postgres=UC/postgres,app_raw_user=U/postgres,app_staging_user=U/postgres,app_api_user=U/postgres,onevault_readonly=U/postgres,onevault_implementation=UC/postgres"
+    },
+    {
+      "name": "ref",
+      "owner": "postgres",
+      "permissions": "postgres=UC/postgres,app_api_user=U/postgres"
+    },
+    {
+      "name": "staging",
+      "owner": "postgres",
+      "permissions": "postgres=UC/postgres,app_staging_user=U/postgres,onevault_readonly=U/postgres,onevault_implementation=UC/postgres"
+    },
+    {
+      "name": "util",
+      "owner": "postgres",
+      "permissions": "postgres=UC/postgres,app_api_user=U/postgres,onevault_readonly=U/postgres,onevault_implementation=UC/postgres"
+    },
+    {
+      "name": "validation",
+      "owner": "postgres",
+      "permissions": null
+    }
+  ],
+  "tables": [
+    {
+      "schema": "audit",
+      "name": "audit_detail_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "audit_event_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "error_log_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "error_log_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "security_event_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "security_event_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "system_health_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "system_health_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "api_token_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "api_token_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "ip_tracking_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "role_definition_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "role_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "security_policy_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "security_policy_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "security_tracking_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "session_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "session_state_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "session_token_l",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "tenant_definition_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "tenant_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "tenant_profile_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "token_activity_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "user_auth_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "user_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "user_profile_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "user_role_l",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "user_session_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "user_session_l",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "user_session_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "user_token_l",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "asset_details_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "asset_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "asset_ownership_l",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "asset_ownership_terms_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "business_entity_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "business_entity_profile_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "business_trip_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "contract_parties_l",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "entity_relationship_details_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "entity_relationship_l",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "intellectual_property_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "ip_details_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "note_payable_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "note_payable_terms_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "service_contract_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "service_contract_terms_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "tax_record_details_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "tax_record_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "trip_details_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "metadata",
+      "name": "record_source",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "raw",
+      "name": "login_attempt_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "raw",
+      "name": "login_attempt_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "raw",
+      "name": "login_details_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "raw",
+      "name": "user_request_details_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "raw",
+      "name": "user_request_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "staging",
+      "name": "login_attempt_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "staging",
+      "name": "login_status_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "staging",
+      "name": "user_creation_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "staging",
+      "name": "user_validation_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "cache_performance_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "cache_performance_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "query_performance_h",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "query_performance_s",
+      "type": "BASE TABLE",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "readonly_database_summary",
+      "type": "VIEW",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "readonly_function_summary",
+      "type": "VIEW",
+      "owner": "postgres"
+    }
+  ],
+  "functions": [
+    {
+      "schema": "api",
+      "name": "admin_reset_password",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "auth_complete_login",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "auth_login",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "auth_login_test",
+      "arguments": "p_username text, p_password text",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "auth_logout",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "auth_validate_session",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "change_password",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "forgot_password_request",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "security_audit",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "security_policies_get",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "security_rate_limit_check",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "system_health_check",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "tenant_register",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "tenant_roles_list",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "tenants_list",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "test_all_endpoints",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "test_auth_with_roles",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "test_existing_endpoints",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "token_validate",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "tokens_generate",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "tokens_revoke",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "tokens_validate",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "user_register",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "users_profile_get",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "users_profile_update",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "users_register",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "validate_contract",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "validate_fixed_contract",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "api",
+      "name": "validate_secure_contract",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "audit_password_storage",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "log_error",
+      "arguments": "p_tenant_hk bytea, p_error_code character varying, p_error_message text, p_context_data jsonb DEFAULT NULL::jsonb",
+      "return_type": "bytea",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "log_security_event",
+      "arguments": "p_event_type character varying, p_event_severity character varying, p_event_description text, p_source_ip_address inet, p_user_agent text, p_affected_user_hk bytea, p_threat_level character varying, p_event_metadata jsonb DEFAULT NULL::jsonb",
+      "return_type": "bytea",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "log_security_event",
+      "arguments": "p_tenant_hk bytea, p_event_type character varying, p_event_description text, p_event_metadata jsonb DEFAULT NULL::jsonb",
+      "return_type": "bytea",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "audit",
+      "name": "maintain_audit_tables",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "bulk_expire_sessions",
+      "arguments": "p_session_hks bytea[]",
+      "return_type": "TABLE(sessions_processed integer, processing_time_ms integer)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "change_password",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "check_account_lockout",
+      "arguments": "p_tenant_hk bytea, p_user_hk bytea",
+      "return_type": "boolean",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "check_rate_limit_enhanced",
+      "arguments": "p_tenant_hk bytea, p_ip_address inet, p_endpoint_path character varying, p_user_agent text DEFAULT NULL::text",
+      "return_type": "TABLE(is_allowed boolean, wait_time_seconds integer, reason text, compliance_alert boolean)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "cleanup_expired_sessions",
+      "arguments": "",
+      "return_type": "TABLE(sessions_expired integer, tokens_revoked integer, cleanup_duration_ms integer)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "create_session_with_token",
+      "arguments": "IN p_user_hk bytea, IN p_ip_address inet, IN p_user_agent text, OUT p_session_hk bytea, OUT p_token_value text",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "establish_base_security_policy",
+      "arguments": "IN p_tenant_hk bytea, IN p_policy_name character varying",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "generate_api_token",
+      "arguments": "p_user_hk bytea, p_token_type character varying, p_scope text[], p_expires_in interval DEFAULT '1 day'::interval",
+      "return_type": "TABLE(token_value text, expires_at timestamp with time zone)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "generate_policy_bk",
+      "arguments": "p_tenant_hk bytea, p_policy_name character varying",
+      "return_type": "character varying",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "generate_security_report",
+      "arguments": "IN p_tenant_hk bytea, IN p_start_date timestamp with time zone, IN p_end_date timestamp with time zone",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "generate_session_token",
+      "arguments": "",
+      "return_type": "text",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "generate_token_for_session",
+      "arguments": "IN p_session_hk bytea, INOUT p_token_value text DEFAULT NULL::text",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "get_cached_user_auth",
+      "arguments": "p_username character varying, p_tenant_hk bytea",
+      "return_type": "TABLE(user_hk bytea, password_hash bytea, password_salt bytea, account_locked boolean, account_locked_until timestamp with time zone, failed_login_attempts integer, last_login_date timestamp with time zone)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "get_tenant_definition",
+      "arguments": "p_tenant_hk bytea",
+      "return_type": "TABLE(tenant_hk bytea, tenant_name character varying, tenant_display_name character varying, tenant_status character varying, subscription_level character varying, max_users integer, compliance_level character varying, tenant_settings jsonb, feature_flags jsonb)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "get_tenant_security_policy",
+      "arguments": "p_tenant_hk bytea",
+      "return_type": "TABLE(security_policy_hk bytea, policy_name character varying, password_min_length integer, session_timeout_minutes integer, require_mfa boolean, is_hipaa_compliant boolean)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "get_user_salt",
+      "arguments": "p_email character varying, p_tenant_hk bytea",
+      "return_type": "bytea",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "login_user",
+      "arguments": "IN p_username character varying, IN p_password text, IN p_ip_address inet, IN p_user_agent text, OUT p_success boolean, OUT p_message text, OUT p_tenant_list jsonb, OUT p_session_token text, OUT p_user_data jsonb, IN p_auto_login boolean DEFAULT true",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "maintain_security_state",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "monitor_failed_logins",
+      "arguments": "p_tenant_hk bytea, p_time_window interval DEFAULT '01:00:00'::interval",
+      "return_type": "TABLE(suspicious_ips inet[], failed_attempts_count integer, unique_usernames_targeted integer, threat_assessment character varying)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "process_failed_login",
+      "arguments": "p_tenant_hk bytea, p_username character varying, p_failure_reason character varying, p_ip_address inet",
+      "return_type": "boolean",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "process_valid_login",
+      "arguments": "IN p_login_attempt_hk bytea, OUT p_session_hk bytea, OUT p_user_hk bytea",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "process_valid_login_enhanced",
+      "arguments": "IN p_login_attempt_hk bytea, OUT p_session_hk bytea, OUT p_user_hk bytea",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "register_tenant",
+      "arguments": "IN p_tenant_name character varying, IN p_admin_email character varying, IN p_admin_password text, IN p_admin_first_name character varying, IN p_admin_last_name character varying, OUT p_tenant_hk bytea, OUT p_admin_user_hk bytea",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "register_user",
+      "arguments": "IN p_tenant_hk bytea, IN p_email character varying, IN p_password text, IN p_first_name character varying, IN p_last_name character varying, IN p_role_bk character varying, OUT p_user_hk bytea",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "reset_password",
+      "arguments": "p_request jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "revoke_token",
+      "arguments": "p_token_hash bytea, p_reason text DEFAULT 'Administrative revocation'::text",
+      "return_type": "boolean",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "revoke_token_enhanced",
+      "arguments": "p_token_value text, p_reason text DEFAULT 'Manual revocation'::text, p_revoked_by_user_hk bytea DEFAULT NULL::bytea",
+      "return_type": "boolean",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "rollback_step_13",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "update_security_policy",
+      "arguments": "IN p_policy_hk bytea, IN p_updates jsonb",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "update_tenant_definition",
+      "arguments": "p_tenant_hk bytea, p_tenant_name character varying DEFAULT NULL::character varying, p_tenant_display_name character varying DEFAULT NULL::character varying, p_tenant_status character varying DEFAULT NULL::character varying, p_subscription_level character varying DEFAULT NULL::character varying, p_max_users integer DEFAULT NULL::integer, p_compliance_level character varying DEFAULT NULL::character varying, p_tenant_settings jsonb DEFAULT NULL::jsonb, p_feature_flags jsonb DEFAULT NULL::jsonb",
+      "return_type": "boolean",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "update_token_usage",
+      "arguments": "p_token_hash bytea",
+      "return_type": "boolean",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "update_user_password_direct",
+      "arguments": "p_tenant_hk bytea, p_username character varying, p_new_password text, p_force_change boolean DEFAULT true",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "validate_hipaa_policy",
+      "arguments": "p_policy_hk bytea",
+      "return_type": "TABLE(is_compliant boolean, validation_messages text[])",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "validate_password_policy",
+      "arguments": "p_tenant_hk bytea, p_password text",
+      "return_type": "TABLE(is_valid boolean, validation_score integer, policy_violations text[], recommendations text[])",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "validate_session",
+      "arguments": "IN p_session_token text, IN p_ip_address inet, IN p_user_agent text, OUT p_is_valid boolean, OUT p_message text, OUT p_user_context jsonb",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "validate_session_enhanced",
+      "arguments": "p_session_hk bytea, p_ip_address inet, p_user_agent text",
+      "return_type": "TABLE(is_valid boolean, validation_message text, user_hk bytea, requires_mfa boolean, session_expires_at timestamp with time zone)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "validate_session_json",
+      "arguments": "p_session_token text, p_ip_address text, p_user_agent text",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "validate_session_optimized",
+      "arguments": "p_session_hk bytea, p_ip_address inet, p_user_agent text",
+      "return_type": "TABLE(is_valid boolean, validation_message text, user_hk bytea, requires_mfa boolean, session_expires_at timestamp with time zone)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "validate_token_and_session",
+      "arguments": "p_token_value text, p_ip_address inet DEFAULT NULL::inet, p_user_agent text DEFAULT NULL::text, p_endpoint character varying DEFAULT NULL::character varying",
+      "return_type": "TABLE(is_valid boolean, user_hk bytea, session_hk bytea, message text)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "validate_token_comprehensive",
+      "arguments": "p_token_value text, p_ip_address inet DEFAULT NULL::inet, p_user_agent text DEFAULT NULL::text, p_endpoint character varying DEFAULT NULL::character varying",
+      "return_type": "TABLE(is_valid boolean, user_hk bytea, session_hk bytea, tenant_hk bytea, username character varying, permissions text[], expires_at timestamp with time zone, message text, compliance_alert boolean)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "auth",
+      "name": "verify_step_13_implementation",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "create_business_entity",
+      "arguments": "p_tenant_hk bytea, p_entity_bk character varying, p_entity_name character varying, p_entity_type character varying, p_tax_id character varying, p_formation_date date, p_state_of_formation character varying, p_business_address jsonb, p_business_purpose text",
+      "return_type": "bytea",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "transfer_asset_ownership",
+      "arguments": "p_tenant_hk bytea, p_asset_hk bytea, p_new_owner_entity_hk bytea, p_transfer_date date, p_transfer_method character varying, p_lease_back_rate numeric, p_market_validation jsonb",
+      "return_type": "bytea",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "business",
+      "name": "validate_market_rates",
+      "arguments": "p_service_type character varying, p_proposed_rate numeric, p_comparable_data jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "debug",
+      "name": "check_user_auth_records",
+      "arguments": "p_username text",
+      "return_type": "TABLE(user_hk text, username text, load_date timestamp with time zone, load_end_date timestamp with time zone, is_current boolean, failed_attempts integer, account_locked boolean, last_login_date timestamp with time zone)",
+      "language": "sql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "metadata",
+      "name": "upsert_record_source",
+      "arguments": "IN p_record_source_code character varying, IN p_record_source_name character varying, IN p_description text",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "armor",
+      "arguments": "bytea",
+      "return_type": "text",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "armor",
+      "arguments": "bytea, text[], text[]",
+      "return_type": "text",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "crypt",
+      "arguments": "text, text",
+      "return_type": "text",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "dearmor",
+      "arguments": "text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "decrypt",
+      "arguments": "bytea, bytea, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "decrypt_iv",
+      "arguments": "bytea, bytea, bytea, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "digest",
+      "arguments": "text, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "digest",
+      "arguments": "bytea, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "encrypt",
+      "arguments": "bytea, bytea, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "encrypt_iv",
+      "arguments": "bytea, bytea, bytea, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "gen_random_bytes",
+      "arguments": "integer",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "gen_random_uuid",
+      "arguments": "",
+      "return_type": "uuid",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "gen_salt",
+      "arguments": "text, integer",
+      "return_type": "text",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "gen_salt",
+      "arguments": "text",
+      "return_type": "text",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "hmac",
+      "arguments": "text, text, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "hmac",
+      "arguments": "bytea, bytea, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_armor_headers",
+      "arguments": "text, OUT key text, OUT value text",
+      "return_type": "SETOF record",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_key_id",
+      "arguments": "bytea",
+      "return_type": "text",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_pub_decrypt",
+      "arguments": "bytea, bytea",
+      "return_type": "text",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_pub_decrypt",
+      "arguments": "bytea, bytea, text, text",
+      "return_type": "text",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_pub_decrypt",
+      "arguments": "bytea, bytea, text",
+      "return_type": "text",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_pub_decrypt_bytea",
+      "arguments": "bytea, bytea, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_pub_decrypt_bytea",
+      "arguments": "bytea, bytea, text, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_pub_decrypt_bytea",
+      "arguments": "bytea, bytea",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_pub_encrypt",
+      "arguments": "text, bytea, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_pub_encrypt",
+      "arguments": "text, bytea",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_pub_encrypt_bytea",
+      "arguments": "bytea, bytea, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_pub_encrypt_bytea",
+      "arguments": "bytea, bytea",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_sym_decrypt",
+      "arguments": "bytea, text",
+      "return_type": "text",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_sym_decrypt",
+      "arguments": "bytea, text, text",
+      "return_type": "text",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_sym_decrypt_bytea",
+      "arguments": "bytea, text, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_sym_decrypt_bytea",
+      "arguments": "bytea, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_sym_encrypt",
+      "arguments": "text, text, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_sym_encrypt",
+      "arguments": "text, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_sym_encrypt_bytea",
+      "arguments": "bytea, text, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "public",
+      "name": "pgp_sym_encrypt_bytea",
+      "arguments": "bytea, text",
+      "return_type": "bytea",
+      "language": "c",
+      "owner": "postgres"
+    },
+    {
+      "schema": "raw",
+      "name": "capture_login_attempt",
+      "arguments": "p_tenant_hk bytea, p_username character varying, p_ip_address inet, p_user_agent text",
+      "return_type": "bytea",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "raw",
+      "name": "create_user_request",
+      "arguments": "IN p_tenant_hk bytea, IN p_email character varying, IN p_password text, IN p_first_name character varying, IN p_last_name character varying, IN p_ip_address inet, IN p_user_agent text, OUT request_hk bytea, IN p_raw_request_data jsonb DEFAULT NULL::jsonb",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "raw",
+      "name": "trf_process_user_request",
+      "arguments": "",
+      "return_type": "trigger",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "staging",
+      "name": "process_raw_login_attempt",
+      "arguments": "p_login_attempt_hk bytea",
+      "return_type": "boolean",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "staging",
+      "name": "trf_process_validated_user",
+      "arguments": "",
+      "return_type": "trigger",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "staging",
+      "name": "validate_login_credentials",
+      "arguments": "p_login_attempt_hk bytea",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "staging",
+      "name": "validate_user_creation",
+      "arguments": "IN p_user_request_hk bytea",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "analyze_field_length_usage",
+      "arguments": "p_schema_name text DEFAULT 'auth'::text, p_column_pattern text DEFAULT '%username%'::text",
+      "return_type": "TABLE(schema_name text, table_name text, column_name text, data_type text, max_length integer, actual_max_length integer, utilization_percentage numeric, recommendation text)",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "analyze_query_performance",
+      "arguments": "p_query_type text, p_tenant_hk bytea",
+      "return_type": "bytea",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "audit_track_bridge",
+      "arguments": "",
+      "return_type": "trigger",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "audit_track_default",
+      "arguments": "",
+      "return_type": "trigger",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "audit_track_dispatcher",
+      "arguments": "",
+      "return_type": "trigger",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "audit_track_hub",
+      "arguments": "",
+      "return_type": "trigger",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "audit_track_link",
+      "arguments": "",
+      "return_type": "trigger",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "audit_track_reference",
+      "arguments": "",
+      "return_type": "trigger",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "audit_track_satellite",
+      "arguments": "",
+      "return_type": "trigger",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "check_system_health",
+      "arguments": "",
+      "return_type": "TABLE(health_status character varying, overall_score numeric, component_scores jsonb, warnings text[], critical_issues text[])",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "create_audit_triggers",
+      "arguments": "p_schema_name text",
+      "return_type": "void",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "create_audit_triggers_safe",
+      "arguments": "p_schema_name text",
+      "return_type": "void",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "current_load_date",
+      "arguments": "",
+      "return_type": "timestamp with time zone",
+      "language": "sql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "final_security_report",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "generate_bk",
+      "arguments": "input_text text",
+      "return_type": "character varying",
+      "language": "sql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "generate_performance_report",
+      "arguments": "p_tenant_hk bytea DEFAULT NULL::bytea, p_hours_back integer DEFAULT 24",
+      "return_type": "TABLE(metric_category character varying, metric_name character varying, current_value numeric, threshold_value numeric, health_status character varying, trend_direction character varying, recommendations text[])",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "generate_security_report",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "get_connection_info",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "get_record_source",
+      "arguments": "",
+      "return_type": "character varying",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "hash_binary",
+      "arguments": "input text",
+      "return_type": "bytea",
+      "language": "sql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "hash_concat",
+      "arguments": "VARIADIC args text[]",
+      "return_type": "bytea",
+      "language": "sql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "log_audit_event",
+      "arguments": "p_event_type text, p_resource_type text, p_resource_id text, p_actor text, p_event_details jsonb DEFAULT '{}'::jsonb",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "optimize_table_statistics",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "process_hex_tenant",
+      "arguments": "hex_string text",
+      "return_type": "bytea",
+      "language": "sql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "refresh_performance_caches",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "rollback_step_14",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "rollback_step_15",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "rollback_step_16",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "rollback_step_21",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "schedule_performance_maintenance",
+      "arguments": "",
+      "return_type": "text",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "simulate_connection_test",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "test_api_security",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "test_api_security_final",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "test_record_source",
+      "arguments": "",
+      "return_type": "text",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "test_registration",
+      "arguments": "",
+      "return_type": "text",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "test_role_permissions",
+      "arguments": "",
+      "return_type": "jsonb",
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "verify_step_14_implementation",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "verify_step_15_implementation",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    },
+    {
+      "schema": "util",
+      "name": "verify_step_16_implementation",
+      "arguments": "",
+      "return_type": null,
+      "language": "plpgsql",
+      "owner": "postgres"
+    }
+  ],
+  "users_roles": [
+    {
+      "name": "admin_access",
+      "can_login": false,
+      "is_superuser": true,
+      "can_create_db": true,
+      "can_create_role": true,
+      "member_of": []
+    },
+    {
+      "name": "admin_staff",
+      "can_login": false,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": [
+        "health_staff"
+      ]
+    },
+    {
+      "name": "app_api_user",
+      "can_login": true,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "app_audit_user",
+      "can_login": true,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "app_business_user",
+      "can_login": true,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "app_raw_user",
+      "can_login": true,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "app_staging_user",
+      "can_login": true,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "app_user",
+      "can_login": false,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "authenticated_users",
+      "can_login": false,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "barn_user",
+      "can_login": true,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "dashboard_readonly",
+      "can_login": true,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "dv_admin",
+      "can_login": false,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "dv_developer",
+      "can_login": false,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "dv_loader",
+      "can_login": false,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "dv_reader",
+      "can_login": false,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "health_staff",
+      "can_login": false,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": [
+        "authenticated_users"
+      ]
+    },
+    {
+      "name": "onevault_implementation",
+      "can_login": true,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "onevault_readonly",
+      "can_login": true,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "postgres",
+      "can_login": true,
+      "is_superuser": true,
+      "can_create_db": true,
+      "can_create_role": true,
+      "member_of": []
+    },
+    {
+      "name": "read_access",
+      "can_login": false,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    },
+    {
+      "name": "test",
+      "can_login": true,
+      "is_superuser": true,
+      "can_create_db": true,
+      "can_create_role": true,
+      "member_of": []
+    },
+    {
+      "name": "write_access",
+      "can_login": false,
+      "is_superuser": false,
+      "can_create_db": false,
+      "can_create_role": false,
+      "member_of": []
+    }
+  ],
+  "indexes": [],
+  "data_vault": {
+    "hubs": [],
+    "satellites": [],
+    "links": [],
+    "references": []
+  },
+  "ai_components": {
+    "ai_tables": [],
+    "ai_functions": []
+  },
+  "specific_objects": {
+    "util.deployment_log": false,
+    "util.hash_binary": false,
+    "util.current_load_date": false,
+    "util.get_record_source": false,
+    "app_user": false,
+    "barn_user": false,
+    "auth.tenant_h": false,
+    "business schema": false
+  },
+  "investigation_metadata": {
+    "timestamp": "2025-06-12T08:13:01.360643",
+    "database": "one_vault",
+    "host": "localhost",
+    "investigator_version": "1.0"
+  },
+  "recommendations": {
+    "foundation_script": [
+      "\u2705 CREATE: util.deployment_log table",
+      "\u2705 CREATE: util.hash_binary function",
+      "\u2705 CREATE: app_user role"
+    ],
+    "ai_script": [
+      "\u2705 SAFE: No AI tables found - full deployment OK"
+    ],
+    "critical_schemas_script": [],
+    "general_notes": [
+      "Database has 15 schemas",
+      "Database has 66 tables",
+      "Database has 162 functions"
+    ]
+  }
+}

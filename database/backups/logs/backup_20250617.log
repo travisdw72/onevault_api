@@ -1,0 +1,51 @@
+2025-06-17 15:33:05,531 - ERROR - PostgreSQL not found. Please install PostgreSQL or add it to PATH
+2025-06-17 15:33:05,532 - INFO - Download from: https://www.postgresql.org/download/
+2025-06-17 15:33:13,372 - ERROR - PostgreSQL not found. Please install PostgreSQL or add it to PATH
+2025-06-17 15:33:13,372 - INFO - Download from: https://www.postgresql.org/download/
+2025-06-17 15:35:19,975 - ERROR - PostgreSQL not found. Please install PostgreSQL or add it to PATH
+2025-06-17 15:35:19,976 - INFO - Download from: https://www.postgresql.org/download/
+2025-06-17 15:36:18,191 - ERROR - PostgreSQL not found. Please install PostgreSQL or add it to PATH
+2025-06-17 15:36:18,192 - INFO - Download from: https://www.postgresql.org/download/
+2025-06-17 15:36:18,192 - INFO - Starting backup of all environments
+2025-06-17 15:36:18,194 - ERROR - PostgreSQL not available - cannot create backup
+2025-06-17 15:36:18,194 - ERROR - PostgreSQL not available - cannot create backup
+2025-06-17 15:36:18,194 - ERROR - PostgreSQL not available - cannot create backup
+2025-06-17 15:36:18,194 - INFO - Backup Summary: 0/3 successful
+2025-06-17 15:36:18,194 - INFO - Cleaning up backups older than 30 days
+2025-06-17 15:36:18,195 - INFO - No old backups to clean up
+2025-06-17 15:38:07,153 - INFO - PostgreSQL found: psql (PostgreSQL) 17.5
+2025-06-17 15:38:17,146 - INFO - PostgreSQL found: psql (PostgreSQL) 17.5
+2025-06-17 15:38:17,147 - INFO - Starting backup for one_vault_dev (Development database)
+2025-06-17 15:38:21,848 - INFO - Database connection validated: one_vault_dev
+2025-06-17 15:38:21,848 - INFO - Creating backup: one_vault_dev_full_20250617_153821.backup
+2025-06-17 15:38:27,102 - INFO - Backup completed successfully
+2025-06-17 15:38:27,103 - INFO - File: C:\Users\travi\OneDrive\Documents\Development\One_Vault\database\backups\one_vault_dev_full_20250617_153821.backup
+2025-06-17 15:38:27,103 - INFO - Size: 2.49 MB
+2025-06-17 15:39:18,892 - INFO - PostgreSQL found: psql (PostgreSQL) 17.5
+2025-06-17 15:39:18,893 - INFO - Available backups:
+2025-06-17 16:02:29,194 - INFO - PostgreSQL found: psql (PostgreSQL) 17.5
+2025-06-17 16:02:29,195 - INFO - Available backups:
+2025-06-17 16:02:34,372 - INFO - PostgreSQL found: psql (PostgreSQL) 17.5
+2025-06-17 16:02:34,372 - INFO - Starting backup of all environments
+2025-06-17 16:02:34,372 - INFO - Starting backup for one_vault (Main production database)
+2025-06-17 16:02:38,681 - INFO - Database connection validated: one_vault
+2025-06-17 16:02:38,681 - INFO - Creating backup: one_vault_full_20250617_160238.backup
+2025-06-17 16:03:49,413 - INFO - Backup completed successfully
+2025-06-17 16:03:49,414 - INFO - File: C:\Users\travi\OneDrive\Documents\Development\One_Vault\database\backups\one_vault_full_20250617_160238.backup
+2025-06-17 16:03:49,414 - INFO - Size: 2.49 MB
+2025-06-17 16:03:49,414 - INFO - Starting backup for one_vault_dev (Development database)
+2025-06-17 16:03:51,086 - INFO - Database connection validated: one_vault_dev
+2025-06-17 16:03:51,086 - INFO - Creating backup: one_vault_dev_full_20250617_160351.backup
+2025-06-17 16:03:53,299 - INFO - Backup completed successfully
+2025-06-17 16:03:53,299 - INFO - File: C:\Users\travi\OneDrive\Documents\Development\One_Vault\database\backups\one_vault_dev_full_20250617_160351.backup
+2025-06-17 16:03:53,299 - INFO - Size: 2.49 MB
+2025-06-17 16:03:53,299 - INFO - Starting backup for one_vault_testing (Testing database)
+2025-06-17 16:03:54,963 - INFO - Database connection validated: one_vault_testing
+2025-06-17 16:03:54,963 - INFO - Creating backup: one_vault_testing_full_20250617_160354.backup
+2025-06-17 16:03:57,248 - INFO - Backup completed successfully
+2025-06-17 16:03:57,248 - INFO - File: C:\Users\travi\OneDrive\Documents\Development\One_Vault\database\backups\one_vault_testing_full_20250617_160354.backup
+2025-06-17 16:03:57,248 - INFO - Size: 2.49 MB
+2025-06-17 16:03:57,248 - INFO - Backup Summary: 3/3 successful
+2025-06-17 16:03:57,248 - INFO - Cleaning up backups older than 30 days
+2025-06-17 16:03:57,248 - INFO - No old backups to clean up
+2025-06-17 17:06:42,876 - INFO - PostgreSQL found: psql (PostgreSQL) 17.5

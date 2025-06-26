@@ -1,0 +1,46 @@
+{
+  "timestamp": "2025-06-26T13:54:40.297420",
+  "target_user": "travis@theonespaoregon.com",
+  "findings": {
+    "user_exists": true,
+    "user_info": {
+      "user_hk": "6cd30f42d1ccfb4fa6a571db8c2fb43b3fb9dd80b0b4b092ece55b06c3c7b6f5",
+      "user_bk": "travis@theonespaoregon.com_ADMIN",
+      "tenant_hk": "6b038c0fb49d598bd0a5f32e03508182aaeaf4ae138ab2b5b80a6551b0c974f7",
+      "first_name": "Travis",
+      "last_name": "Woodward",
+      "email": "travis@theonespaoregon.com",
+      "is_active": true,
+      "created_date": "2025-06-21 09:30:18.854540-07:00",
+      "tenant_bk": "The ONE Spa_2025-06-21 09:30:18.85454-07",
+      "tenant_name": "The ONE Spa"
+    },
+    "has_roles": false,
+    "tenant_info": {
+      "tenant_hk": "6b038c0fb49d598bd0a5f32e03508182aaeaf4ae138ab2b5b80a6551b0c974f7",
+      "tenant_bk": "The ONE Spa_2025-06-21 09:30:18.85454-07",
+      "tenant_name": "The ONE Spa",
+      "tenant_description": "Multi-entity business optimization tenant",
+      "contact_email": "travis@theonespaoregon.com",
+      "max_users": 10,
+      "subscription_level": "standard",
+      "created_date": "2025-06-21 09:30:18.854540-07:00",
+      "is_active": true
+    },
+    "tenant_roles": [],
+    "procedure_analysis": {
+      "creates_roles": false,
+      "creates_role_assignments": false,
+      "issue_identified": true
+    },
+    "system_roles": []
+  },
+  "recommendations": [
+    "CRITICAL: User has no roles assigned - needs administrator role for tenant",
+    "CRITICAL: Tenant has no roles defined - need to create default role structure",
+    "Update auth.register_tenant to include role creation",
+    "Add default role assignment for admin user",
+    "Implement role template system for new tenants",
+    "Consider implementing system-wide role templates"
+  ]
+}

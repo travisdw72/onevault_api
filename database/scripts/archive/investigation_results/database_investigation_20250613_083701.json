@@ -1,0 +1,510 @@
+{
+  "contamination_check": {
+    "all_schemas": [
+      [
+        "ai_monitoring",
+        "postgres",
+        "OTHER"
+      ],
+      [
+        "archive",
+        "postgres",
+        "OTHER"
+      ],
+      [
+        "debug",
+        "postgres",
+        "OTHER"
+      ],
+      [
+        "infomart",
+        "postgres",
+        "OTHER"
+      ],
+      [
+        "metadata",
+        "postgres",
+        "OTHER"
+      ],
+      [
+        "pg_toast_temp_18",
+        "postgres",
+        "OTHER"
+      ],
+      [
+        "pg_toast_temp_83",
+        "postgres",
+        "OTHER"
+      ],
+      [
+        "public",
+        "pg_database_owner",
+        "OTHER"
+      ],
+      [
+        "validation",
+        "postgres",
+        "OTHER"
+      ],
+      [
+        "information_schema",
+        "postgres",
+        "SYSTEM"
+      ],
+      [
+        "pg_catalog",
+        "postgres",
+        "SYSTEM"
+      ],
+      [
+        "pg_toast",
+        "postgres",
+        "SYSTEM"
+      ],
+      [
+        "api",
+        "postgres",
+        "TEMPLATE CORE"
+      ],
+      [
+        "audit",
+        "postgres",
+        "TEMPLATE CORE"
+      ],
+      [
+        "auth",
+        "postgres",
+        "TEMPLATE CORE"
+      ],
+      [
+        "business",
+        "postgres",
+        "TEMPLATE CORE"
+      ],
+      [
+        "config",
+        "postgres",
+        "TEMPLATE CORE"
+      ],
+      [
+        "raw",
+        "postgres",
+        "TEMPLATE CORE"
+      ],
+      [
+        "ref",
+        "postgres",
+        "TEMPLATE CORE"
+      ],
+      [
+        "staging",
+        "postgres",
+        "TEMPLATE CORE"
+      ],
+      [
+        "util",
+        "postgres",
+        "TEMPLATE CORE"
+      ]
+    ],
+    "table_counts_by_schema": [
+      [
+        "ai_monitoring",
+        12,
+        "OTHER"
+      ],
+      [
+        "metadata",
+        1,
+        "OTHER"
+      ],
+      [
+        "raw",
+        5,
+        "OTHER"
+      ],
+      [
+        "ref",
+        4,
+        "OTHER"
+      ],
+      [
+        "staging",
+        4,
+        "OTHER"
+      ],
+      [
+        "audit",
+        12,
+        "TEMPLATE CORE"
+      ],
+      [
+        "auth",
+        23,
+        "TEMPLATE CORE"
+      ],
+      [
+        "business",
+        37,
+        "TEMPLATE CORE"
+      ],
+      [
+        "util",
+        9,
+        "TEMPLATE CORE"
+      ]
+    ],
+    "recent_deployments": [
+      [
+        4,
+        "AI Data Vault 2.0 Integration v1.0",
+        "2025-06-12 08:25:26.450374-07:00",
+        "2025-06-12 08:25:26.450374-07:00",
+        "COMPLETED",
+        "Successfully deployed complete AI interaction management system with Data Vault 2.0 compliance, Zero Trust security, HIPAA/GDPR audit trails, tenant isolation, and performance monitoring. | AI Data Vault 2.0 deployment completed successfully with 22 tables and essential indexes",
+        "postgres"
+      ]
+    ]
+  },
+  "data_vault_assessment": {
+    "structure_completeness": [
+      [
+        "Hubs",
+        39,
+        "GOOD",
+        [
+          "auth.user_session_h",
+          "auth.role_h",
+          "raw.user_request_h",
+          "audit.ai_security_event_h",
+          "audit.system_health_h",
+          "audit.security_event_h",
+          "audit.error_log_h",
+          "audit.ai_compliance_h",
+          "audit.audit_event_h",
+          "util.query_performance_h",
+          "util.cache_performance_h",
+          "util.ai_performance_h",
+          "auth.session_h",
+          "auth.security_policy_h",
+          "auth.api_token_h",
+          "business.ai_interaction_h",
+          "auth.tenant_h",
+          "auth.user_h",
+          "auth.security_tracking_h",
+          "raw.login_attempt_h",
+          "staging.login_attempt_h",
+          "staging.user_creation_h",
+          "business.monitoring_sensor_h",
+          "business.ai_session_h",
+          "business.business_entity_h",
+          "business.service_contract_h",
+          "business.note_payable_h",
+          "business.asset_h",
+          "business.business_trip_h",
+          "business.intellectual_property_h",
+          "business.tax_record_h",
+          "business.ai_observation_h",
+          "business.ai_alert_h",
+          "business.monitored_entity_h",
+          "ai_monitoring.monitored_entity_h",
+          "ai_monitoring.ai_analysis_h",
+          "ai_monitoring.alert_h",
+          "ai_monitoring.zt_access_policies_h",
+          "ai_monitoring.zt_security_events_h"
+        ]
+      ],
+      [
+        "Links",
+        14,
+        "GOOD",
+        [
+          "auth.user_role_l",
+          "auth.user_session_l",
+          "auth.user_token_l",
+          "auth.session_token_l",
+          "business.user_ai_interaction_l",
+          "business.user_ai_session_l",
+          "business.ai_session_interaction_l",
+          "business.entity_relationship_l",
+          "business.asset_ownership_l",
+          "business.contract_parties_l",
+          "business.ai_observation_alert_l",
+          "business.user_ai_observation_l",
+          "ai_monitoring.entity_analysis_l",
+          "ai_monitoring.analysis_alert_l"
+        ]
+      ],
+      [
+        "Reference Tables",
+        4,
+        "PARTIAL",
+        [
+          "ref.ai_model_r",
+          "ref.ai_context_type_r",
+          "ref.ai_observation_type_r",
+          "ref.ai_alert_type_r"
+        ]
+      ],
+      [
+        "Satellites",
+        47,
+        "GOOD",
+        [
+          "auth.user_session_s",
+          "auth.tenant_profile_s",
+          "raw.user_request_details_s",
+          "audit.audit_detail_s",
+          "audit.error_log_s",
+          "audit.system_health_s",
+          "audit.ai_security_event_s",
+          "audit.ai_compliance_s",
+          "audit.security_event_s",
+          "util.template_features",
+          "util.cache_performance_s",
+          "util.query_performance_s",
+          "util.ai_performance_s",
+          "auth.role_definition_s",
+          "auth.session_state_s",
+          "auth.security_policy_s",
+          "auth.api_token_s",
+          "auth.tenant_definition_s",
+          "staging.user_validation_s",
+          "auth.user_profile_s",
+          "auth.user_auth_s",
+          "auth.token_activity_s",
+          "auth.ip_tracking_s",
+          "raw.login_attempt_s",
+          "raw.login_details_s",
+          "staging.login_status_s",
+          "business.ai_interaction_details_s",
+          "business.ai_interaction_security_s",
+          "business.ai_session_details_s",
+          "business.business_entity_profile_s",
+          "business.entity_relationship_details_s",
+          "business.asset_ownership_terms_s",
+          "business.service_contract_terms_s",
+          "business.ip_details_s",
+          "business.asset_details_s",
+          "business.note_payable_terms_s",
+          "business.tax_record_details_s",
+          "business.trip_details_s",
+          "business.ai_observation_details_s",
+          "business.ai_alert_details_s",
+          "business.monitored_entity_details_s",
+          "business.monitoring_sensor_details_s",
+          "ai_monitoring.monitored_entity_details_s",
+          "ai_monitoring.ai_analysis_results_s",
+          "ai_monitoring.alert_details_s",
+          "ai_monitoring.zt_access_policies_s",
+          "ai_monitoring.zt_security_events_s"
+        ]
+      ]
+    ],
+    "naming_compliance": [
+      [
+        "Hub Tables",
+        39,
+        31,
+        31,
+        38,
+        "85.47"
+      ],
+      [
+        "Satellite Tables",
+        47,
+        46,
+        46,
+        46,
+        "97.87"
+      ]
+    ]
+  },
+  "tenant_isolation_assessment": {
+    "isolation_completeness": [
+      [
+        "Hub Tables",
+        39,
+        38,
+        1,
+        "97.44",
+        "GOOD_ISOLATION"
+      ],
+      [
+        "Link Tables",
+        14,
+        14,
+        0,
+        "100.00",
+        "PERFECT_ISOLATION"
+      ]
+    ],
+    "rls_policies": []
+  },
+  "performance_analysis": {
+    "index_analysis": [
+      [
+        "PERFORMANCE",
+        131,
+        [
+          "ai_monitoring",
+          "audit",
+          "auth",
+          "business",
+          "raw",
+          "ref",
+          "staging",
+          "util"
+        ],
+        8,
+        123
+      ],
+      [
+        "PRIMARY_KEY",
+        113,
+        [
+          "ai_monitoring",
+          "audit",
+          "auth",
+          "business",
+          "metadata",
+          "raw",
+          "ref",
+          "staging",
+          "util"
+        ],
+        10,
+        103
+      ],
+      [
+        "TENANT_ISOLATION",
+        20,
+        [
+          "ai_monitoring",
+          "audit",
+          "auth",
+          "business",
+          "raw",
+          "staging"
+        ],
+        0,
+        20
+      ],
+      [
+        "BUSINESS_KEY",
+        15,
+        [
+          "ai_monitoring",
+          "auth",
+          "business"
+        ],
+        2,
+        13
+      ],
+      [
+        "UNIQUE_CONSTRAINT",
+        8,
+        [
+          "auth",
+          "metadata",
+          "util"
+        ],
+        2,
+        6
+      ],
+      [
+        "HASH_KEY",
+        4,
+        [
+          "auth"
+        ],
+        1,
+        3
+      ],
+      [
+        "TEMPORAL",
+        2,
+        [
+          "auth"
+        ],
+        0,
+        2
+      ]
+    ],
+    "table_usage": []
+  },
+  "compliance_analysis": {
+    "hipaa_compliance": [],
+    "retention_analysis": []
+  },
+  "api_business_analysis": {
+    "api_coverage": [],
+    "entity_analysis": []
+  },
+  "production_readiness": {
+    "readiness_assessment": [],
+    "health_metrics": [],
+    "missing_components": []
+  },
+  "authentication_system": {
+    "auth_tables": [],
+    "token_system": [],
+    "session_system": [],
+    "auth_functions": [],
+    "api_auth_functions": [],
+    "security_policies": [],
+    "rls_policies": [],
+    "auth_indexes": [],
+    "token_validation": [],
+    "assessment": {
+      "completeness_percentage": 0.0,
+      "components_present": 0,
+      "total_components": 8,
+      "strengths": [],
+      "gaps": [
+        "User Management",
+        "Token System",
+        "Session Management",
+        "Auth Functions",
+        "Api Auth",
+        "Security Policies",
+        "Performance Indexes",
+        "Token Validation"
+      ],
+      "recommendation": "BASIC"
+    }
+  },
+  "schemas": [],
+  "tables": [],
+  "functions": [],
+  "users_roles": [],
+  "tenant_structure": {},
+  "investigation_metadata": {
+    "timestamp": "2025-06-13T08:37:01.298488",
+    "database": "one_vault",
+    "host": "localhost",
+    "investigator_version": "2.0",
+    "features_investigated": [
+      "domain_contamination",
+      "authentication_system",
+      "tenant_structure",
+      "ai_monitoring_readiness"
+    ]
+  },
+  "recommendations": {
+    "authentication_integration": [
+      "\ud83d\udd10 Authentication System: BASIC (0.0% complete)",
+      "\ud83d\udea8 BASIC auth system - significant authentication work needed",
+      "\ud83d\udd27 Build robust auth foundation before deploying AI monitoring"
+    ],
+    "ai_monitoring_integration": [
+      "\u26a0\ufe0f  No API auth functions found - AI monitoring will need API authentication layer",
+      "\u2753 No explicit token tables found - verify token system naming conventions"
+    ],
+    "general_notes": [
+      "Database has 0 schemas",
+      "Database has 0 tables",
+      "Database has 0 functions"
+    ]
+  }
+}

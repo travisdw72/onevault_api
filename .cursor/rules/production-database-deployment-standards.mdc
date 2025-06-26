@@ -1,7 +1,7 @@
 ---
-description: 
+description: Production Database Deployment Standards - This document defines the mandatory standards for all production database deployments in our Multi-Tenant Data Vault 2.0 platform. Every database change MUST follow these patterns to ensure safety, reliability, and compliance in production environments.
 globs: 
-alwaysApply: true
+alwaysApply: false
 ---
 # Production Database Deployment Standards
 ## Enterprise-Grade Database Migration Framework
