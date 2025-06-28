@@ -10,7 +10,7 @@ import os
 import json
 import psycopg2
 
-from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi import FastAPI, HTTPException, Depends, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -72,6 +72,31 @@ def get_db_connection():
         return conn
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database connection failed: {str(e)}")
+
+# Background processing function
+def process_site_tracking_background():
+    """Background task for processing site tracking events"""
+    try:
+        logger.info("🔄 Background processing: Starting site tracking pipeline...")
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Call the smart processing function
+        cursor.execute("SELECT staging.auto_process_if_needed()")
+        result = cursor.fetchone()
+        conn.commit()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            logger.info(f"✅ Background processing completed: {result[0]}")
+        else:
+            logger.info("ℹ️ Background processing: No work needed")
+            
+    except Exception as e:
+        logger.error(f"❌ Background processing failed: {e}")
+        # Don't raise - background tasks should be silent
 
 # Customer validation
 async def validate_customer_header(request: Request) -> str:
@@ -446,7 +471,74 @@ async def track_site_event(
     customer_id: str = Depends(validate_customer_header),
     token: str = Depends(validate_auth_token)
 ):
-    """Track site events for customers"""
+    """Track site events for customers with automatic processing"""
+    try:
+        # Connect to database
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Call the database function with correct parameters
+        cursor.execute("""
+            SELECT api.track_site_event(
+                %s, %s, %s, %s, %s
+            )
+        """, (
+            request.client.host if request.client else '127.0.0.1',  # p_ip_address (INET)
+            request.headers.get('User-Agent', 'Unknown'),  # p_user_agent (TEXT)
+            event_data.get('page_url'),  # p_page_url (TEXT)
+            event_data.get('event_type', 'page_view'),  # p_event_type (VARCHAR)
+            json.dumps(event_data.get('event_data', {}))  # p_event_data (JSONB)
+        ))
+        
+        result = cursor.fetchone()
+        conn.commit()
+        
+        # 🚀 AUTOMATIC PROCESSING: Trigger site tracking pipeline after event ingestion
+        try:
+            logger.info("🔄 Triggering automatic site tracking processing...")
+            cursor.execute("SELECT staging.auto_process_if_needed()")
+            processing_result = cursor.fetchone()
+            conn.commit()
+            
+            if processing_result and processing_result[0]:
+                logger.info(f"✅ Processing result: {processing_result[0]}")
+            else:
+                logger.info("ℹ️ No processing needed - all events up to date")
+                
+        except Exception as processing_error:
+            # Don't fail the main request if processing fails
+            logger.warning(f"⚠️ Site tracking processing failed (non-critical): {processing_error}")
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            response_data = result[0]  # This is already a dict from JSONB
+            return {
+                "success": response_data.get('success', False),
+                "message": response_data.get('message', 'Event tracked'),
+                "event_id": response_data.get('event_id'),
+                "timestamp": datetime.utcnow().isoformat(),
+                "processing": "automatic"  # Indicate automatic processing is enabled
+            }
+        else:
+            raise HTTPException(status_code=500, detail="Failed to track event")
+            
+    except psycopg2.Error as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Authentication or tracking failed")
+
+# Alternative tracking endpoint with background processing
+@app.post("/api/v1/track/async")
+async def track_site_event_async(
+    background_tasks: BackgroundTasks,
+    request: Request,
+    event_data: Dict[str, Any],
+    customer_id: str = Depends(validate_customer_header),
+    token: str = Depends(validate_auth_token)
+):
+    """Track site events with background processing (faster response)"""
     try:
         # Connect to database
         conn = get_db_connection()
@@ -470,13 +562,17 @@ async def track_site_event(
         cursor.close()
         conn.close()
         
+        # 🚀 BACKGROUND PROCESSING: Schedule processing in background
+        background_tasks.add_task(process_site_tracking_background)
+        
         if result and result[0]:
             response_data = result[0]  # This is already a dict from JSONB
             return {
                 "success": response_data.get('success', False),
                 "message": response_data.get('message', 'Event tracked'),
                 "event_id": response_data.get('event_id'),
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.utcnow().isoformat(),
+                "processing": "background"  # Indicate background processing is scheduled
             }
         else:
             raise HTTPException(status_code=500, detail="Failed to track event")
@@ -485,6 +581,154 @@ async def track_site_event(
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Authentication or tracking failed")
+
+# Site tracking management endpoints
+@app.get("/api/v1/track/status")
+async def get_tracking_status(
+    customer_id: str = Depends(validate_customer_header),
+    token: str = Depends(validate_auth_token)
+):
+    """Get site tracking pipeline status"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get pipeline status
+        cursor.execute("SELECT * FROM staging.get_pipeline_status()")
+        status_result = cursor.fetchone()
+        
+        # Get recent events from dashboard view
+        cursor.execute("""
+            SELECT * FROM staging.pipeline_dashboard 
+            ORDER BY raw_load_date DESC 
+            LIMIT 10
+        """)
+        recent_events = cursor.fetchall()
+        
+        # Get column names for the dashboard
+        cursor.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_schema = 'staging' 
+            AND table_name = 'pipeline_dashboard'
+            ORDER BY ordinal_position
+        """)
+        column_names = [row[0] for row in cursor.fetchall()]
+        
+        cursor.close()
+        conn.close()
+        
+        # Format recent events
+        events_list = []
+        for event in recent_events:
+            event_dict = dict(zip(column_names, event))
+            events_list.append(event_dict)
+        
+        return {
+            "status": "success",
+            "pipeline_status": status_result[0] if status_result else None,
+            "recent_events": events_list,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get tracking status: {str(e)}")
+
+@app.post("/api/v1/track/process")
+async def trigger_processing(
+    customer_id: str = Depends(validate_customer_header),
+    token: str = Depends(validate_auth_token)
+):
+    """Manually trigger site tracking processing"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Trigger processing
+        cursor.execute("SELECT staging.trigger_pipeline_now()")
+        result = cursor.fetchone()
+        conn.commit()
+        
+        cursor.close()
+        conn.close()
+        
+        return {
+            "status": "success",
+            "message": "Processing triggered successfully",
+            "result": result[0] if result else None,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to trigger processing: {str(e)}")
+
+@app.get("/api/v1/track/dashboard")
+async def get_tracking_dashboard(
+    customer_id: str = Depends(validate_customer_header),
+    token: str = Depends(validate_auth_token),
+    limit: int = 20
+):
+    """Get comprehensive tracking dashboard data"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get dashboard data
+        cursor.execute(f"""
+            SELECT * FROM staging.pipeline_dashboard 
+            ORDER BY raw_load_date DESC 
+            LIMIT {limit}
+        """)
+        dashboard_data = cursor.fetchall()
+        
+        # Get column names
+        cursor.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_schema = 'staging' 
+            AND table_name = 'pipeline_dashboard'
+            ORDER BY ordinal_position
+        """)
+        column_names = [row[0] for row in cursor.fetchall()]
+        
+        # Get summary statistics
+        cursor.execute("""
+            SELECT 
+                COUNT(*) as total_events,
+                COUNT(CASE WHEN staging_status = 'PROCESSED' THEN 1 END) as processed_to_staging,
+                COUNT(CASE WHEN business_status = '✅ Complete Pipeline' THEN 1 END) as processed_to_business,
+                MAX(raw_load_date) as latest_event
+            FROM staging.pipeline_dashboard
+        """)
+        stats = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        # Format dashboard data
+        events_list = []
+        for event in dashboard_data:
+            event_dict = dict(zip(column_names, event))
+            # Convert datetime objects to ISO strings
+            for key, value in event_dict.items():
+                if hasattr(value, 'isoformat'):
+                    event_dict[key] = value.isoformat()
+            events_list.append(event_dict)
+        
+        return {
+            "status": "success",
+            "summary": {
+                "total_events": stats[0] if stats else 0,
+                "processed_to_staging": stats[1] if stats else 0,
+                "processed_to_business": stats[2] if stats else 0,
+                "latest_event": stats[3].isoformat() if stats and stats[3] else None
+            },
+            "events": events_list,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get dashboard data: {str(e)}")
 
 # Error handler
 @app.exception_handler(404)
