@@ -369,4 +369,156 @@ COMMENT ON FUNCTION staging.validate_and_enrich_event IS
 'Main ETL function that processes raw tracking events through validation, enrichment, and quality scoring before loading to staging table.';
 
 -- Staging layer implementation complete
-SELECT 'Staging layer for universal site tracking created successfully!' as status; 
+SELECT 'Staging layer for universal site tracking created successfully!' as status;
+
+-- =====================================================
+-- MISSING PIECE: STAGING TO BUSINESS PROCESSOR
+-- =====================================================
+
+-- Function to process staging events to business layer
+CREATE OR REPLACE FUNCTION staging.process_staging_to_business()
+RETURNS TABLE (
+    processed_count INTEGER,
+    success_count INTEGER,
+    error_count INTEGER,
+    processing_summary JSONB
+) AS $$
+DECLARE
+    v_staging_record RECORD;
+    v_processed_count INTEGER := 0;
+    v_success_count INTEGER := 0;
+    v_error_count INTEGER := 0;
+    v_event_hk BYTEA;
+    v_session_hk BYTEA;
+    v_visitor_hk BYTEA;
+    v_page_hk BYTEA;
+    v_event_bk VARCHAR(255);
+    v_session_bk VARCHAR(255);
+    v_visitor_bk VARCHAR(255);
+    v_error_details JSONB := '[]'::JSONB;
+BEGIN
+    RAISE NOTICE '🚀 Processing staging events to business layer...';
+    
+    -- Process staging records that haven't been moved to business
+    FOR v_staging_record IN 
+        SELECT * 
+        FROM staging.site_tracking_events_s 
+        WHERE validation_status = 'VALID'
+        AND (processed_to_business IS NULL OR processed_to_business = FALSE)
+        ORDER BY processed_timestamp ASC
+    LOOP
+        v_processed_count := v_processed_count + 1;
+        
+        BEGIN
+            -- Create business keys with correct formats
+            v_event_bk := 'evt_staging_' || v_staging_record.staging_event_id::text;
+            v_session_bk := 'sess_' || COALESCE(v_staging_record.session_id, 'staging_' || v_staging_record.staging_event_id::text);
+            v_visitor_bk := 'visitor_' || COALESCE(
+                LOWER(REGEXP_REPLACE(v_staging_record.user_id, '[^a-zA-Z0-9]', '', 'g')), 
+                'anonymous' || v_staging_record.staging_event_id::text
+            );
+            
+            -- Create/get business hubs using existing functions
+            v_event_hk := business.get_or_create_site_event_hk(
+                v_event_bk, v_staging_record.tenant_hk, 'staging_processor'
+            );
+            
+            v_session_hk := business.get_or_create_site_session_hk(
+                v_session_bk, v_staging_record.tenant_hk, 'staging_processor'
+            );
+            
+            v_visitor_hk := business.get_or_create_site_visitor_hk(
+                v_visitor_bk, v_staging_record.tenant_hk, 'staging_processor'
+            );
+            
+            v_page_hk := business.get_or_create_site_page_hk(
+                v_staging_record.page_url, v_staging_record.tenant_hk, 'staging_processor'
+            );
+            
+            -- Create business links using existing functions
+            PERFORM business.get_or_create_event_session_link(
+                v_event_hk, v_session_hk, v_staging_record.tenant_hk, 'staging_processor'
+            );
+            
+            PERFORM business.get_or_create_event_page_link(
+                v_event_hk, v_page_hk, v_staging_record.tenant_hk, 'staging_processor'
+            );
+            
+            PERFORM business.get_or_create_session_visitor_link(
+                v_session_hk, v_visitor_hk, v_staging_record.tenant_hk, 'staging_processor'
+            );
+            
+            -- Create event satellite using existing function
+            PERFORM business.insert_event_details(
+                v_event_hk,
+                jsonb_build_object(
+                    'event_timestamp', v_staging_record.event_timestamp,
+                    'event_type', v_staging_record.event_type,
+                    'event_category', 'user_interaction',
+                    'event_action', 'click',
+                    'page_url', v_staging_record.page_url,
+                    'page_title', v_staging_record.page_title,
+                    'custom_properties', jsonb_build_object(
+                        'staging_event_id', v_staging_record.staging_event_id,
+                        'quality_score', v_staging_record.quality_score,
+                        'device_type', v_staging_record.device_type,
+                        'browser_name', v_staging_record.browser_name
+                    )
+                ),
+                'staging_processor'
+            );
+            
+            -- Mark staging record as processed
+            UPDATE staging.site_tracking_events_s 
+            SET processed_to_business = TRUE,
+                business_processing_timestamp = CURRENT_TIMESTAMP
+            WHERE staging_event_id = v_staging_record.staging_event_id;
+            
+            v_success_count := v_success_count + 1;
+            
+            RAISE NOTICE '✅ SUCCESS: staging_event_id % → business', v_staging_record.staging_event_id;
+            
+        EXCEPTION WHEN OTHERS THEN
+            v_error_count := v_error_count + 1;
+            v_error_details := v_error_details || jsonb_build_object(
+                'staging_event_id', v_staging_record.staging_event_id,
+                'error_message', SQLERRM
+            );
+            
+            RAISE NOTICE '❌ ERROR: staging_event_id % failed - %', v_staging_record.staging_event_id, SQLERRM;
+        END;
+    END LOOP;
+    
+    RAISE NOTICE '🎯 Processing complete: % processed, % success, % errors', 
+                 v_processed_count, v_success_count, v_error_count;
+    
+    RETURN QUERY SELECT 
+        v_processed_count,
+        v_success_count, 
+        v_error_count,
+        jsonb_build_object(
+            'processed_count', v_processed_count,
+            'success_count', v_success_count,
+            'error_count', v_error_count,
+            'error_details', v_error_details,
+            'processing_timestamp', CURRENT_TIMESTAMP
+        );
+END;
+$$ LANGUAGE plpgsql;
+
+-- Add missing columns to staging table for business processing tracking
+ALTER TABLE staging.site_tracking_events_s 
+ADD COLUMN IF NOT EXISTS processed_to_business BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE staging.site_tracking_events_s 
+ADD COLUMN IF NOT EXISTS business_processing_timestamp TIMESTAMP WITH TIME ZONE;
+
+-- Add index for business processing queries
+CREATE INDEX IF NOT EXISTS idx_site_tracking_events_s_processed_to_business 
+ON staging.site_tracking_events_s(processed_to_business);
+
+COMMENT ON FUNCTION staging.process_staging_to_business IS 
+'Processes validated staging events to business layer using existing business hub/link/satellite functions. Bridges the gap between staging and business layers.';
+
+-- Updated success message
+SELECT 'Staging layer for universal site tracking created successfully! (WITH staging-to-business processor)' as status; 
