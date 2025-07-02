@@ -893,6 +893,40 @@ async def analyze_with_ai(
         # Calculate processing time
         processing_time = int((datetime.utcnow() - start_time).total_seconds() * 1000)
         
+        # 🔥 STORE AI INTERACTION IN DATABASE
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            
+            # Call database function to store AI interaction
+            cursor.execute("""
+                SELECT business.store_ai_interaction(
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                )
+            """, (
+                customer_id,                    # p_tenant_identifier
+                ai_request.query,               # p_question_text  
+                demo_response,                  # p_response_text
+                0.87,                           # p_confidence_score
+                ai_request.agent_type,          # p_context_type
+                f"gpt-4-{agent_id}",           # p_model_used
+                processing_time,                # p_processing_time_ms
+                len(ai_request.query.split()),  # p_token_count_input (estimate)
+                len(demo_response.split()),     # p_token_count_output (estimate)
+                session_id                      # p_session_id
+            ))
+            
+            db_result = cursor.fetchone()
+            conn.commit()
+            cursor.close()
+            conn.close()
+            
+            logger.info(f"✅ AI interaction stored in database: {db_result}")
+            
+        except Exception as db_error:
+            logger.warning(f"⚠️ Failed to store AI interaction in database: {db_error}")
+            # Don't fail the request if database storage fails
+        
         return AIAgentResponse(
             agent_id=agent_id,
             response=demo_response,
@@ -960,6 +994,40 @@ async def analyze_photo(
 *Analysis powered by OneVault Vision AI*"""
 
         processing_time = int((datetime.utcnow() - start_time).total_seconds() * 1000)
+        
+        # 🔥 STORE PHOTO ANALYSIS IN DATABASE
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            
+            # Store photo analysis as AI interaction
+            cursor.execute("""
+                SELECT business.store_ai_interaction(
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                )
+            """, (
+                customer_id,                                    # p_tenant_identifier
+                f"Photo analysis: {photo_request.analysis_type}", # p_question_text
+                demo_response,                                  # p_response_text
+                0.912,                                          # p_confidence_score
+                'photo_analysis',                               # p_context_type
+                "vision-ai-v1",                                 # p_model_used
+                processing_time,                                # p_processing_time_ms
+                50,                                             # p_token_count_input (estimate for image)
+                len(demo_response.split()),                     # p_token_count_output
+                session_id                                      # p_session_id
+            ))
+            
+            db_result = cursor.fetchone()
+            conn.commit()
+            cursor.close()
+            conn.close()
+            
+            logger.info(f"✅ Photo analysis stored in database: {db_result}")
+            
+        except Exception as db_error:
+            logger.warning(f"⚠️ Failed to store photo analysis in database: {db_error}")
+            # Don't fail the request if database storage fails
         
         return {
             "analysis_id": f"PA_{session_id}",
