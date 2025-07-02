@@ -14,12 +14,35 @@ from fastapi import FastAPI, HTTPException, Depends, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from typing import List
 
 # Pydantic models for authentication
 class LoginRequest(BaseModel):
     username: str
     password: str
     auto_login: Optional[bool] = True
+
+# AI Agent Pydantic models
+class AIAgentRequest(BaseModel):
+    agent_type: str  # 'business_analysis', 'data_science', 'customer_insight'
+    query: str
+    context: Optional[Dict[str, Any]] = {}
+    session_id: Optional[str] = None
+
+class AIAgentResponse(BaseModel):
+    agent_id: str
+    response: str
+    confidence: float
+    sources: List[str] = []
+    session_id: str
+    processing_time_ms: int
+    timestamp: str
+
+class PhotoAnalysisRequest(BaseModel):
+    image_data: str  # base64 encoded
+    image_type: str
+    analysis_type: str = "horse_health"
+    session_id: Optional[str] = None
 
 class CompleteLoginRequest(BaseModel):
     username: str
@@ -729,6 +752,235 @@ async def get_tracking_dashboard(
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get dashboard data: {str(e)}")
+
+# =============================================================================
+# AI AGENT ENDPOINTS - OneVault Canvas Integration
+# =============================================================================
+
+@app.get("/api/v1/ai/agents/status")
+async def get_ai_agents_status(
+    customer_id: str = Depends(validate_customer_header),
+    token: str = Depends(validate_auth_token)
+):
+    """Get status of all AI agents for customer dashboard"""
+    try:
+        # Agent definitions with demo data
+        agents = {
+            "BAA-001": {
+                "name": "Business Analysis Agent",
+                "type": "business_analysis", 
+                "status": "active",
+                "health": "excellent",
+                "last_analysis": "2025-07-02T15:30:00Z",
+                "specialties": ["Financial Planning", "Risk Assessment", "Market Analysis"]
+            },
+            "DSA-001": {
+                "name": "Data Science Agent",
+                "type": "data_science",
+                "status": "active", 
+                "health": "excellent",
+                "last_analysis": "2025-07-02T15:25:00Z",
+                "specialties": ["Predictive Analytics", "Pattern Recognition", "Statistical Analysis"]
+            },
+            "CIA-001": {
+                "name": "Customer Insight Agent", 
+                "type": "customer_insight",
+                "status": "active",
+                "health": "excellent", 
+                "last_analysis": "2025-07-02T15:28:00Z",
+                "specialties": ["Behavior Analysis", "Sentiment Analysis", "Trend Prediction"]
+            }
+        }
+        
+        return {
+            "customer_id": customer_id,
+            "agents": agents,
+            "total_agents": len(agents),
+            "active_agents": sum(1 for a in agents.values() if a["status"] == "active"),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ AI agents status failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Could not get AI agents status: {str(e)}")
+
+@app.post("/api/v1/ai/analyze")
+async def analyze_with_ai(
+    request: Request,
+    ai_request: AIAgentRequest,
+    customer_id: str = Depends(validate_customer_header),
+    token: str = Depends(validate_auth_token)
+):
+    """Main AI analysis endpoint - routes to appropriate AI agent"""
+    start_time = datetime.utcnow()
+    
+    try:
+        # Map agent types to agent IDs
+        agent_mapping = {
+            "business_analysis": "BAA-001",
+            "data_science": "DSA-001", 
+            "customer_insight": "CIA-001"
+        }
+        
+        agent_id = agent_mapping.get(ai_request.agent_type, "UNKNOWN")
+        
+        if agent_id == "UNKNOWN":
+            raise HTTPException(status_code=400, detail=f"Unknown agent type: {ai_request.agent_type}")
+        
+        # Generate session ID if not provided
+        session_id = ai_request.session_id or f"{customer_id}_{int(datetime.utcnow().timestamp())}"
+        
+        # Demo AI responses based on agent type
+        if ai_request.agent_type == "business_analysis":
+            demo_response = f"""Based on your query "{ai_request.query}", here's my business analysis:
+
+📊 **Key Insights:**
+- Market opportunity identified in your sector
+- Risk factors: Market volatility (15%), Competition (12%)
+- Projected ROI: 18-22% over 24 months
+
+💡 **Recommendations:**
+1. Diversify revenue streams
+2. Invest in customer retention (current churn: 8%)
+3. Consider expansion into adjacent markets
+
+📈 **Financial Impact:**
+- Short-term: Increased operational costs by 12%
+- Long-term: Revenue growth potential of 25-30%
+
+*Analysis powered by OneVault Business Intelligence Engine*"""
+
+        elif ai_request.agent_type == "data_science":
+            demo_response = f"""Data Science Analysis for: "{ai_request.query}"
+
+🔬 **Statistical Findings:**
+- Correlation coefficient: 0.847 (strong positive)
+- Data completeness: 94.2%
+- Anomaly detection: 3 outliers identified
+
+📊 **Predictive Model Results:**
+- Accuracy: 91.3%
+- Precision: 89.7%
+- F1-Score: 0.905
+
+🎯 **Recommendations:**
+1. Implement real-time monitoring for top 5 KPIs
+2. Address data quality issues in customer demographics
+3. Deploy predictive model for early warning system
+
+*Powered by OneVault Advanced Analytics*"""
+
+        else:  # customer_insight
+            demo_response = f"""Customer Insight Analysis: "{ai_request.query}"
+
+👥 **Customer Behavior Patterns:**
+- Peak engagement: Tuesday-Thursday (2-4 PM)
+- Conversion rate: 12.3% (above industry average)
+- Customer satisfaction: 8.7/10
+
+💭 **Sentiment Analysis:**
+- Positive sentiment: 67%
+- Neutral sentiment: 28% 
+- Negative sentiment: 5%
+
+🎯 **Actionable Insights:**
+1. Optimize content delivery for peak hours
+2. Address top 3 pain points (identified from reviews)
+3. Implement personalization for 15% conversion boost
+
+*OneVault Customer Intelligence Platform*"""
+
+        # Calculate processing time
+        processing_time = int((datetime.utcnow() - start_time).total_seconds() * 1000)
+        
+        return AIAgentResponse(
+            agent_id=agent_id,
+            response=demo_response,
+            confidence=0.87,
+            sources=[f"OneVault-{agent_id}", "Data Vault 2.0", f"Customer-{customer_id}"],
+            session_id=session_id,
+            processing_time_ms=processing_time,
+            timestamp=datetime.utcnow().isoformat()
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ AI analysis failed: {e}")
+        processing_time = int((datetime.utcnow() - start_time).total_seconds() * 1000)
+        
+        # Return graceful error response
+        return AIAgentResponse(
+            agent_id="ERROR",
+            response=f"I apologize, but I encountered an error processing your request: {str(e)}. Please try again or contact support.",
+            confidence=0.0,
+            sources=["error_handler"],
+            session_id=ai_request.session_id or "error_session",
+            processing_time_ms=processing_time,
+            timestamp=datetime.utcnow().isoformat()
+        )
+
+@app.post("/api/v1/ai/photo-analysis")
+async def analyze_photo(
+    request: Request,
+    photo_request: PhotoAnalysisRequest,
+    customer_id: str = Depends(validate_customer_header),
+    token: str = Depends(validate_auth_token)  
+):
+    """AI-powered photo analysis endpoint"""
+    start_time = datetime.utcnow()
+    
+    try:
+        session_id = photo_request.session_id or f"photo_{customer_id}_{int(datetime.utcnow().timestamp())}"
+        
+        # Demo photo analysis response
+        demo_response = f"""📸 **Photo Analysis Complete**
+
+🔍 **Visual Analysis Results:**
+- Image Quality: High (94% clarity)
+- Subject Detection: 3 primary subjects identified
+- Lighting Conditions: Optimal (natural daylight)
+- Composition Score: 8.2/10
+
+🎯 **Key Findings:**
+1. **Subject Health Assessment**: Excellent condition observed
+2. **Environmental Factors**: Clean, well-maintained environment
+3. **Attention Areas**: Minor concern in lower-left quadrant
+
+📊 **Confidence Metrics:**
+- Overall Analysis: 91.2% confidence
+- Health Assessment: 88.7% confidence
+- Environmental Analysis: 94.3% confidence
+
+💡 **Recommendations:**
+- Continue current care routine
+- Monitor identified area for 7-14 days
+- Consider follow-up photo in 1 week
+
+*Analysis powered by OneVault Vision AI*"""
+
+        processing_time = int((datetime.utcnow() - start_time).total_seconds() * 1000)
+        
+        return {
+            "analysis_id": f"PA_{session_id}",
+            "customer_id": customer_id,
+            "analysis_type": photo_request.analysis_type,
+            "image_type": photo_request.image_type,
+            "analysis_result": demo_response,
+            "confidence_score": 0.912,
+            "processing_time_ms": processing_time,
+            "session_id": session_id,
+            "timestamp": datetime.utcnow().isoformat(),
+            "next_steps": [
+                "Save analysis to customer dashboard",
+                "Schedule follow-up if needed", 
+                "Export detailed report"
+            ]
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Photo analysis failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Photo analysis failed: {str(e)}")
 
 # Error handler
 @app.exception_handler(404)
