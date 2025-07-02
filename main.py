@@ -6,11 +6,12 @@ OneVault API - Simplified Vercel Deployment
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List, Union
 import os
 import psycopg2
 from datetime import datetime
 import json
+import base64
 
 # Pydantic models for authentication
 class LoginRequest(BaseModel):
@@ -24,6 +25,29 @@ class CompleteLoginRequest(BaseModel):
 
 class ValidateSessionRequest(BaseModel):
     session_token: str
+
+class AIAgentRequest(BaseModel):
+    agent_type: str  # 'business_analysis', 'data_science', 'customer_insight'
+    query: str
+    context: Optional[Dict[str, Any]] = {}
+    session_id: Optional[str] = None
+    tenant_id: Optional[str] = None
+
+class AIAgentResponse(BaseModel):
+    agent_id: str
+    response: str
+    confidence: float
+    sources: List[str] = []
+    session_id: str
+    processing_time_ms: int
+    timestamp: str
+
+class PhotoAnalysisRequest(BaseModel):
+    image_data: str  # base64 encoded
+    image_type: str
+    analysis_type: str = "horse_health"
+    session_id: Optional[str] = None
+    tenant_id: Optional[str] = None
 
 # Create FastAPI app
 app = FastAPI(
@@ -291,6 +315,129 @@ async def platform_info():
                 "hipaa_compliance"
             ]
         },
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+# AI Agent endpoints
+@app.post("/api/v1/ai/analyze", response_model=AIAgentResponse)
+async def ai_agent_analyze(request: Request, ai_request: AIAgentRequest):
+    """AI Agent Analysis - Routes to appropriate reasoning engine"""
+    try:
+        conn = get_db_connection() 
+        cursor = conn.cursor()
+        
+        # Prepare request data for database AI function
+        request_data = {
+            "agent_type": ai_request.agent_type,
+            "query": ai_request.query, 
+            "context": ai_request.context,
+            "session_id": ai_request.session_id,
+            "tenant_id": ai_request.tenant_id,
+            "ip_address": request.client.host if request.client else "127.0.0.1",
+            "user_agent": request.headers.get('User-Agent', 'OneVault-AI-Agent'),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+        # Call AI reasoning function (you'll need to create this in DB)
+        cursor.execute("SELECT api.ai_agent_reasoning(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            return result[0]  # Return the JSONB response directly
+        else:
+            # Fallback demo response for testing
+            return {
+                "agent_id": f"{ai_request.agent_type}_001",
+                "response": f"Demo response for {ai_request.query} from {ai_request.agent_type} agent",
+                "confidence": 0.85,
+                "sources": ["data_vault_demo"],
+                "session_id": ai_request.session_id or "demo_session",
+                "processing_time_ms": 150,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+    except psycopg2.Error as e:
+        if "function api.ai_agent_reasoning" in str(e):
+            # Return demo response if function not implemented yet
+            return {
+                "agent_id": f"{ai_request.agent_type}_001",
+                "response": f"Demo: Your {ai_request.agent_type} agent analyzed '{ai_request.query}' and found interesting patterns in your data.",
+                "confidence": 0.75,
+                "sources": ["demo_data_vault"],
+                "session_id": ai_request.session_id or "demo_session", 
+                "processing_time_ms": 200,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+
+@app.post("/api/v1/ai/photo-analysis")
+async def ai_photo_analysis(request: Request, photo_request: PhotoAnalysisRequest):
+    """AI Photo Analysis - For specialized visual analysis"""
+    try:
+        # This endpoint bridges to your existing Anthropic service
+        # but logs to database and maintains tenant isolation
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Log the request
+        log_data = {
+            "analysis_type": photo_request.analysis_type,
+            "session_id": photo_request.session_id,
+            "tenant_id": photo_request.tenant_id,
+            "image_size_bytes": len(photo_request.image_data) if photo_request.image_data else 0,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+        # Store analysis request in database
+        cursor.execute("SELECT api.log_ai_photo_request(%s)", (json.dumps(log_data),))
+        
+        cursor.close()
+        conn.close()
+        
+        # Return structured response that frontend can use
+        return {
+            "status": "processing",
+            "session_id": photo_request.session_id or f"session_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}",
+            "message": "Photo analysis request received - use frontend Anthropic service for processing",
+            "api_integration_ready": True,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Photo analysis error: {str(e)}")
+
+@app.get("/api/v1/ai/agents/status")
+async def ai_agents_status():
+    """Get status of all AI agents"""
+    return {
+        "agents": {
+            "business_analysis_agent": {
+                "id": "BAA-001", 
+                "status": "online",
+                "capabilities": ["business_insights", "trend_analysis", "kpi_tracking"],
+                "personality": "Strategic, analytical, forward-thinking"
+            },
+            "data_science_agent": {
+                "id": "DSA-001",
+                "status": "online", 
+                "capabilities": ["statistical_analysis", "pattern_recognition", "predictions"],
+                "personality": "Curious, precise, data-driven"
+            },
+            "customer_insight_agent": {
+                "id": "CIA-001",
+                "status": "online",
+                "capabilities": ["customer_behavior", "satisfaction_analysis", "recommendations"],
+                "personality": "Empathetic, understanding, customer-focused"
+            }
+        },
+        "system_status": "operational",
+        "api_version": "1.0.0",
         "timestamp": datetime.utcnow().isoformat()
     }
 
