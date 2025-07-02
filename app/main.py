@@ -44,6 +44,45 @@ class PhotoAnalysisRequest(BaseModel):
     analysis_type: str = "horse_health"
     session_id: Optional[str] = None
 
+# Database-compatible models (matching exact API contract)
+class DatabaseLoginRequest(BaseModel):
+    username: str
+    password: str
+    ip_address: Optional[str] = "127.0.0.1"
+    user_agent: Optional[str] = "OneVault-API"
+    auto_login: Optional[bool] = True
+
+class DatabaseCompleteLoginRequest(BaseModel):
+    session_token: Optional[str] = None
+    mfa_code: Optional[str] = None
+    tenant_selection: Optional[str] = None
+
+class DatabaseValidateSessionRequest(BaseModel):
+    session_token: str
+    ip_address: Optional[str] = "127.0.0.1"
+    user_agent: Optional[str] = "OneVault-API"
+
+class DatabaseLogoutRequest(BaseModel):
+    session_token: str
+
+class DatabaseAICreateSessionRequest(BaseModel):
+    tenant_id: Optional[str] = None
+    agent_type: str = "business_intelligence_agent"
+    session_purpose: str = "canvas_integration"
+    metadata: Optional[Dict[str, Any]] = {}
+
+class DatabaseAIChatRequest(BaseModel):
+    session_id: str
+    message: str
+    context: Optional[Dict[str, Any]] = {}
+
+class DatabaseTrackSiteEventRequest(BaseModel):
+    ip_address: Optional[str] = "127.0.0.1"
+    user_agent: Optional[str] = "OneVault-API"
+    page_url: Optional[str] = "https://canvas.onevault.com"
+    event_type: str
+    event_data: Optional[Dict[str, Any]] = {}
+
 class CompleteLoginRequest(BaseModel):
     username: str
     tenant_id: str
@@ -1050,12 +1089,302 @@ async def analyze_photo(
         logger.error(f"❌ Photo analysis failed: {e}")
         raise HTTPException(status_code=500, detail=f"Photo analysis failed: {str(e)}")
 
+# =============================================================================
+# DATABASE-COMPATIBLE ENDPOINTS (Production API Contract)
+# =============================================================================
+
+@app.post("/api/auth_login")
+async def database_auth_login(request: Request, login_data: DatabaseLoginRequest):
+    """Database-compatible authentication endpoint"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get client IP and user agent
+        client_ip = request.client.host if request.client else login_data.ip_address
+        user_agent = request.headers.get('User-Agent', login_data.user_agent)
+        
+        # Prepare request data exactly as database expects
+        request_data = {
+            "username": login_data.username,
+            "password": login_data.password,
+            "ip_address": client_ip,
+            "user_agent": user_agent,
+            "auto_login": login_data.auto_login
+        }
+        
+        # Call the database function
+        cursor.execute("SELECT api.auth_login(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            response_data = result[0]
+            logger.info(f"✅ Database auth_login successful for user: {login_data.username}")
+            return response_data
+        else:
+            raise HTTPException(status_code=401, detail="Authentication failed")
+            
+    except Exception as e:
+        logger.error(f"❌ Database auth_login error: {e}")
+        raise HTTPException(status_code=500, detail=f"Authentication error: {str(e)}")
+
+@app.post("/api/auth_complete_login")
+async def database_auth_complete_login(request: Request, complete_data: DatabaseCompleteLoginRequest):
+    """Database-compatible complete login endpoint"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Prepare request data
+        request_data = {
+            "session_token": complete_data.session_token,
+            "mfa_code": complete_data.mfa_code,
+            "tenant_selection": complete_data.tenant_selection
+        }
+        
+        # Call the database function
+        cursor.execute("SELECT api.auth_complete_login(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            response_data = result[0]
+            logger.info("✅ Database auth_complete_login successful")
+            return response_data
+        else:
+            raise HTTPException(status_code=401, detail="Complete login failed")
+            
+    except Exception as e:
+        logger.error(f"❌ Database auth_complete_login error: {e}")
+        raise HTTPException(status_code=500, detail=f"Complete login error: {str(e)}")
+
+@app.post("/api/auth_validate_session")
+async def database_auth_validate_session(request: Request, validate_data: DatabaseValidateSessionRequest):
+    """Database-compatible session validation endpoint"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get client IP and user agent
+        client_ip = request.client.host if request.client else validate_data.ip_address
+        user_agent = request.headers.get('User-Agent', validate_data.user_agent)
+        
+        # Prepare request data
+        request_data = {
+            "session_token": validate_data.session_token,
+            "ip_address": client_ip,
+            "user_agent": user_agent
+        }
+        
+        # Call the database function
+        cursor.execute("SELECT api.auth_validate_session(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            response_data = result[0]
+            logger.info("✅ Database auth_validate_session successful")
+            return response_data
+        else:
+            raise HTTPException(status_code=401, detail="Session validation failed")
+            
+    except Exception as e:
+        logger.error(f"❌ Database auth_validate_session error: {e}")
+        raise HTTPException(status_code=500, detail=f"Session validation error: {str(e)}")
+
+@app.post("/api/auth_logout")
+async def database_auth_logout(request: Request, logout_data: DatabaseLogoutRequest):
+    """Database-compatible logout endpoint"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Prepare request data
+        request_data = {
+            "session_token": logout_data.session_token
+        }
+        
+        # Call the database function
+        cursor.execute("SELECT api.auth_logout(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            response_data = result[0]
+            logger.info("✅ Database auth_logout successful")
+            return response_data
+        else:
+            raise HTTPException(status_code=500, detail="Logout failed")
+            
+    except Exception as e:
+        logger.error(f"❌ Database auth_logout error: {e}")
+        raise HTTPException(status_code=500, detail=f"Logout error: {str(e)}")
+
+@app.post("/api/ai_create_session")
+async def database_ai_create_session(request: Request, ai_data: DatabaseAICreateSessionRequest):
+    """Database-compatible AI session creation endpoint"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Prepare request data
+        request_data = {
+            "tenant_id": ai_data.tenant_id or "default_tenant",
+            "agent_type": ai_data.agent_type,
+            "session_purpose": ai_data.session_purpose,
+            "metadata": {
+                "canvas_integration": True,
+                **ai_data.metadata
+            }
+        }
+        
+        # Call the database function
+        cursor.execute("SELECT api.ai_create_session(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            response_data = result[0]
+            logger.info(f"✅ Database ai_create_session successful for agent: {ai_data.agent_type}")
+            return response_data
+        else:
+            raise HTTPException(status_code=500, detail="AI session creation failed")
+            
+    except Exception as e:
+        logger.error(f"❌ Database ai_create_session error: {e}")
+        raise HTTPException(status_code=500, detail=f"AI session creation error: {str(e)}")
+
+@app.post("/api/ai_secure_chat")
+async def database_ai_secure_chat(request: Request, chat_data: DatabaseAIChatRequest):
+    """Database-compatible AI chat endpoint"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Prepare request data
+        request_data = {
+            "session_id": chat_data.session_id,
+            "message": chat_data.message,
+            "context": chat_data.context
+        }
+        
+        # Call the database function
+        cursor.execute("SELECT api.ai_secure_chat(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            response_data = result[0]
+            logger.info(f"✅ Database ai_secure_chat successful for session: {chat_data.session_id}")
+            return response_data
+        else:
+            raise HTTPException(status_code=500, detail="AI chat failed")
+            
+    except Exception as e:
+        logger.error(f"❌ Database ai_secure_chat error: {e}")
+        raise HTTPException(status_code=500, detail=f"AI chat error: {str(e)}")
+
+@app.post("/api/track_site_event")
+async def database_track_site_event(request: Request, event_data: DatabaseTrackSiteEventRequest):
+    """Database-compatible site event tracking endpoint"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Get client IP and user agent
+        client_ip = request.client.host if request.client else event_data.ip_address
+        user_agent = request.headers.get('User-Agent', event_data.user_agent)
+        
+        # Prepare request data
+        request_data = {
+            "ip_address": client_ip,
+            "user_agent": user_agent,
+            "page_url": event_data.page_url,
+            "event_type": event_data.event_type,
+            "event_data": {
+                "timestamp": datetime.utcnow().isoformat(),
+                **event_data.event_data
+            }
+        }
+        
+        # Call the database function
+        cursor.execute("SELECT api.track_site_event(%s)", (json.dumps(request_data),))
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            response_data = result[0]
+            logger.info(f"✅ Database track_site_event successful for event: {event_data.event_type}")
+            return response_data
+        else:
+            raise HTTPException(status_code=500, detail="Site event tracking failed")
+            
+    except Exception as e:
+        logger.error(f"❌ Database track_site_event error: {e}")
+        raise HTTPException(status_code=500, detail=f"Site event tracking error: {str(e)}")
+
+@app.get("/api/system_health_check")
+async def database_system_health_check():
+    """Database-compatible system health check endpoint"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Call the database function
+        cursor.execute("SELECT api.system_health_check()")
+        result = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if result and result[0]:
+            response_data = result[0]
+            logger.info("✅ Database system_health_check successful")
+            return response_data
+        else:
+            raise HTTPException(status_code=500, detail="System health check failed")
+            
+    except Exception as e:
+        logger.error(f"❌ Database system_health_check error: {e}")
+        raise HTTPException(status_code=500, detail=f"System health check error: {str(e)}")
+
 # Error handler
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc: HTTPException):
     return JSONResponse(
         status_code=404,
-        content={"detail": "Not Found"}
+        content={
+            "error": "Not Found",
+            "message": f"The requested endpoint {request.url.path} was not found",
+            "available_endpoints": [
+                "/health",
+                "/api/auth_login",
+                "/api/auth_validate_session", 
+                "/api/ai_create_session",
+                "/api/ai_secure_chat",
+                "/api/track_site_event",
+                "/api/system_health_check",
+                "/api/v1/auth/login",
+                "/api/v1/track",
+                "/api/v1/ai/analyze"
+            ],
+            "documentation": "https://docs.onevault.com/api"
+        }
     )
 
 # For local development
