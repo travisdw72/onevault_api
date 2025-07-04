@@ -1,0 +1,411 @@
+---
+description: Configuration Rules & Standards - Single Source of Truth Architecture for One Barn Platform
+globs: 
+alwaysApply: false
+---
+# Configuration Rules & Standards
+## Single Source of Truth Architecture for One vault Platform
+
+### 🎯 **CORE PRINCIPLE**
+**ALL content, styling, and configuration MUST come from config files. Components are PURE presentation logic only.**
+
+---
+
+## 📋 **CONFIGURATION FILE HIERARCHY**
+
+### Primary Configuration Files
+```
+src/config/
+├── brandConfig.ts          # 🎨 ALL styling, colors, typography, spacing
+├── employeeDashboardData.ts # 📊 ALL employee dashboard content & data
+├── clientDashboardData.ts   # 👤 ALL client dashboard content & data
+├── permissions.config.ts    # 🔐 ALL RBAC permissions & access control
+└── appConfig.ts            # ⚙️ ALL application-wide settings
+```
+
+### Configuration Responsibility Matrix
+| Config File | Responsible For | Never Contains |
+|-------------|----------------|----------------|
+| `brandConfig.ts` | Colors, fonts, spacing, breakpoints, animations | Content text, data, business logic |
+| `*DashboardData.ts` | Text content, data structures, UI copy | Styling, colors, component logic |
+| `permissions.config.ts` | Access control, role definitions, security | UI styling, content text |
+| `appConfig.ts` | App settings, API endpoints, feature flags | Styling, dashboard-specific content |
+
+---
+
+## 🚫 **FORBIDDEN PRACTICES**
+
+### ❌ **NEVER DO THIS**
+```typescript
+// ❌ WRONG: Hardcoded text in component
+export const WelcomeHeader = () => (
+  <Typography>Welcome to Your Dashboard</Typography>
+);
+
+// ❌ WRONG: Hardcoded styling values
+const styles = {
+  button: {
+    backgroundColor: '#8B4513', // Hardcoded color
+    fontSize: '16px',           // Hardcoded size
+    padding: '12px 24px'        // Hardcoded spacing
+  }
+};
+
+// ❌ WRONG: Hardcoded configuration
+const tooltipText = {
+  'sessions-today': 'Click to view schedule',
+  'active-horses': 'Click to view horses'
+};
+```
+
+### ✅ **ALWAYS DO THIS**
+```typescript
+// ✅ CORRECT: All content from config
+import { dashboardConfig } from '../../config/employeeDashboardData';
+import { brandConfig } from '../../config/brandConfig';
+
+export const WelcomeHeader = () => (
+  <Typography sx={{ 
+    color: brandConfig.colors.stableMahogany,
+    fontSize: brandConfig.typography.fontSize3xl 
+  }}>
+    {dashboardConfig.welcome.title}
+  </Typography>
+);
+
+// ✅ CORRECT: All styling from brandConfig
+const styles = {
+  button: {
+    backgroundColor: brandConfig.colors.stableMahogany,
+    fontSize: brandConfig.typography.fontSizeBase,
+    padding: `${brandConfig.spacing.md} ${brandConfig.spacing.lg}`
+  }
+};
+
+// ✅ CORRECT: All tooltips from config
+const getTooltipText = (statId: string) => {
+  return dashboardConfig.tooltips[statId] || dashboardConfig.tooltips.default;
+};
+```
+
+---
+
+## 📐 **BRANDCONFIG.TS RULES**
+
+### Structure Requirements
+```typescript
+export const brandConfig = {
+  // 🎨 Colors - ALL color values
+  colors: {
+    // Primary brand colors
+    stableMahogany: '#8B4513',
+    hunterGreen: '#2C5530',
+    // ... all colors defined here
+  },
+  
+  // 📝 Typography - ALL text styling
+  typography: {
+    fontPrimary: 'Inter, sans-serif',
+    fontSize3xl: '1.875rem',
+    weightBold: 700,
+    // ... all typography defined here
+  },
+  
+  // 📏 Spacing - ALL spacing values
+  spacing: {
+    xs: '0.25rem',
+    sm: '0.5rem',
+    md: '1rem',
+    // ... all spacing defined here
+  },
+  
+  // 🏗️ Layout - ALL layout properties
+  layout: {
+    borderRadius: '8px',
+    maxWidth: '1200px',
+    // ... all layout defined here
+  }
+};
+```
+
+### Usage Rules
+1. **NEVER** hardcode color values (`#8B4513`, `rgb(139, 69, 19)`)
+2. **NEVER** hardcode font sizes (`16px`, `1.2rem`)
+3. **NEVER** hardcode spacing (`margin: '10px'`, `padding: 20`)
+4. **ALWAYS** use `brandConfig.colors.colorName`
+5. **ALWAYS** use `brandConfig.typography.propertyName`
+6. **ALWAYS** use `brandConfig.spacing.sizeName`
+
+---
+
+## 📊 **DASHBOARD DATA CONFIG RULES**
+
+### Structure Requirements
+```typescript
+export const dashboardConfig = {
+  // 👋 Welcome content
+  welcome: {
+    title: 'Welcome to Your Dashboard',
+    subtitle: 'Manage your daily responsibilities...'
+  },
+  
+  // 💬 All user-facing text
+  messages: {
+    accessDenied: 'Access denied. You do not have permission...',
+    noData: 'No data available',
+    loading: 'Loading...'
+  },
+  
+  // 🔘 Button labels
+  buttons: {
+    save: 'Save Changes',
+    cancel: 'Cancel',
+    delete: 'Delete'
+  },
+  
+  // 📋 Section headers
+  headers: {
+    priorityTasks: 'Priority Tasks',
+    recentActivity: 'Recent Activity'
+  },
+  
+  // 💡 Tooltips and help text
+  tooltips: {
+    'stat-id': 'Helpful tooltip text',
+    default: 'Click for more details'
+  }
+};
+```
+
+### Content Rules
+1. **NEVER** hardcode user-facing text in components
+2. **ALWAYS** define ALL text content in config
+3. **GROUP** related content logically (welcome, messages, buttons)
+4. **USE** descriptive keys that indicate purpose
+5. **PROVIDE** fallback values for dynamic content
+
+---
+
+## 🔐 **PERMISSIONS CONFIG RULES**
+
+### Structure Requirements
+```typescript
+export const ROLE_PERMISSIONS = {
+  client: [
+    {
+      resource: "horses",
+      actions: ["list", "show"],
+      filters: [{ field: "owner_id", operator: "eq", value: "CURRENT_USER_ID" }],
+      columns: ["name", "breed", "status"]
+    }
+  ],
+  employee: [
+    // Employee permissions
+  ],
+  admin: [
+    // Admin permissions
+  ]
+};
+```
+
+### Permission Rules
+1. **DEFINE** all permissions in config, never in components
+2. **USE** resource-based permission structure
+3. **IMPLEMENT** role inheritance where appropriate
+4. **SPECIFY** column-level permissions for data security
+5. **INCLUDE** contextual filters (vault_id, user_id)
+
+---
+
+## 🧩 **COMPONENT IMPLEMENTATION RULES**
+
+### Import Standards
+```typescript
+// ✅ CORRECT: Import order and naming
+import React from 'react';
+import { MUI_COMPONENTS } from '@mui/material';
+import { brandConfig } from '../../config/brandConfig';
+import { dashboardConfig } from '../../config/employeeDashboardData';
+import { ROLE_PERMISSIONS } from '../../config/permissions.config';
+import type { IComponentProps } from '../../interfaces/ComponentTypes';
+```
+
+### Component Structure
+```typescript
+export const ComponentName: React.FC<IComponentProps> = ({ 
+  configDrivenProps 
+}) => {
+  // 1. Hooks and state
+  const [localState, setLocalState] = useState();
+  
+  // 2. Computed values from config
+  const computedValue = dashboardConfig.section.property;
+  
+  // 3. Styles object using brandConfig ONLY
+  const styles = {
+    container: {
+      backgroundColor: brandConfig.colors.background,
+      padding: brandConfig.spacing.lg,
+      borderRadius: brandConfig.layout.borderRadius
+    }
+  };
+  
+  // 4. Event handlers (business logic only)
+  const handleAction = () => {
+    // Pure business logic
+  };
+  
+  // 5. Render with config-driven content
+  return (
+    <Box sx={styles.container}>
+      <Typography>{dashboardConfig.headers.sectionTitle}</Typography>
+      {/* All content from config */}
+    </Box>
+  );
+};
+```
+
+---
+
+## 🔄 **CONFIGURATION UPDATE WORKFLOW**
+
+### Adding New Content
+1. **Identify** the type of content (styling, text, data, permissions)
+2. **Locate** the appropriate config file
+3. **Add** the new configuration property
+4. **Update** TypeScript interfaces if needed
+5. **Reference** the config in components
+6. **Test** all affected components
+
+### Modifying Existing Content
+1. **Find** the config property (never modify in component)
+2. **Update** the config file
+3. **Verify** all components using that property
+4. **Test** the changes across all roles/views
+
+---
+
+## 🧪 **TESTING CONFIGURATION COMPLIANCE**
+
+### Automated Checks
+```typescript
+// Example test to ensure no hardcoded values
+describe('Configuration Compliance', () => {
+  it('should not contain hardcoded colors', () => {
+    const componentCode = fs.readFileSync('Component.tsx', 'utf8');
+    expect(componentCode).not.toMatch(/#[0-9A-Fa-f]{6}/); // No hex colors
+    expect(componentCode).not.toMatch(/rgb\(/); // No RGB colors
+  });
+  
+  it('should not contain hardcoded text', () => {
+    const componentCode = fs.readFileSync('Component.tsx', 'utf8');
+    expect(componentCode).not.toMatch(/"[A-Z][a-z\s]+"/); // No sentence-case strings
+  });
+});
+```
+
+### Manual Review Checklist
+- [ ] No hardcoded colors in components
+- [ ] No hardcoded text strings in components
+- [ ] No hardcoded spacing/sizing values
+- [ ] All config imports present and used
+- [ ] TypeScript interfaces updated for new config
+- [ ] All roles tested with new configuration
+
+---
+
+## 🚀 **BENEFITS OF CONFIG-DRIVEN ARCHITECTURE**
+
+### 🎯 **Maintainability**
+- Single location for all styling changes
+- Consistent branding across entire application
+- Easy to update content without touching components
+
+### 🌍 **Internationalization Ready**
+- All text centralized for easy translation
+- Consistent messaging across languages
+- Cultural customization support
+
+### 🎨 **Theming Support**
+- Easy to implement dark/light themes
+- Brand customization for different clients
+- Accessibility improvements (high contrast, large text)
+
+### 🔒 **Security**
+- Centralized permission management
+- Consistent access control enforcement
+- Easy audit trail for permission changes
+
+### 🧪 **Testing**
+- Predictable component behavior
+- Easy to mock configuration for tests
+- Isolated testing of business logic
+
+---
+
+## ⚠️ **COMMON VIOLATIONS & FIXES**
+
+### Violation: Hardcoded Alert Messages
+```typescript
+// ❌ WRONG
+alert('Access denied. You do not have permission to access this module.');
+
+// ✅ CORRECT
+alert(dashboardConfig.messages.accessDenied);
+```
+
+### Violation: Inline Styling
+```typescript
+// ❌ WRONG
+<Button style={{ backgroundColor: '#8B4513', color: 'white' }}>
+
+// ✅ CORRECT
+<Button sx={{ 
+  backgroundColor: brandConfig.colors.stableMahogany,
+  color: brandConfig.colors.arenaSand 
+}}>
+```
+
+### Violation: Component-Level Configuration
+```typescript
+// ❌ WRONG
+const PRIORITY_LEVELS = {
+  high: 'High Priority',
+  medium: 'Medium Priority',
+  low: 'Low Priority'
+};
+
+// ✅ CORRECT - Move to config file
+// In dashboardConfig.ts
+export const dashboardConfig = {
+  priorities: {
+    high: 'High Priority',
+    medium: 'Medium Priority', 
+    low: 'Low Priority'
+  }
+};
+```
+
+---
+
+## 📚 **CONCLUSION**
+
+Following these configuration rules ensures:
+
+1. **Consistency** - Uniform styling and messaging
+2. **Maintainability** - Single source of truth for changes
+3. **Scalability** - Easy to extend and modify
+4. **Compliance** - Follows established architecture patterns
+5. **Quality** - Predictable, testable code
+
+**Remember: If it's content, styling, or configuration - it belongs in a config file, NOT in a component!**
+
+---
+
+## 🔗 **Related Documentation**
+- @RBAC Architecture Guide
+- @Brand Configuration Standards
+- @Component Development Guidelines
+
+
+- @TypeScript Interface Standards 

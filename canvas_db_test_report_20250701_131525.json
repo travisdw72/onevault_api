@@ -1,0 +1,45 @@
+{
+  "test_summary": {
+    "total_tests": 5,
+    "passed_tests": 2,
+    "success_rate": 40.0,
+    "test_date": "2025-07-01T13:15:25.097445"
+  },
+  "test_results": [
+    {
+      "test": "auth_login",
+      "status": "PASS",
+      "result": {
+        "message": "Invalid username or password",
+        "success": false,
+        "error_code": "INVALID_CREDENTIALS"
+      },
+      "timestamp": "2025-07-01T13:15:25.072667"
+    },
+    {
+      "test": "auth_validate_session",
+      "status": "PASS",
+      "result": {
+        "message": "Invalid session token",
+        "success": false,
+        "error_code": "INVALID_TOKEN"
+      },
+      "timestamp": "2025-07-01T13:15:25.072667"
+    },
+    {
+      "test": "tenant_isolation",
+      "status": "ERROR",
+      "error": "column \"load_end_date\" does not exist\nLINE 4:                 WHERE load_end_date IS NULL\n                              ^\n"
+    },
+    {
+      "test": "ai_agent_functions",
+      "status": "ERROR",
+      "error": "current transaction is aborted, commands ignored until end of transaction block\n"
+    },
+    {
+      "test": "workflow_storage",
+      "status": "ERROR",
+      "error": "current transaction is aborted, commands ignored until end of transaction block\n"
+    }
+  ]
+}

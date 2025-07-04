@@ -1,0 +1,144 @@
+---
+description: AI Agent Builder - Content Configuration System - When creating code for One_Vault, all content references must follow our established naming convention system and utilize appropriate configuration files. This ensures consistency, maintainability, multi-tenant support, and easy content management across different AI workflows and organizations.
+globs: 
+alwaysApply: false
+---
+# One_Vault AI Agent Builder - Content Configuration System
+
+## Core Principles
+
+When creating code for One_Vault, all content references must follow our established naming convention system and utilize appropriate configuration files. This ensures consistency, maintainability, multi-tenant support, and easy content management across different AI workflows and organizations.
+
+## Required Implementation Practices
+
+### 1. Configuration References
+- Never hardcode text, node descriptions, AI prompts, or workflow templates directly in components
+- All content must be retrieved from the appropriate configuration file
+- Support organization-specific overrides when needed
+- Example: `const title = textContent.txt_workflow_template_data_analysis_title;`
+
+### 2. Naming Convention Structure
+- All variable names follow: `[content_type]_[module]_[feature]_[element]`
+- Use established prefixes consistently
+- Example: `txt_node_ai_gpt4_description` for AI node descriptions
+
+### 3. Configuration Files Structure
+
+#### Text Content Configuration
+```typescript
+// config/textContent.ts
+export const textContent = {
+  // Dashboard content
+  txt_dashboard_creator_title: "AI Workflow Builder",
+  txt_dashboard_viewer_title: "Workflow Dashboard",
+  txt_dashboard_admin_title: "Platform Administration",
+  
+  // Node descriptions
+  txt_node_input_data_title: "Data Input Node",
+  txt_node_ai_gpt4_title: "GPT-4 AI Node",
+  txt_node_transform_json_title: "JSON Transformer",
+  
+  // Workflow templates
+  txt_template_data_analysis_title: "Data Analysis Pipeline",
+  txt_template_content_generation_title: "Content Generation Workflow",
+  
+  // Status messages
+  txt_status_processing: "Processing...",
+  txt_status_completed: "Workflow Complete",
+  txt_status_error: "Error Occurred",
+};
+```
+
+#### AI Configuration
+```typescript
+// config/aiContent.ts
+export const aiContent = {
+  // Model configurations
+  ai_model_gpt4_config: {
+    name: "GPT-4",
+    description: "Advanced language model for complex tasks",
+    defaultTemperature: 0.7,
+    maxTokens: 4096,
+  },
+  
+  ai_model_claude_config: {
+    name: "Claude 3",
+    description: "Anthropic's AI for nuanced understanding",
+    defaultTemperature: 0.5,
+    maxTokens: 8192,
+  },
+  
+  // Prompt templates
+  ai_prompt_data_analysis: "Analyze the following data and provide insights:",
+  ai_prompt_code_generation: "Generate code based on these requirements:",
+};
+```
+
+#### Workflow Templates Configuration
+```typescript
+// config/workflowTemplates.ts
+export const workflowTemplates = {
+  wf_template_data_pipeline: {
+    name: "Data Processing Pipeline",
+    description: "ETL workflow for data transformation",
+    nodes: ["input_csv", "transform_data", "ai_analysis", "output_report"],
+    category: "data_science",
+  },
+  
+  wf_template_content_creator: {
+    name: "AI Content Creator",
+    description: "Generate and refine content with AI",
+    nodes: ["input_brief", "ai_draft", "ai_refine", "output_publish"],
+    category: "content",
+  },
+};
+```
+
+### 4. Dynamic Key Generation
+```typescript
+function renderNodeType(nodeKey: string) {
+  return (
+    <div className="node-card">
+      <h3>{textContent[`txt_node_${nodeKey}_title`]}</h3>
+      <p>{textContent[`txt_node_${nodeKey}_description`]}</p>
+      <div className="node-config">
+        {aiContent[`ai_model_${nodeKey}_config`] && (
+          <span>Model: {aiContent[`ai_model_${nodeKey}_config`].name}</span>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+### 5. Multi-Tenant Support
+```typescript
+import { getTenantContent } from '../utils/tenantConfig';
+
+function WorkflowBuilder({ tenantId }: { tenantId: string }) {
+  const customPrompt = getTenantContent(tenantId, 'ai_prompt_custom') || 
+                      aiContent.ai_prompt_default;
+  
+  const brandedTitle = getTenantContent(tenantId, 'txt_platform_title') || 
+                      textContent.txt_platform_default_title;
+  
+  return (
+    <div>
+      <h1>{brandedTitle}</h1>
+      {/* Workflow builder UI */}
+    </div>
+  );
+}
+```
+
+## Implementation Verification
+
+When generating code, always verify:
+1. Every component references configuration files, not hardcoded values
+2. All variable names follow the established naming convention
+3. Content is loaded from the correct configuration object
+4. Keys are constructed consistently for dynamic components
+5. Multi-tenant overrides are properly handled
+
+This approach ensures all content remains configurable, supports white-labeling, and facilitates easy updates without code changes.
+

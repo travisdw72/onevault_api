@@ -1,0 +1,477 @@
+---
+description: Performance & Offline Capability Framework - This framework ensures One_Vault delivers exceptional performance for AI workflow building, with seamless offline capabilities that allow users to continue building and testing workflows regardless of connectivity. Critical for users who need uninterrupted access to their automation tools.
+globs: 
+alwaysApply: false
+---
+# One_Vault Performance & Offline Capability Framework
+
+## Overview
+
+This framework ensures One_Vault delivers exceptional performance for AI workflow building, with seamless offline capabilities that allow users to continue building and testing workflows regardless of connectivity. Critical for users who need uninterrupted access to their automation tools.
+
+## Core Architecture Principles
+
+### Progressive Web App (PWA) Implementation
+
+```javascript
+// Service Worker Registration with Workflow-Specific Caching
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(registration => {
+    console.log('OneVault Service Worker registered');
+    // Check for updates every hour
+    setInterval(() => registration.update(), 3600000);
+  });
+}
+```
+
+### Offline-First Workflow Strategy
+
+#### Critical Data Caching
+```javascript
+const CRITICAL_CACHES = {
+  workflows: 'workflows-v1',
+  nodes: 'node-definitions-v1', 
+  templates: 'workflow-templates-v1',
+  aiModels: 'ai-model-configs-v1',
+  executions: 'recent-executions-v1'
+};
+
+// Cache all workflow definitions on first load
+async function cacheWorkflowData() {
+  const cache = await caches.open(CRITICAL_CACHES.workflows);
+  const workflows = await fetchUserWorkflows();
+  
+  workflows.forEach(workflow => {
+    cache.put(
+      `/api/workflows/${workflow.id}`,
+      new Response(JSON.stringify(workflow))
+    );
+  });
+  
+  // Cache node definitions for offline building
+  await cacheNodeDefinitions();
+  await cacheAIModelConfigs();
+}
+
+async function cacheNodeDefinitions() {
+  const cache = await caches.open(CRITICAL_CACHES.nodes);
+  const nodeTypes = [
+    'input/api', 'input/webhook', 'input/file',
+    'ai/gpt4', 'ai/claude', 'ai/custom',
+    'transform/json', 'transform/filter', 'transform/merge',
+    'output/api', 'output/database', 'output/file'
+  ];
+  
+  for (const nodeType of nodeTypes) {
+    const definition = await fetchNodeDefinition(nodeType);
+    cache.put(`/api/nodes/${nodeType}`, new Response(JSON.stringify(definition)));
+  }
+}
+```
+
+#### Sync Queue for Workflow Changes
+```javascript
+class WorkflowSyncQueue {
+  constructor() {
+    this.queue = JSON.parse(localStorage.getItem('workflowSyncQueue') || '[]');
+    this.syncInProgress = false;
+  }
+
+  async addToQueue(action) {
+    const queueItem = {
+      id: generateUUID(),
+      timestamp: Date.now(),
+      action: action,
+      priority: this.calculatePriority(action),
+      retryCount: 0,
+      workflowId: action.workflowId
+    };
+    
+    this.queue.push(queueItem);
+    this.queue.sort((a, b) => b.priority - a.priority);
+    this.persistQueue();
+    
+    if (navigator.onLine) {
+      this.processQueue();
+    }
+  }
+
+  calculatePriority(action) {
+    const priorities = {
+      'workflow_create': 10,
+      'workflow_delete': 9,
+      'node_add': 8,
+      'node_delete': 8,
+      'connection_change': 7,
+      'config_update': 6,
+      'name_change': 3
+    };
+    
+    return priorities[action.type] || 1;
+  }
+
+  async processQueue() {
+    if (this.syncInProgress || this.queue.length === 0) return;
+    
+    this.syncInProgress = true;
+    const itemsToSync = [...this.queue];
+    
+    for (const item of itemsToSync) {
+      try {
+        await this.syncItem(item);
+        this.removeFromQueue(item.id);
+      } catch (error) {
+        item.retryCount++;
+        if (item.retryCount >= 3) {
+          this.moveToFailedQueue(item);
+        }
+      }
+    }
+    
+    this.syncInProgress = false;
+  }
+}
+```
+
+## Performance Optimization Strategies
+
+### Canvas Rendering Optimization
+
+```javascript
+class CanvasPerformanceManager {
+  constructor() {
+    this.renderQueue = [];
+    this.frameRequested = false;
+    this.visibleNodes = new Set();
+  }
+
+  optimizeNodeRendering(nodes, viewport) {
+    // Only render nodes within viewport + buffer
+    const buffer = 100;
+    const visibleBounds = {
+      left: viewport.x - buffer,
+      right: viewport.x + viewport.width + buffer,
+      top: viewport.y - buffer,
+      bottom: viewport.y + viewport.height + buffer
+    };
+
+    nodes.forEach(node => {
+      const isVisible = this.isNodeInBounds(node, visibleBounds);
+      
+      if (isVisible && !this.visibleNodes.has(node.id)) {
+        this.visibleNodes.add(node.id);
+        this.queueRender(() => this.renderNode(node));
+      } else if (!isVisible && this.visibleNodes.has(node.id)) {
+        this.visibleNodes.delete(node.id);
+        this.queueRender(() => this.hideNode(node));
+      }
+    });
+  }
+
+  queueRender(renderFn) {
+    this.renderQueue.push(renderFn);
+    
+    if (!this.frameRequested) {
+      this.frameRequested = true;
+      requestAnimationFrame(() => this.processRenderQueue());
+    }
+  }
+
+  processRenderQueue() {
+    const startTime = performance.now();
+    const frameDeadline = startTime + 16; // Target 60fps
+    
+    while (this.renderQueue.length > 0 && performance.now() < frameDeadline) {
+      const renderFn = this.renderQueue.shift();
+      renderFn();
+    }
+    
+    this.frameRequested = false;
+    
+    if (this.renderQueue.length > 0) {
+      this.frameRequested = true;
+      requestAnimationFrame(() => this.processRenderQueue());
+    }
+  }
+}
+```
+
+### Lazy Loading for Complex Workflows
+
+```javascript
+class WorkflowLazyLoader {
+  constructor() {
+    this.loadedChunks = new Map();
+    this.chunkSize = 50; // nodes per chunk
+  }
+
+  async loadWorkflowProgressively(workflowId) {
+    const metadata = await this.loadWorkflowMetadata(workflowId);
+    const totalNodes = metadata.nodeCount;
+    const chunks = Math.ceil(totalNodes / this.chunkSize);
+    
+    // Load first chunk immediately
+    const firstChunk = await this.loadChunk(workflowId, 0);
+    this.loadedChunks.set(`${workflowId}-0`, firstChunk);
+    
+    // Preload next chunk
+    if (chunks > 1) {
+      this.preloadChunk(workflowId, 1);
+    }
+    
+    return {
+      metadata,
+      initialNodes: firstChunk.nodes,
+      loadMore: (chunkIndex) => this.loadChunk(workflowId, chunkIndex)
+    };
+  }
+
+  async loadChunk(workflowId, chunkIndex) {
+    const cacheKey = `${workflowId}-${chunkIndex}`;
+    
+    if (this.loadedChunks.has(cacheKey)) {
+      return this.loadedChunks.get(cacheKey);
+    }
+    
+    const chunk = await fetch(`/api/workflows/${workflowId}/chunks/${chunkIndex}`);
+    const data = await chunk.json();
+    
+    this.loadedChunks.set(cacheKey, data);
+    
+    // Preload next chunk
+    this.preloadChunk(workflowId, chunkIndex + 1);
+    
+    return data;
+  }
+}
+```
+
+## Offline Workflow Testing
+
+### Local Execution Engine
+
+```javascript
+class OfflineExecutionEngine {
+  constructor() {
+    this.mockData = new Map();
+    this.executionCache = new Map();
+  }
+
+  async executeOffline(workflow, testData) {
+    const execution = {
+      id: generateUUID(),
+      workflowId: workflow.id,
+      status: 'running',
+      mode: 'offline-test',
+      startTime: Date.now(),
+      nodes: {}
+    };
+
+    try {
+      // Execute nodes in dependency order
+      const executionOrder = this.calculateExecutionOrder(workflow);
+      
+      for (const nodeId of executionOrder) {
+        const node = workflow.nodes.find(n => n.id === nodeId);
+        const result = await this.executeNode(node, execution, testData);
+        
+        execution.nodes[nodeId] = {
+          status: 'completed',
+          output: result,
+          executionTime: Date.now()
+        };
+      }
+      
+      execution.status = 'completed';
+      execution.endTime = Date.now();
+      
+    } catch (error) {
+      execution.status = 'failed';
+      execution.error = error.message;
+    }
+    
+    this.cacheExecution(execution);
+    return execution;
+  }
+
+  async executeNode(node, execution, testData) {
+    switch (node.type) {
+      case 'input/manual':
+        return testData[node.id] || node.defaultValue;
+        
+      case 'ai/mock':
+        return this.generateMockAIResponse(node.config);
+        
+      case 'transform/json':
+        return this.executeJSONTransform(node.config, execution);
+        
+      default:
+        return { 
+          mockData: true, 
+          message: `Offline execution for ${node.type}`,
+          sampleOutput: this.getSampleOutput(node.type)
+        };
+    }
+  }
+
+  generateMockAIResponse(config) {
+    return {
+      response: "This is a mock AI response for offline testing. " +
+                "In production, this would call " + config.model,
+      usage: { tokens: 150, cost: 0.003 },
+      model: config.model,
+      offline: true
+    };
+  }
+}
+```
+
+## Sync Status UI Components
+
+### Visual Sync Indicators
+
+```jsx
+const SyncStatusBar = () => {
+  const { syncStatus, pendingChanges, lastSync } = useSyncStatus();
+  
+  return (
+    <div className="sync-status-bar">
+      <div className={`sync-indicator ${syncStatus}`}>
+        {syncStatus === 'syncing' && <LoadingSpinner />}
+        {syncStatus === 'offline' && <OfflineIcon />}
+        {syncStatus === 'synced' && <CheckIcon />}
+        {syncStatus === 'error' && <ErrorIcon />}
+      </div>
+      
+      {pendingChanges > 0 && (
+        <span className="pending-changes">
+          {pendingChanges} changes pending sync
+        </span>
+      )}
+      
+      {syncStatus === 'offline' && (
+        <div className="offline-banner">
+          <InfoIcon />
+          <span>Working offline - changes will sync when connected</span>
+        </div>
+      )}
+      
+      <div className="last-sync">
+        Last sync: {formatRelativeTime(lastSync)}
+      </div>
+    </div>
+  );
+};
+```
+
+## Performance Monitoring
+
+### Real-time Performance Metrics
+
+```javascript
+class PerformanceMonitor {
+  constructor() {
+    this.metrics = {
+      canvasFPS: new MovingAverage(60),
+      nodeRenderTime: new MovingAverage(100),
+      apiLatency: new MovingAverage(50),
+      memoryUsage: new MovingAverage(30)
+    };
+  }
+
+  trackCanvasPerformance() {
+    let lastFrame = performance.now();
+    
+    const measureFrame = () => {
+      const now = performance.now();
+      const delta = now - lastFrame;
+      const fps = 1000 / delta;
+      
+      this.metrics.canvasFPS.add(fps);
+      
+      if (fps < 30) {
+        this.triggerPerformanceOptimization();
+      }
+      
+      lastFrame = now;
+      requestAnimationFrame(measureFrame);
+    };
+    
+    measureFrame();
+  }
+
+  triggerPerformanceOptimization() {
+    // Reduce visual quality for better performance
+    this.reduceNodeDetails();
+    this.disableAnimations();
+    this.enableNodeCulling();
+  }
+}
+```
+
+## Storage Management
+
+### Intelligent Cache Management
+
+```javascript
+class StorageManager {
+  async manageStorage() {
+    if ('storage' in navigator && 'estimate' in navigator.storage) {
+      const {usage, quota} = await navigator.storage.estimate();
+      const percentUsed = (usage / quota) * 100;
+      
+      if (percentUsed > 80) {
+        await this.cleanupOldData();
+      }
+      
+      if (percentUsed > 90) {
+        await this.aggressiveCleanup();
+      }
+    }
+  }
+
+  async cleanupOldData() {
+    // Remove old execution results
+    const executions = await this.getStoredExecutions();
+    const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+    
+    for (const execution of executions) {
+      if (execution.timestamp < thirtyDaysAgo) {
+        await this.removeExecution(execution.id);
+      }
+    }
+    
+    // Clear old cached API responses
+    await this.clearOldAPICache();
+  }
+}
+```
+
+## Configuration
+
+```javascript
+export const performanceConfig = {
+  // Performance thresholds
+  targetFPS: 60,
+  minFPS: 30,
+  maxNodesVisible: 100,
+  nodeRenderBudget: 16, // ms
+  
+  // Offline settings
+  offlineCacheDuration: 7 * 24 * 60 * 60 * 1000, // 7 days
+  maxOfflineStorage: 500 * 1024 * 1024, // 500MB
+  syncRetryInterval: 30000, // 30 seconds
+  
+  // Optimization triggers
+  enableLazyLoading: true,
+  enableNodeCulling: true,
+  enableProgressiveRendering: true,
+  
+  // PWA settings
+  updateCheckInterval: 3600000, // 1 hour
+  backgroundSyncTag: 'workflow-sync'
+};
+```
+
+This framework ensures users can build and test AI workflows seamlessly, whether online or offline, with intelligent performance optimizations that maintain a smooth experience even with complex workflows.
+

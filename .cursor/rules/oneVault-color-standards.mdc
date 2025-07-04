@@ -1,0 +1,347 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# One_Vault AI Agent Builder - Color Palette Standards
+
+This document outlines the official color palette for One_Vault AI Agent Builder, designed to make users feel like they're inside a neural network, commanding synaptic connections and orchestrating intelligence flows while maintaining professional credibility.
+
+## Design Philosophy
+
+Our color palette draws inspiration from actual neural networks, bioluminescent organisms, and sci-fi interfaces that shaped our vision of the future. Unlike competitors who default to corporate blues or simple dark themes, our palette creates a living, breathing canvas where data flows like synaptic impulses and AI agents glow with inner intelligence.
+
+## Canvas Colors
+
+| Color Name | Hex Code | RGB | Description |
+|------------|----------|-----|-------------|
+| True Black | #0a0a0a | rgb(10, 10, 10) | Primary canvas - makes nodes pop like stars in space |
+| Elevated Black | #141414 | rgb(20, 20, 20) | Raised surfaces, panels, and cards |
+| Surface Black | #1a1a1a | rgb(26, 26, 26) | Node backgrounds - subtle elevation |
+| Neural Gray | #2d2d2d | rgb(45, 45, 45) | Borders and dividers |
+| Connection Gray | #4a5568 | rgb(74, 85, 104) | Inactive connections - recedes into background |
+
+## Primary Neural Colors
+
+The semantic color system where each hue represents a specific function in the AI workflow:
+
+| Color Name | Hex Code | RGB | Description |
+|------------|----------|-----|-------------|
+| Synaptic Green | #00ff88 | rgb(0, 255, 136) | Success states, active flows, "go" signals |
+| Neural Purple | #b366ff | rgb(179, 102, 255) | AI/ML nodes, intelligence, transformation |
+| Electric Blue | #00d9ff | rgb(0, 217, 255) | Data streams, input nodes, information |
+| Neural Pink | #ff0080 | rgb(255, 0, 128) | Processing states, active computation |
+| Data Lime | #95e559 | rgb(149, 229, 89) | Output nodes, results, completion |
+
+## Semantic Node Colors
+
+Each node type has its own color signature for instant recognition:
+
+| Node Type | Primary Color | Hex Code | Glow Effect |
+|-----------|---------------|----------|-------------|
+| Input/Data Source | Electric Blue | #00d9ff | Pulse when receiving |
+| AI/ML Model | Neural Purple | #b366ff | Breathe when thinking |
+| Transform/Process | Quantum Teal | #4ecdc4 | Rotate when processing |
+| Logic/Control | Coral Decision | #ff6b6b | Flash on state change |
+| Output/Action | Data Lime | #95e559 | Celebrate on success |
+| Integration | Fusion Orange | #ff8c42 | Stream when connected |
+
+## State Indicator Colors
+
+Dynamic colors that communicate node and connection states:
+
+| State | Color Name | Hex Code | Animation |
+|-------|------------|----------|-----------|
+| Idle | Muted Base | *60% opacity | None |
+| Hover | Full Intensity | *100% opacity | Subtle glow |
+| Active | Active Gold | #ffd700 | Pulsing glow |
+| Running | Process Pink | #ff0080 | Particle orbit |
+| Success | Victory Green | #00ff88 | Burst effect |
+| Error | Critical Red | #ff3366 | Shake + pulse |
+| Warning | Alert Amber | #ffaa00 | Slow pulse |
+| Thinking | Neural Purple | #b366ff | Brain wave effect |
+
+## Gradient Systems
+
+Living gradients that make the interface feel alive:
+
+```css
+/* Active Node Gradients */
+.gradient-neural-active {
+  background: radial-gradient(circle, #00ff88 20%, #00d9ff 100%);
+}
+
+.gradient-processing {
+  background: linear-gradient(90deg, #ff0080, #00ff88, #00d9ff);
+  animation: gradient-shift 3s ease infinite;
+}
+
+.gradient-ai-thinking {
+  background: radial-gradient(circle, #b366ff 0%, transparent 70%);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Connection Flow Gradients */
+.gradient-data-flow {
+  background: linear-gradient(90deg, #00d9ff 0%, #4ecdc4 100%);
+}
+
+.gradient-confidence-high {
+  background: linear-gradient(90deg, #00ff88 0%, #95e559 100%);
+}
+```
+
+## Usage Guidelines
+
+### Canvas & Workspace
+- Use **True Black** (#0a0a0a) for the main canvas - maximum contrast
+- Use **Elevated Black** (#141414) for floating panels and toolbars
+- Grid dots in **Neural Gray** (#2d2d2d) at 10% opacity for orientation
+
+### Node Design
+- Base: **Surface Black** (#1a1a1a) with semantic color top bar
+- Border: 1px of semantic color at 60% opacity
+- Hover: Increase border opacity to 100% + add glow
+- Active: Full glow effect + particle systems
+
+### Connections
+- Inactive: **Connection Gray** (#4a5568) at 40% opacity
+- Hover: Semantic color at 60% opacity
+- Active: Semantic color at 100% + flow animation
+- Thickness: 1-4px based on data volume
+- Confidence: Opacity 40-100% based on score
+
+### Typography on Dark Canvas
+- Primary text: **Pure White** (#ffffff)
+- Secondary text: **Neural Gray** (#a0a0a0)
+- Accent text: Semantic colors at 100% opacity
+- Disabled text: **Connection Gray** (#4a5568)
+
+## Module-Specific Palettes
+
+### Data Science Module
+```css
+Primary: #b366ff (Neural Purple)
+Secondary: #00d9ff (Electric Blue)
+Accent: #ffd700 (Active Gold)
+Success: #95e559 (Data Lime)
+```
+
+### Business Intelligence Module
+```css
+Primary: #00d9ff (Electric Blue)
+Secondary: #4ecdc4 (Quantum Teal)
+Accent: #ff8c42 (Fusion Orange)
+Success: #00ff88 (Synaptic Green)
+```
+
+### Automation Module
+```css
+Primary: #ff6b6b (Coral Decision)
+Secondary: #ffaa00 (Alert Amber)
+Accent: #b366ff (Neural Purple)
+Success: #00ff88 (Synaptic Green)
+```
+
+## Accessibility Compliance
+
+All color combinations maintain WCAG 2.1 AA compliance on black backgrounds:
+
+| Foreground | Background | Contrast Ratio | Use Case |
+|------------|------------|----------------|-----------|
+| Pure White | True Black | 19.5:1 | Primary text |
+| Synaptic Green | True Black | 15.3:1 | Success states |
+| Electric Blue | Surface Black | 12.8:1 | Data values |
+| Neural Purple | Surface Black | 7.9:1 | AI indicators |
+| Alert Amber | True Black | 10.2:1 | Warnings |
+
+## Emotional Color Strategy
+
+### Intelligence & Innovation
+The **Neural Purple** to **Electric Blue** spectrum triggers associations with advanced technology, making users feel they're working with cutting-edge AI rather than simple automation.
+
+### Energy & Activity
+**Synaptic Green** and **Neural Pink** create a sense of living data, with colors that pulse and flow like biological neural networks, making workflows feel alive.
+
+### Achievement & Progress
+**Active Gold** and **Data Lime** celebrate successful operations, providing dopamine hits that make building workflows addictive and rewarding.
+
+## Implementation Examples
+
+### CSS Variables
+```css
+:root {
+  /* Canvas */
+  --true-black: #0a0a0a;
+  --elevated-black: #141414;
+  --surface-black: #1a1a1a;
+  --neural-gray: #2d2d2d;
+  --connection-gray: #4a5568;
+  
+  /* Primary Neural */
+  --synaptic-green: #00ff88;
+  --neural-purple: #b366ff;
+  --electric-blue: #00d9ff;
+  --neural-pink: #ff0080;
+  --data-lime: #95e559;
+  
+  /* Semantic Nodes */
+  --quantum-teal: #4ecdc4;
+  --coral-decision: #ff6b6b;
+  --fusion-orange: #ff8c42;
+  --active-gold: #ffd700;
+  
+  /* States */
+  --critical-red: #ff3366;
+  --alert-amber: #ffaa00;
+  --pure-white: #ffffff;
+  --text-secondary: #a0a0a0;
+}
+```
+
+### Node Component Example
+```css
+.ai-node {
+  background-color: var(--surface-black);
+  border: 1px solid rgba(179, 102, 255, 0.6);
+  box-shadow: 0 0 20px rgba(179, 102, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.ai-node:hover {
+  border-color: var(--neural-purple);
+  box-shadow: 0 0 30px rgba(179, 102, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.ai-node.active {
+  animation: neural-pulse 2s ease-in-out infinite;
+  box-shadow: 
+    0 0 30px rgba(179, 102, 255, 0.8),
+    inset 0 0 20px rgba(179, 102, 255, 0.2);
+}
+```
+
+### Connection States
+```css
+.connection-line {
+  stroke: var(--connection-gray);
+  stroke-opacity: 0.4;
+  transition: all 0.3s ease;
+}
+
+.connection-line.active {
+  stroke: var(--electric-blue);
+  stroke-opacity: 1;
+  filter: drop-shadow(0 0 3px var(--electric-blue));
+  animation: data-flow 1s linear infinite;
+}
+
+@keyframes data-flow {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -20; }
+}
+```
+
+## Special Effects Palette
+
+### Glow Effects
+```css
+/* Thinking glow for AI nodes */
+.ai-thinking {
+  box-shadow: 
+    0 0 40px rgba(179, 102, 255, 0.6),
+    0 0 80px rgba(179, 102, 255, 0.3),
+    inset 0 0 20px rgba(179, 102, 255, 0.2);
+}
+
+/* Success celebration */
+.success-burst {
+  box-shadow: 
+    0 0 50px var(--synaptic-green),
+    0 0 100px rgba(0, 255, 136, 0.5);
+}
+```
+
+### Particle Colors
+```javascript
+const particleColors = {
+  dataFlow: ['#00d9ff', '#4ecdc4', '#00ff88'],
+  processing: ['#ff0080', '#b366ff', '#00d9ff'],
+  success: ['#00ff88', '#95e559', '#ffd700'],
+  error: ['#ff3366', '#ff0080', '#ffaa00']
+};
+```
+
+## Dark Mode Variations
+
+Our primary theme IS dark mode, but for users who need light environments:
+
+| Dark Mode Color | Light Mode Equivalent | Use Case |
+|-----------------|----------------------|----------|
+| True Black | Pure White (#ffffff) | Canvas |
+| Surface Black | Light Gray (#f5f5f5) | Node background |
+| Neural Purple | Deep Purple (#7c3aed) | AI nodes |
+| Synaptic Green | Forest Green (#059669) | Success |
+| Electric Blue | Ocean Blue (#0284c7) | Data |
+
+## Competitive Differentiation
+
+While competitors use:
+- **n8n**: Orange accent on gray
+- **Zapier**: Orange on white
+- **Make.com**: Purple on white
+- **Pipedream**: Blue on dark gray
+
+Our Neural Network palette:
+- Makes every workflow feel like commanding AI
+- Creates visual hierarchy through color meaning
+- Provides instant state recognition
+- Celebrates successes with light effects
+- Transforms mundane automation into neural orchestration
+
+## Color Psychology in Action
+
+**Black Canvas** creates:
+- Professional credibility
+- Focus on the nodes (stars in space)
+- Reduced eye strain for long sessions
+- Premium, high-tech feeling
+
+**Neon Accents** trigger:
+- Excitement and energy
+- Futuristic associations
+- Clear visual hierarchy
+- Addictive feedback loops
+
+**Semantic Colors** enable:
+- Instant pattern recognition
+- Reduced cognitive load
+- Faster workflow debugging
+- Intuitive node purpose understanding
+
+## Performance Considerations
+
+### GPU Optimization
+```css
+/* Use CSS transforms for smooth animations */
+.glow-effect {
+  will-change: transform, opacity;
+  transform: translateZ(0); /* Force GPU acceleration */
+}
+
+/* Reduce glow complexity at lower zoom */
+@media (max-resolution: 1dppx) {
+  .node-glow {
+    box-shadow: 0 0 20px var(--node-color);
+  }
+}
+```
+
+### Battery Efficiency
+- Reduce particle effects on battery power
+- Dim glows by 20% in power-saving mode
+- Pause non-critical animations when idle
+
+
+This color system doesn't just theme an interface - it creates an environment where users feel like neural network architects, commanding flows of intelligence through a living, breathing digital organism. Every color serves both functional and emotional purposes, making One_Vault not just a tool, but an experience that users will love to use and show off.

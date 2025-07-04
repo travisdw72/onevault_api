@@ -1,0 +1,1029 @@
+{
+  "api_functions": {
+    "all_functions": [
+      {
+        "routine_name": "admin_reset_password",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_acknowledge_alert",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_chat_history",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_create_session",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_get_active_alerts",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_get_observation_analytics",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_get_observations",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_log_observation",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_monitoring_acknowledge_alert",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_monitoring_get_alerts",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_monitoring_get_entity_timeline",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_monitoring_ingest",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_monitoring_system_health",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_retention_cleanup",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_secure_chat",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_video_upload",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "auth_complete_login",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "auth_login",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "auth_login_test",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "auth_logout",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "auth_validate_session",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "calculate_security_score",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "change_password",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "check_rate_limit",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "consent_create",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "consent_status",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "correct_event_tenant",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "forgot_password_request",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "get_ai_system_health",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "get_optimal_model_for_request",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "get_tracking_status",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "log_tracking_attempt",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "security_audit",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "security_policies_get",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "security_rate_limit_check",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "system_health_check",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "system_platform_stats",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "system_tenants_list",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tenant_register",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tenant_register_elt",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tenant_roles_list",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tenants_list",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "test_all_endpoints",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "test_auth_with_roles",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "test_existing_endpoints",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "token_validate",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tokens_generate",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tokens_revoke",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tokens_validate",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "track_site_event",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "track_site_event",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "track_site_event_test",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "user_register",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "users_profile_get",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "users_profile_update",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "users_register",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "validate_contract",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "validate_features_for_inference",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "validate_fixed_contract",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "validate_secure_contract",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_analytics",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_delete",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_get_stream_url",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_list",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_upload_complete",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_upload_initiate",
+        "routine_type": "FUNCTION"
+      }
+    ],
+    "auth_functions": [
+      {
+        "routine_name": "auth_complete_login",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "auth_login",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "auth_login_test",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "auth_logout",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "auth_validate_session",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "test_auth_with_roles",
+        "routine_type": "FUNCTION"
+      }
+    ],
+    "ai_functions": [
+      {
+        "routine_name": "ai_acknowledge_alert",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_chat_history",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_create_session",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_get_active_alerts",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_get_observation_analytics",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_get_observations",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_log_observation",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_monitoring_acknowledge_alert",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_monitoring_get_alerts",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_monitoring_get_entity_timeline",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_monitoring_ingest",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_monitoring_system_health",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_retention_cleanup",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_secure_chat",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "ai_video_upload",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "get_ai_system_health",
+        "routine_type": "FUNCTION"
+      }
+    ],
+    "other_functions": [
+      {
+        "routine_name": "admin_reset_password",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "calculate_security_score",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "change_password",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "check_rate_limit",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "consent_create",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "consent_status",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "correct_event_tenant",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "forgot_password_request",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "get_optimal_model_for_request",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "get_tracking_status",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "log_tracking_attempt",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "security_audit",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "security_policies_get",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "security_rate_limit_check",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "system_health_check",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "system_platform_stats",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "system_tenants_list",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tenant_register",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tenant_register_elt",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tenant_roles_list",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tenants_list",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "test_all_endpoints",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "test_existing_endpoints",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "token_validate",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tokens_generate",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tokens_revoke",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "tokens_validate",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "track_site_event",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "track_site_event",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "track_site_event_test",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "user_register",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "users_profile_get",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "users_profile_update",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "users_register",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "validate_contract",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "validate_features_for_inference",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "validate_fixed_contract",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "validate_secure_contract",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_analytics",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_delete",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_get_stream_url",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_list",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_upload_complete",
+        "routine_type": "FUNCTION"
+      },
+      {
+        "routine_name": "video_upload_initiate",
+        "routine_type": "FUNCTION"
+      }
+    ]
+  },
+  "ai_functions": [
+    {
+      "routine_name": "ai_acknowledge_alert",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_chat_history",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_create_session",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_get_active_alerts",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_get_observation_analytics",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_get_observations",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_log_observation",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_monitoring_acknowledge_alert",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_monitoring_get_alerts",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_monitoring_get_entity_timeline",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_monitoring_ingest",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_monitoring_system_health",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_retention_cleanup",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_secure_chat",
+      "routine_type": "FUNCTION"
+    },
+    {
+      "routine_name": "ai_video_upload",
+      "routine_type": "FUNCTION"
+    }
+  ],
+  "ai_agents_tables": [
+    {
+      "table_name": "agent_certificate_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "agent_communication_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "agent_communication_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "agent_domain_access_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "agent_domain_l",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "agent_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "agent_identity_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "agent_session_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "agent_session_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "agent_template_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "agent_template_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "alert_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "alert_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "anomaly_detection_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "anomaly_detection_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "api_endpoint_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "api_endpoint_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "automated_response_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "automated_response_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "behavioral_analytics_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "behavioral_analytics_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "behavioral_baseline_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "behavioral_baseline_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "behavioral_score_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "behavioral_score_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "business_intelligence_agent_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "consensus_protocol_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "consensus_protocol_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "consensus_round_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "consensus_round_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "data_acquisition_agent_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "data_validation_agent_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "decision_execution_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "decision_execution_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "decision_making_agent_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "external_integration_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "external_integration_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "knowledge_domain_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "knowledge_domain_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "learning_details_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "learning_event_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "logic_reasoning_agent_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "orchestration_agent_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "orchestration_participant_l",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "orchestration_participant_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "orchestration_session_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "orchestration_session_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "pattern_recognition_agent_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "performance_metric_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "performance_metric_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "pki_authority_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "pki_authority_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "reasoning_details_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "reasoning_request_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "risk_assessment_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "risk_assessment_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "security_event_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "security_event_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "security_incident_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "security_incident_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "session_activity_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "session_auth_l",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "session_auth_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "soc_agent_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "system_health_check_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "system_health_check_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "threat_detection_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "threat_detection_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "threat_feed_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "threat_feed_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "threat_indicator_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "threat_indicator_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "threat_intelligence_agent_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "threat_intelligence_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "user_agent_execution_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "user_agent_execution_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "user_agent_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "user_agent_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "vote_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "vote_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "zero_trust_execution_log",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "zero_trust_gateway_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "zero_trust_gateway_s",
+      "table_type": "BASE TABLE"
+    }
+  ],
+  "ai_monitoring_tables": [
+    {
+      "table_name": "ai_analysis_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "ai_analysis_results_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "alert_details_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "alert_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "analysis_alert_l",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "entity_analysis_l",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "monitored_entity_details_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "monitored_entity_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "zt_access_policies_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "zt_access_policies_s",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "zt_security_events_h",
+      "table_type": "BASE TABLE"
+    },
+    {
+      "table_name": "zt_security_events_s",
+      "table_type": "BASE TABLE"
+    }
+  ],
+  "ref_tables": [
+    {
+      "table_name": "ai_alert_type_r"
+    },
+    {
+      "table_name": "ai_context_type_r"
+    },
+    {
+      "table_name": "ai_model_r"
+    },
+    {
+      "table_name": "ai_observation_type_r"
+    },
+    {
+      "table_name": "compliance_framework_r"
+    },
+    {
+      "table_name": "entity_type_r"
+    },
+    {
+      "table_name": "tax_code_r"
+    },
+    {
+      "table_name": "transaction_type_r"
+    }
+  ],
+  "sample_data": {
+    "tenants": 12,
+    "users": 15,
+    "agents": 1,
+    "monitoring_entities": 0
+  },
+  "readiness_assessment": {
+    "score": 100.0,
+    "checks": {
+      "authentication": true,
+      "ai_agents": true,
+      "ai_monitoring": true,
+      "ai_api_functions": true,
+      "reference_data": true
+    },
+    "status": "READY"
+  }
+}

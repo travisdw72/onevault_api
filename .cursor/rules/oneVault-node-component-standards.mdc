@@ -1,0 +1,705 @@
+---
+description: Node Component Standards - This document establishes comprehensive standards for AI workflow nodes in One_Vault, ensuring consistent behavior, appearance, and user experience across all node types while maintaining the "Neural Network" design philosophy.
+globs: 
+alwaysApply: false
+---
+# One_Vault Node Component Standards
+
+## Overview
+
+This document establishes comprehensive standards for AI workflow nodes in One_Vault, ensuring consistent behavior, appearance, and user experience across all node types while maintaining the "Neural Network" design philosophy.
+
+## Node Architecture Principles
+
+### Core Node Structure
+
+Every node in One_Vault follows a consistent architecture that supports both visual clarity and functional extensibility.
+
+```typescript
+// src/types/node.types.ts
+export interface IBaseNode {
+  id: string;
+  type: string;
+  category: NodeCategory;
+  position: { x: number; y: number };
+  data: {
+    label: string;
+    description?: string;
+    config: Record<string, any>;
+    inputs: INodePort[];
+    outputs: INodePort[];
+    status?: NodeStatus;
+    metrics?: INodeMetrics;
+  };
+  style?: INodeStyle;
+}
+
+export enum NodeCategory {
+  Input = "input",
+  AI = "ai",
+  Transform = "transform",
+  Logic = "logic",
+  Output = "output",
+  Integration = "integration"
+}
+
+export enum NodeStatus {
+  Idle = "idle",
+  Running = "running",
+  Success = "success",
+  Error = "error",
+  Warning = "warning"
+}
+
+export interface INodePort {
+  id: string;
+  type: "input" | "output";
+  dataType: DataType;
+  label?: string;
+  required?: boolean;
+  multiple?: boolean;
+  connected?: boolean;
+}
+
+export enum DataType {
+  Any = "any",
+  Text = "text",
+  Number = "number",
+  Boolean = "boolean",
+  Array = "array",
+  Object = "object",
+  File = "file",
+  Image = "image",
+  Audio = "audio"
+}
+```
+
+## Visual Design Standards
+
+### Node Color Semantics
+
+Following our Neural Network theme, each node category has specific colors that convey meaning:
+
+```typescript
+// src/constants/nodeStyles.ts
+export const NODE_STYLES: Record<NodeCategory, INodeStyle> = {
+  [NodeCategory.Input]: {
+    backgroundColor: "#1a1a1a",
+    borderColor: "#00d9ff", // Electric Blue - data streams
+    glowColor: "rgba(0, 217, 255, 0.5)",
+    iconColor: "#00d9ff",
+    semantic: "Data flows into the system"
+  },
+  [NodeCategory.AI]: {
+    backgroundColor: "#1a1a1a",
+    borderColor: "#b366ff", // Neural Purple - intelligence
+    glowColor: "rgba(179, 102, 255, 0.5)",
+    iconColor: "#b366ff",
+    semantic: "AI processing and intelligence"
+  },
+  [NodeCategory.Transform]: {
+    backgroundColor: "#1a1a1a",
+    borderColor: "#4ecdc4", // Quantum Teal - transformation
+    glowColor: "rgba(78, 205, 196, 0.5)",
+    iconColor: "#4ecdc4",
+    semantic: "Data transformation and manipulation"
+  },
+  [NodeCategory.Logic]: {
+    backgroundColor: "#1a1a1a",
+    borderColor: "#ff6b6b", // Coral Decision - logic
+    glowColor: "rgba(255, 107, 107, 0.5)",
+    iconColor: "#ff6b6b",
+    semantic: "Conditional logic and routing"
+  },
+  [NodeCategory.Output]: {
+    backgroundColor: "#1a1a1a",
+    borderColor: "#95e559", // Data Lime - results
+    glowColor: "rgba(149, 229, 89, 0.5)",
+    iconColor: "#95e559",
+    semantic: "Results and outputs"
+  },
+  [NodeCategory.Integration]: {
+    backgroundColor: "#1a1a1a",
+    borderColor: "#ff8c42", // Fusion Orange - connections
+    glowColor: "rgba(255, 140, 66, 0.5)",
+    iconColor: "#ff8c42",
+    semantic: "External integrations"
+  }
+};
+```
+
+### Node Component Implementation
+
+```tsx
+// src/components/nodes/BaseNode.tsx
+import React from "react";
+import { Handle, Position } from "reactflow";
+import { motion } from "framer-motion";
+import { NODE_STYLES } from "@/constants/nodeStyles";
+
+export const BaseNode: React.FC<IBaseNodeProps> = ({ data, category, status }) => {
+  const style = NODE_STYLES[category];
+  const isActive = status === NodeStatus.Running;
+  
+  return (
+    <motion.div
+      className="base-node"
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ 
+        scale: isActive ? 1.05 : 1,
+        opacity: 1
+      }}
+      whileHover={{ scale: 1.02 }}
+      style={{
+        backgroundColor: style.backgroundColor,
+        border: `2px solid ${style.borderColor}`,
+        boxShadow: isActive ? `0 0 30px ${style.glowColor}` : `0 0 10px ${style.glowColor}`,
+        minWidth: "200px",
+        borderRadius: "8px",
+        position: "relative"
+      }}
+    >
+      {/* Status indicator */}
+      <div className="node-status" style={{
+        position: "absolute",
+        top: -8,
+        right: -8,
+        width: 16,
+        height: 16,
+        borderRadius: "50%",
+        backgroundColor: getStatusColor(status),
+        boxShadow: isActive ? `0 0 10px ${getStatusColor(status)}` : "none"
+      }} />
+      
+      {/* Node header */}
+      <div className="node-header" style={{
+        padding: "8px 12px",
+        borderBottom: `1px solid ${style.borderColor}30`,
+        display: "flex",
+        alignItems: "center",
+        gap: "8px"
+      }}>
+        <NodeIcon category={category} color={style.iconColor} />
+        <span className="node-label" style={{
+          color: "#ffffff",
+          fontSize: "14px",
+          fontWeight: 600,
+          fontFamily: "'IBM Plex Sans', sans-serif"
+        }}>
+          {data.label}
+        </span>
+      </div>
+      
+      {/* Node content */}
+      <div className="node-content" style={{
+        padding: "12px",
+        color: "#a0a0a0",
+        fontSize: "12px",
+        fontFamily: "'IBM Plex Sans', sans-serif"
+      }}>
+        {data.description && (
+          <p className="node-description" style={{ margin: 0, marginBottom: 8 }}>
+            {data.description}
+          </p>
+        )}
+        
+        {/* Dynamic content based on node type */}
+        <NodeContent data={data} category={category} />
+      </div>
+      
+      {/* Input handles */}
+      {data.inputs.map((input, index) => (
+        <Handle
+          key={input.id}
+          type="target"
+          position={Position.Left}
+          id={input.id}
+          style={{
+            top: `${30 + (index * 20)}px`,
+            backgroundColor: input.connected ? style.borderColor : "#4a5568",
+            width: 10,
+            height: 10,
+            border: "2px solid #0a0a0a"
+          }}
+        >
+          {input.label && (
+            <div className="handle-label" style={{
+              position: "absolute",
+              right: 15,
+              top: -8,
+              fontSize: "10px",
+              color: "#a0a0a0",
+              whiteSpace: "nowrap"
+            }}>
+              {input.label}
+            </div>
+          )}
+        </Handle>
+      ))}
+      
+      {/* Output handles */}
+      {data.outputs.map((output, index) => (
+        <Handle
+          key={output.id}
+          type="source"
+          position={Position.Right}
+          id={output.id}
+          style={{
+            top: `${30 + (index * 20)}px`,
+            backgroundColor: output.connected ? style.borderColor : "#4a5568",
+            width: 10,
+            height: 10,
+            border: "2px solid #0a0a0a"
+          }}
+        >
+          {output.label && (
+            <div className="handle-label" style={{
+              position: "absolute",
+              left: 15,
+              top: -8,
+              fontSize: "10px",
+              color: "#a0a0a0",
+              whiteSpace: "nowrap"
+            }}>
+              {output.label}
+            </div>
+          )}
+        </Handle>
+      ))}
+      
+      {/* Processing animation */}
+      {isActive && <ProcessingAnimation color={style.glowColor} />}
+    </motion.div>
+  );
+};
+```
+
+## Node State Management
+
+### State Visualization
+
+```typescript
+// src/components/nodes/NodeStateIndicators.tsx
+export const ProcessingAnimation: React.FC<{ color: string }> = ({ color }) => {
+  return (
+    <div className="processing-animation" style={{
+      position: "absolute",
+      inset: -2,
+      borderRadius: "8px",
+      pointerEvents: "none"
+    }}>
+      {/* Orbiting particles */}
+      {[0, 1, 2].map(i => (
+        <motion.div
+          key={i}
+          style={{
+            position: "absolute",
+            width: 4,
+            height: 4,
+            backgroundColor: color,
+            borderRadius: "50%",
+            top: "50%",
+            left: "50%"
+          }}
+          animate={{
+            x: [0, 30 * Math.cos((i * 120) * Math.PI / 180), 0],
+            y: [0, 30 * Math.sin((i * 120) * Math.PI / 180), 0]
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            delay: i * 0.2
+          }}
+        />
+      ))}
+      
+      {/* Pulse effect */}
+      <motion.div
+        style={{
+          position: "absolute",
+          inset: 0,
+          border: `1px solid ${color}`,
+          borderRadius: "8px"
+        }}
+        animate={{
+          opacity: [0.5, 1, 0.5],
+          scale: [1, 1.02, 1]
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity
+        }}
+      />
+    </div>
+  );
+};
+
+export const SuccessAnimation: React.FC = () => {
+  return (
+    <motion.div
+      initial={{ scale: 0, opacity: 1 }}
+      animate={{ scale: 2, opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      style={{
+        position: "absolute",
+        inset: 0,
+        border: "2px solid #00ff88",
+        borderRadius: "8px",
+        pointerEvents: "none"
+      }}
+    />
+  );
+};
+```
+
+## Specialized Node Types
+
+### AI Model Nodes
+
+```typescript
+// src/components/nodes/AIModelNode.tsx
+export const AIModelNode: React.FC<INodeProps> = ({ data }) => {
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  
+  return (
+    <BaseNode data={data} category={NodeCategory.AI}>
+      <div className="ai-node-content">
+        {/* Model indicator */}
+        <div className="model-badge" style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 4,
+          padding: "2px 8px",
+          backgroundColor: "#b366ff20",
+          borderRadius: 4,
+          fontSize: 11,
+          color: "#b366ff",
+          marginBottom: 8
+        }}>
+          <AIIcon size={12} />
+          {data.config.model || "GPT-4"}
+        </div>
+        
+        {/* Token usage */}
+        {data.metrics?.tokenUsage && (
+          <div className="token-usage" style={{
+            fontSize: 10,
+            color: "#a0a0a0",
+            marginTop: 4
+          }}>
+            Tokens: {data.metrics.tokenUsage} 
+            <span style={{ color: "#4ecdc4", marginLeft: 8 }}>
+              ${(data.metrics.cost || 0).toFixed(4)}
+            </span>
+          </div>
+        )}
+        
+        {/* Quick config */}
+        <button
+          className="config-button"
+          onClick={() => setIsConfigOpen(true)}
+          style={{
+            marginTop: 8,
+            padding: "4px 8px",
+            backgroundColor: "#b366ff20",
+            border: "1px solid #b366ff40",
+            borderRadius: 4,
+            color: "#b366ff",
+            fontSize: 11,
+            cursor: "pointer"
+          }}
+        >
+          Configure Model
+        </button>
+      </div>
+    </BaseNode>
+  );
+};
+```
+
+### Data Input Nodes
+
+```typescript
+// src/components/nodes/DataInputNode.tsx
+export const DataInputNode: React.FC<INodeProps> = ({ data }) => {
+  const inputType = data.config.inputType || "manual";
+  
+  return (
+    <BaseNode data={data} category={NodeCategory.Input}>
+      <div className="input-node-content">
+        {inputType === "manual" && (
+          <textarea
+            className="data-input"
+            placeholder="Enter data..."
+            value={data.config.value || ""}
+            onChange={(e) => updateNodeData(data.id, { value: e.target.value })}
+            style={{
+              width: "100%",
+              minHeight: 60,
+              backgroundColor: "#0a0a0a",
+              border: "1px solid #00d9ff40",
+              borderRadius: 4,
+              color: "#ffffff",
+              padding: 8,
+              fontSize: 12,
+              fontFamily: "'JetBrains Mono', monospace",
+              resize: "vertical"
+            }}
+          />
+        )}
+        
+        {inputType === "file" && (
+          <div className="file-input" style={{
+            padding: 12,
+            border: "2px dashed #00d9ff40",
+            borderRadius: 4,
+            textAlign: "center",
+            cursor: "pointer"
+          }}>
+            <UploadIcon size={24} color="#00d9ff" />
+            <p style={{ margin: "8px 0 0", fontSize: 11, color: "#a0a0a0" }}>
+              {data.config.fileName || "Drop file or click to upload"}
+            </p>
+          </div>
+        )}
+        
+        {inputType === "api" && (
+          <div className="api-input">
+            <input
+              type="text"
+              placeholder="API Endpoint"
+              value={data.config.endpoint || ""}
+              style={{
+                width: "100%",
+                backgroundColor: "#0a0a0a",
+                border: "1px solid #00d9ff40",
+                borderRadius: 4,
+                color: "#ffffff",
+                padding: "4px 8px",
+                fontSize: 11
+              }}
+            />
+          </div>
+        )}
+      </div>
+    </BaseNode>
+  );
+};
+```
+
+## Connection Styling
+
+### Connection Rules and Validation
+
+```typescript
+// src/utils/connectionValidation.ts
+export const validateConnection = (
+  source: INodePort,
+  target: INodePort
+): { valid: boolean; reason?: string } => {
+  // Can't connect to same node
+  if (source.nodeId === target.nodeId) {
+    return { valid: false, reason: "Cannot connect node to itself" };
+  }
+  
+  // Check data type compatibility
+  if (target.dataType !== DataType.Any && 
+      source.dataType !== DataType.Any && 
+      source.dataType !== target.dataType) {
+    return { 
+      valid: false, 
+      reason: `Type mismatch: ${source.dataType} → ${target.dataType}` 
+    };
+  }
+  
+  // Check if target already has connection (unless multiple allowed)
+  if (target.connected && !target.multiple) {
+    return { valid: false, reason: "Input already connected" };
+  }
+  
+  return { valid: true };
+};
+
+// Connection edge styling
+export const getEdgeStyle = (edge: IEdge): React.CSSProperties => {
+  const baseStyle = {
+    stroke: "#4a5568", // Connection gray
+    strokeWidth: 2,
+    strokeDasharray: edge.animated ? "5 5" : undefined
+  };
+  
+  if (edge.data?.isActive) {
+    return {
+      ...baseStyle,
+      stroke: "#00d9ff",
+      strokeWidth: 3,
+      filter: "drop-shadow(0 0 4px #00d9ff)"
+    };
+  }
+  
+  if (edge.data?.hasError) {
+    return {
+      ...baseStyle,
+      stroke: "#ff3366",
+      strokeWidth: 3
+    };
+  }
+  
+  return baseStyle;
+};
+```
+
+## Interactive Behaviors
+
+### Node Interaction Standards
+
+```typescript
+// src/hooks/useNodeInteraction.ts
+export const useNodeInteraction = (nodeId: string) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
+  
+  const handleDoubleClick = () => {
+    // Open configuration panel
+    openNodeConfig(nodeId);
+  };
+  
+  const handleRightClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    showNodeContextMenu(nodeId, { x: e.clientX, y: e.clientY });
+  };
+  
+  const handleKeyPress = (e: KeyboardEvent) => {
+    if (isSelected) {
+      switch (e.key) {
+        case "Delete":
+        case "Backspace":
+          deleteNode(nodeId);
+          break;
+        case "d":
+          if (e.ctrlKey || e.metaKey) {
+            duplicateNode(nodeId);
+          }
+          break;
+        case "Enter":
+          openNodeConfig(nodeId);
+          break;
+      }
+    }
+  };
+  
+  return {
+    handlers: {
+      onMouseEnter: () => setIsHovered(true),
+      onMouseLeave: () => setIsHovered(false),
+      onDoubleClick: handleDoubleClick,
+      onContextMenu: handleRightClick
+    },
+    state: {
+      isHovered,
+      isDragging,
+      isSelected
+    }
+  };
+};
+```
+
+## Performance Guidelines
+
+### Node Rendering Optimization
+
+```typescript
+// src/components/nodes/OptimizedNode.tsx
+export const OptimizedNode = React.memo<INodeProps>(({ data, category }) => {
+  // Memoize expensive computations
+  const processedData = useMemo(() => 
+    processNodeData(data), [data.config, data.inputs, data.outputs]
+  );
+  
+  // Debounce frequent updates
+  const debouncedUpdate = useDebouncedCallback(
+    (newData) => updateNodeData(data.id, newData),
+    300
+  );
+  
+  // Use CSS transforms for animations (GPU accelerated)
+  const animationStyle = {
+    transform: `translateZ(0)`, // Force GPU layer
+    willChange: "transform, opacity"
+  };
+  
+  return (
+    <div style={animationStyle}>
+      <BaseNode data={processedData} category={category} />
+    </div>
+  );
+}, (prevProps, nextProps) => {
+  // Custom comparison for re-rendering
+  return (
+    prevProps.data.config === nextProps.data.config &&
+    prevProps.data.status === nextProps.data.status &&
+    prevProps.selected === nextProps.selected
+  );
+});
+```
+
+## Accessibility Standards
+
+### Node Accessibility
+
+```typescript
+// src/components/nodes/AccessibleNode.tsx
+export const AccessibleNode: React.FC<INodeProps> = ({ data }) => {
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={`${data.label} node. ${data.description || ""}`}
+      aria-describedby={`node-${data.id}-description`}
+      onKeyDown={handleKeyboardNavigation}
+    >
+      <BaseNode data={data}>
+        {/* Screen reader description */}
+        <span 
+          id={`node-${data.id}-description`} 
+          className="sr-only"
+        >
+          {generateNodeDescription(data)}
+        </span>
+      </BaseNode>
+    </div>
+  );
+};
+```
+
+## Configuration Standards
+
+```typescript
+export const nodeConfiguration = {
+  // Visual settings
+  minWidth: 200,
+  maxWidth: 400,
+  borderRadius: 8,
+  borderWidth: 2,
+  glowIntensity: 0.5,
+  
+  // Interaction settings
+  doubleClickDelay: 300,
+  hoverDelay: 100,
+  selectionOutline: 2,
+  
+  // Performance settings
+  renderThrottle: 16, // 60fps
+  updateDebounce: 300,
+  maxVisibleNodes: 100,
+  
+  // Animation settings
+  enterDuration: 300,
+  exitDuration: 200,
+  statusTransition: 500
+};
+```
+
+
+This comprehensive node component standard ensures consistent, performant, and accessible nodes throughout the One_Vault platform while maintaining the Neural Network aesthetic that makes users feel like they're orchestrating intelligence.

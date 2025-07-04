@@ -1,6 +1,6 @@
 # 🤖 AUTOBOTS ROLL OUT! 🚗⚡
 ## **AI Agent Deployment Mission: Operation Customer WOW**
-### **Mission Deadline: July 7th, 2024 (T-10 Days)**
+### **Mission Deadline: July 7th, 2025 (T-10 Days)**
 
 ---
 
@@ -522,6 +522,6 @@
 
 ---
 
-*Mission Created: June 27, 2024*  
-*Mission Deadline: July 7, 2024*  
+*Mission Created: June 27, 2025*  
+*Mission Deadline: July 7, 2025*  
 *Mission Status: 🟢 GO FOR LAUNCH* 

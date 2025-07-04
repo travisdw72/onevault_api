@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-07-01T13:53:40.388110",
+  "pipeline_tests": {
+    "raw_insert": false,
+    "staging_functions": true,
+    "ai_observation": false,
+    "constraints_checked": true,
+    "site_tracking": false
+  },
+  "root_cause": "Raw layer insertion blocked - check permissions/constraints",
+  "fix_applied": false,
+  "recommendations": [
+    "Check raw schema table permissions",
+    "Verify tenant_hk format and constraints",
+    "Test with simpler data structures"
+  ]
+}

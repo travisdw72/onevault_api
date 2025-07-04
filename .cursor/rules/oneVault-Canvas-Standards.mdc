@@ -1,0 +1,654 @@
+---
+description: Canvas Interaction Patterns - This document defines the interaction patterns and user experience standards for the One_Vault workflow canvas, ensuring intuitive and powerful workflow building that feels like orchestrating a neural network
+globs: 
+alwaysApply: false
+---
+# One_Vault Canvas Interaction Patterns
+
+## Overview
+
+This document defines the interaction patterns and user experience standards for the One_Vault workflow canvas, ensuring intuitive and powerful workflow building that feels like orchestrating a neural network.
+
+## Canvas Architecture
+
+### Canvas State Management
+
+```typescript
+// src/types/canvas.types.ts
+export interface ICanvasState {
+  viewport: {
+    x: number;
+    y: number;
+    zoom: number;
+  };
+  selection: {
+    nodes: string[];
+    edges: string[];
+    area?: ISelectionArea;
+  };
+  interaction: {
+    mode: InteractionMode;
+    tool: CanvasTool;
+    modifiers: IModifierKeys;
+  };
+  grid: {
+    visible: boolean;
+    snap: boolean;
+    size: number;
+  };
+}
+
+export enum InteractionMode {
+  Default = "default",
+  Panning = "panning",
+  Selecting = "selecting",
+  Connecting = "connecting",
+  Dragging = "dragging",
+  Zooming = "zooming"
+}
+
+export enum CanvasTool {
+  Select = "select",
+  Hand = "hand",
+  Connect = "connect",
+  Comment = "comment"
+}
+```
+
+## Core Interaction Patterns
+
+### Pan and Zoom Controls
+
+```typescript
+// src/hooks/useCanvasControls.ts
+export const useCanvasControls = () => {
+  const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
+  
+  // Zoom controls with smooth animation
+  const zoom = useCallback((delta: number, center?: { x: number; y: number }) => {
+    setViewport(prev => {
+      const newZoom = Math.max(0.25, Math.min(2, prev.zoom + delta));
+      
+      if (center) {
+        // Zoom towards cursor position
+        const scale = newZoom / prev.zoom;
+        return {
+          x: center.x - (center.x - prev.x) * scale,
+          y: center.y - (center.y - prev.y) * scale,
+          zoom: newZoom
+        };
+      }
+      
+      return { ...prev, zoom: newZoom };
+    });
+  }, []);
+  
+  // Smart zoom levels
+  const zoomToFit = useCallback(() => {
+    const bounds = calculateWorkflowBounds();
+    const padding = 50;
+    
+    const scaleX = (window.innerWidth - padding * 2) / bounds.width;
+    const scaleY = (window.innerHeight - padding * 2) / bounds.height;
+    const scale = Math.min(scaleX, scaleY, 1);
+    
+    setViewport({
+      x: -bounds.x * scale + padding,
+      y: -bounds.y * scale + padding,
+      zoom: scale
+    });
+  }, []);
+  
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyboard = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case "0":
+            e.preventDefault();
+            setViewport({ x: 0, y: 0, zoom: 1 });
+            break;
+          case "=":
+          case "+":
+            e.preventDefault();
+            zoom(0.1);
+            break;
+          case "-":
+            e.preventDefault();
+            zoom(-0.1);
+            break;
+        }
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyboard);
+    return () => window.removeEventListener("keydown", handleKeyboard);
+  }, [zoom]);
+  
+  return { viewport, zoom, zoomToFit, pan: setViewport };
+};
+```
+
+### Node Selection Patterns
+
+```typescript
+// src/components/canvas/SelectionManager.tsx
+export const SelectionManager: React.FC = () => {
+  const [selection, setSelection] = useState<ISelection>({ nodes: [], edges: [] });
+  const [selectionBox, setSelectionBox] = useState<ISelectionBox | null>(null);
+  
+  const handleSelectionStart = (e: React.MouseEvent) => {
+    if (e.button !== 0) return; // Left click only
+    
+    const start = { x: e.clientX, y: e.clientY };
+    setSelectionBox({ start, end: start });
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      setSelectionBox(prev => prev ? { ...prev, end: { x: e.clientX, y: e.clientY } } : null);
+    };
+    
+    const handleMouseUp = () => {
+      if (selectionBox) {
+        const selectedNodes = getNodesInBounds(selectionBox);
+        setSelection({ nodes: selectedNodes, edges: [] });
+      }
+      setSelectionBox(null);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+    
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+  
+  // Multi-select with Shift/Ctrl
+  const handleNodeClick = (nodeId: string, e: React.MouseEvent) => {
+    if (e.shiftKey || e.ctrlKey || e.metaKey) {
+      setSelection(prev => ({
+        ...prev,
+        nodes: prev.nodes.includes(nodeId)
+          ? prev.nodes.filter(id => id !== nodeId)
+          : [...prev.nodes, nodeId]
+      }));
+    } else {
+      setSelection({ nodes: [nodeId], edges: [] });
+    }
+  };
+  
+  return (
+    <>
+      {selectionBox && (
+        <div
+          className="selection-box"
+          style={{
+            position: "fixed",
+            left: Math.min(selectionBox.start.x, selectionBox.end.x),
+            top: Math.min(selectionBox.start.y, selectionBox.end.y),
+            width: Math.abs(selectionBox.end.x - selectionBox.start.x),
+            height: Math.abs(selectionBox.end.y - selectionBox.start.y),
+            border: "1px solid #00d9ff",
+            backgroundColor: "rgba(0, 217, 255, 0.1)",
+            pointerEvents: "none"
+          }}
+        />
+      )}
+    </>
+  );
+};
+```
+
+### Connection Drawing
+
+```typescript
+// src/components/canvas/ConnectionDrawing.tsx
+export const ConnectionDrawing: React.FC = () => {
+  const [activeConnection, setActiveConnection] = useState<IActiveConnection | null>(null);
+  
+  const handleConnectionStart = (nodeId: string, handleId: string, handleType: "source" | "target") => {
+    setActiveConnection({
+      nodeId,
+      handleId,
+      handleType,
+      startPoint: getHandlePosition(nodeId, handleId),
+      endPoint: null
+    });
+  };
+  
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!activeConnection) return;
+    
+    const canvasPoint = screenToCanvas({ x: e.clientX, y: e.clientY });
+    setActiveConnection(prev => prev ? { ...prev, endPoint: canvasPoint } : null);
+    
+    // Highlight valid targets
+    const targetHandle = getHandleAtPosition(canvasPoint);
+    if (targetHandle && isValidConnection(activeConnection, targetHandle)) {
+      highlightHandle(targetHandle);
+    }
+  };
+  
+  const renderConnectionPreview = () => {
+    if (!activeConnection || !activeConnection.endPoint) return null;
+    
+    const path = calculateConnectionPath(
+      activeConnection.startPoint,
+      activeConnection.endPoint
+    );
+    
+    return (
+      <svg className="connection-preview" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+        <defs>
+          <linearGradient id="connectionGradient">
+            <stop offset="0%" stopColor="#00d9ff" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#b366ff" stopOpacity="0.8" />
+          </linearGradient>
+        </defs>
+        <path
+          d={path}
+          fill="none"
+          stroke="url(#connectionGradient)"
+          strokeWidth="2"
+          strokeDasharray="5,5"
+          className="animated-dash"
+        />
+      </svg>
+    );
+  };
+  
+  return <>{renderConnectionPreview()}</>;
+};
+```
+
+## Advanced Interaction Features
+
+### Smart Node Alignment
+
+```typescript
+// src/utils/smartAlignment.ts
+export class SmartAlignment {
+  private threshold = 10; // pixels
+  
+  findAlignmentGuides(movingNode: INode, allNodes: INode[]): IAlignmentGuide[] {
+    const guides: IAlignmentGuide[] = [];
+    const movingBounds = getNodeBounds(movingNode);
+    
+    allNodes.forEach(node => {
+      if (node.id === movingNode.id) return;
+      
+      const bounds = getNodeBounds(node);
+      
+      // Vertical alignment
+      if (Math.abs(movingBounds.centerX - bounds.centerX) < this.threshold) {
+        guides.push({
+          type: "vertical",
+          position: bounds.centerX,
+          nodes: [node.id]
+        });
+      }
+      
+      // Horizontal alignment
+      if (Math.abs(movingBounds.centerY - bounds.centerY) < this.threshold) {
+        guides.push({
+          type: "horizontal",
+          position: bounds.centerY,
+          nodes: [node.id]
+        });
+      }
+      
+      // Edge alignment
+      if (Math.abs(movingBounds.left - bounds.left) < this.threshold) {
+        guides.push({
+          type: "vertical",
+          position: bounds.left,
+          nodes: [node.id],
+          edge: "left"
+        });
+      }
+    });
+    
+    return guides;
+  }
+  
+  snapToGuides(position: IPosition, guides: IAlignmentGuide[]): IPosition {
+    let snappedPosition = { ...position };
+    
+    guides.forEach(guide => {
+      if (guide.type === "vertical") {
+        snappedPosition.x = guide.position - (guide.edge === "left" ? 0 : nodeWidth / 2);
+      } else {
+        snappedPosition.y = guide.position - (guide.edge === "top" ? 0 : nodeHeight / 2);
+      }
+    });
+    
+    return snappedPosition;
+  }
+}
+```
+
+### Gesture Support
+
+```typescript
+// src/hooks/useGestures.ts
+export const useGestures = (canvasRef: React.RefObject<HTMLElement>) => {
+  const [gesture, setGesture] = useState<IGesture | null>(null);
+  
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    
+    const hammer = new Hammer(canvasRef.current);
+    
+    // Pinch to zoom
+    hammer.get("pinch").set({ enable: true });
+    hammer.on("pinch", (e) => {
+      setGesture({
+        type: "pinch",
+        scale: e.scale,
+        center: { x: e.center.x, y: e.center.y }
+      });
+    });
+    
+    // Two-finger pan
+    hammer.get("pan").set({ pointers: 2 });
+    hammer.on("pan", (e) => {
+      setGesture({
+        type: "pan",
+        deltaX: e.deltaX,
+        deltaY: e.deltaY
+      });
+    });
+    
+    // Double tap to zoom
+    hammer.on("doubletap", (e) => {
+      setGesture({
+        type: "doubleTap",
+        position: { x: e.center.x, y: e.center.y }
+      });
+    });
+    
+    return () => hammer.destroy();
+  }, [canvasRef]);
+  
+  return gesture;
+};
+```
+
+### Context Menu System
+
+```typescript
+// src/components/canvas/ContextMenu.tsx
+export const CanvasContextMenu: React.FC = () => {
+  const [menu, setMenu] = useState<IContextMenu | null>(null);
+  
+  const contextMenuItems = {
+    node: [
+      { label: "Edit Node", icon: <EditIcon />, action: "edit", shortcut: "Enter" },
+      { label: "Duplicate", icon: <CopyIcon />, action: "duplicate", shortcut: "Ctrl+D" },
+      { label: "Delete", icon: <DeleteIcon />, action: "delete", shortcut: "Del" },
+      { type: "separator" },
+      { label: "Copy", icon: <CopyIcon />, action: "copy", shortcut: "Ctrl+C" },
+      { label: "Cut", icon: <CutIcon />, action: "cut", shortcut: "Ctrl+X" },
+      { type: "separator" },
+      { label: "Bring to Front", action: "bringToFront" },
+      { label: "Send to Back", action: "sendToBack" }
+    ],
+    canvas: [
+      { label: "Paste", icon: <PasteIcon />, action: "paste", shortcut: "Ctrl+V" },
+      { type: "separator" },
+      { label: "Add Node", icon: <PlusIcon />, submenu: getNodeCategories() },
+      { label: "Select All", action: "selectAll", shortcut: "Ctrl+A" },
+      { type: "separator" },
+      { label: "Zoom to Fit", action: "zoomToFit" },
+      { label: "Reset View", action: "resetView", shortcut: "Ctrl+0" }
+    ],
+    edge: [
+      { label: "Delete Connection", icon: <DeleteIcon />, action: "delete" },
+      { label: "Add Node Between", icon: <PlusIcon />, submenu: getNodeCategories() }
+    ]
+  };
+  
+  return menu ? (
+    <div
+      className="context-menu"
+      style={{
+        position: "fixed",
+        left: menu.x,
+        top: menu.y,
+        backgroundColor: "#1a1a1a",
+        border: "1px solid #2d2d2d",
+        borderRadius: 4,
+        padding: 4,
+        boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+        minWidth: 200
+      }}
+    >
+      {contextMenuItems[menu.type].map((item, index) => (
+        item.type === "separator" ? (
+          <div key={index} className="separator" style={{
+            height: 1,
+            backgroundColor: "#2d2d2d",
+            margin: "4px 0"
+          }} />
+        ) : (
+          <MenuItem key={index} {...item} onClick={() => handleAction(item.action)} />
+        )
+      ))}
+    </div>
+  ) : null;
+};
+```
+
+## Canvas Features
+
+### Mini-Map Navigation
+
+```typescript
+// src/components/canvas/MiniMap.tsx
+export const MiniMap: React.FC = () => {
+  const { nodes, edges, viewport } = useWorkflowState();
+  const [isExpanded, setIsExpanded] = useState(true);
+  
+  const miniMapScale = 0.1;
+  const bounds = calculateBounds(nodes);
+  
+  return (
+    <div className={`mini-map ${isExpanded ? "expanded" : "collapsed"}`}
+      style={{
+        position: "absolute",
+        bottom: 20,
+        right: 20,
+        width: isExpanded ? 200 : 40,
+        height: isExpanded ? 150 : 40,
+        backgroundColor: "#0a0a0a",
+        border: "1px solid #2d2d2d",
+        borderRadius: 8,
+        overflow: "hidden"
+      }}
+    >
+      {isExpanded ? (
+        <svg width="200" height="150" viewBox={`${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`}>
+          {/* Render simplified nodes */}
+          {nodes.map(node => (
+            <rect
+              key={node.id}
+              x={node.position.x}
+              y={node.position.y}
+              width={200 * miniMapScale}
+              height={100 * miniMapScale}
+              fill={NODE_STYLES[node.category].borderColor}
+              opacity={0.6}
+            />
+          ))}
+          
+          {/* Viewport indicator */}
+          <rect
+            x={-viewport.x / viewport.zoom}
+            y={-viewport.y / viewport.zoom}
+            width={window.innerWidth / viewport.zoom}
+            height={window.innerHeight / viewport.zoom}
+            fill="none"
+            stroke="#00d9ff"
+            strokeWidth={2}
+            opacity={0.5}
+          />
+        </svg>
+      ) : (
+        <MapIcon size={20} color="#4a5568" />
+      )}
+      
+      <button
+        className="toggle-btn"
+        onClick={() => setIsExpanded(!isExpanded)}
+        style={{
+          position: "absolute",
+          top: 4,
+          right: 4,
+          background: "none",
+          border: "none",
+          color: "#4a5568",
+          cursor: "pointer"
+        }}
+      >
+        {isExpanded ? <ChevronDownIcon size={16} /> : <ChevronUpIcon size={16} />}
+      </button>
+    </div>
+  );
+};
+```
+
+### Grid and Snapping
+
+```typescript
+// src/components/canvas/Grid.tsx
+export const CanvasGrid: React.FC<{ size: number; visible: boolean }> = ({ size, visible }) => {
+  if (!visible) return null;
+  
+  return (
+    <svg className="canvas-grid" style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+      <defs>
+        <pattern id="grid" width={size} height={size} patternUnits="userSpaceOnUse">
+          <circle cx={1} cy={1} r={0.5} fill="#2d2d2d" />
+        </pattern>
+        <pattern id="grid-large" width={size * 5} height={size * 5} patternUnits="userSpaceOnUse">
+          <circle cx={1} cy={1} r={1} fill="#4a5568" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" />
+      <rect width="100%" height="100%" fill="url(#grid-large)" />
+    </svg>
+  );
+};
+
+// Snap to grid utility
+export const snapToGrid = (position: IPosition, gridSize: number): IPosition => {
+  return {
+    x: Math.round(position.x / gridSize) * gridSize,
+    y: Math.round(position.y / gridSize) * gridSize
+  };
+};
+```
+
+## Performance Optimizations
+
+### Viewport Culling
+
+```typescript
+// src/hooks/useViewportCulling.ts
+export const useViewportCulling = (nodes: INode[], viewport: IViewport) => {
+  return useMemo(() => {
+    const buffer = 100; // Render nodes slightly outside viewport
+    const viewBounds = {
+      left: -viewport.x / viewport.zoom - buffer,
+      top: -viewport.y / viewport.zoom - buffer,
+      right: (-viewport.x + window.innerWidth) / viewport.zoom + buffer,
+      bottom: (-viewport.y + window.innerHeight) / viewport.zoom + buffer
+    };
+    
+    return nodes.filter(node => {
+      const nodeBounds = getNodeBounds(node);
+      return !(
+        nodeBounds.right < viewBounds.left ||
+        nodeBounds.left > viewBounds.right ||
+        nodeBounds.bottom < viewBounds.top ||
+        nodeBounds.top > viewBounds.bottom
+      );
+    });
+  }, [nodes, viewport]);
+};
+```
+
+## Accessibility Features
+
+### Keyboard Navigation
+
+```typescript
+// src/hooks/useKeyboardNavigation.ts
+export const useKeyboardNavigation = () => {
+  const { nodes, selection, setSelection } = useWorkflowState();
+  
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target !== document.body) return;
+      
+      switch (e.key) {
+        case "Tab":
+          e.preventDefault();
+          navigateToNextNode(e.shiftKey);
+          break;
+          
+        case "ArrowUp":
+        case "ArrowDown":
+        case "ArrowLeft":
+        case "ArrowRight":
+          if (selection.nodes.length > 0) {
+            e.preventDefault();
+            moveSelectedNodes(e.key, e.shiftKey ? 10 : 1);
+          }
+          break;
+          
+        case " ":
+          if (selection.nodes.length === 1) {
+            e.preventDefault();
+            openNodeConfig(selection.nodes[0]);
+          }
+          break;
+      }
+    };
+    
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [selection]);
+};
+```
+
+## Configuration
+
+```typescript
+export const canvasConfiguration = {
+  // Interaction settings
+  panSensitivity: 1,
+  zoomSensitivity: 0.001,
+  minZoom: 0.25,
+  maxZoom: 2,
+  
+  // Grid settings
+  gridSize: 20,
+  snapThreshold: 10,
+  showGrid: true,
+  snapToGrid: true,
+  
+  // Selection settings
+  multiSelectKey: "shift",
+  boxSelectThreshold: 5,
+  
+  // Animation settings
+  zoomDuration: 200,
+  panDuration: 0,
+  
+  // Performance settings
+  cullingBuffer: 100,
+  maxRenderNodes: 500
+};
+```
+
+
+This comprehensive canvas interaction system creates an intuitive, powerful workflow building experience that responds naturally to user input while maintaining the neural network aesthetic throughout all interactions.

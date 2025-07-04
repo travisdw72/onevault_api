@@ -1,0 +1,74 @@
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import '@fontsource/ibm-plex-sans/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/space-grotesk/400.css';
+@import '@fontsource/space-grotesk/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-true-black text-pure-white font-ibm-plex;
+    background-image: radial-gradient(circle at 25% 25%, rgba(179, 102, 255, 0.1) 0%, transparent 50%),
+                      radial-gradient(circle at 75% 75%, rgba(0, 217, 255, 0.1) 0%, transparent 50%);
+  }
+}
+
+@layer components {
+  .neural-glow {
+    @apply shadow-lg transition-all duration-300;
+    box-shadow: 0 0 20px rgba(179, 102, 255, 0.3);
+  }
+  
+  .neural-glow:hover {
+    box-shadow: 0 0 30px rgba(179, 102, 255, 0.5);
+    transform: translateY(-2px);
+  }
+}
+
+/* 🧠 Neural Network Animations */
+@keyframes neural-flow {
+  0% {
+    stroke-dasharray: 0 100;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 50 50;
+    stroke-dashoffset: -25;
+  }
+  100% {
+    stroke-dasharray: 0 100;
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes neural-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes neural-global-pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes neural-ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}

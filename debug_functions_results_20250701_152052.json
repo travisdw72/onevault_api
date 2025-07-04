@@ -1,0 +1,247 @@
+{
+  "timestamp": "2025-07-01T15:20:52.787341",
+  "debug_tests": {
+    "ai_observation_columns": [
+      {
+        "name": "link_observation_alert_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "ai_observation_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "ai_alert_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "tenant_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "load_date",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "record_source",
+        "type": "character varying"
+      },
+      {
+        "name": "relationship_type",
+        "type": "character varying"
+      },
+      {
+        "name": "link_strength",
+        "type": "numeric"
+      },
+      {
+        "name": "ai_observation_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "load_date",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "load_end_date",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "hash_diff",
+        "type": "bytea"
+      },
+      {
+        "name": "entity_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "sensor_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "user_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "observation_type",
+        "type": "character varying"
+      },
+      {
+        "name": "observation_category",
+        "type": "character varying"
+      },
+      {
+        "name": "severity_level",
+        "type": "character varying"
+      },
+      {
+        "name": "confidence_score",
+        "type": "numeric"
+      },
+      {
+        "name": "observation_title",
+        "type": "character varying"
+      },
+      {
+        "name": "observation_description",
+        "type": "text"
+      },
+      {
+        "name": "observation_data",
+        "type": "jsonb"
+      },
+      {
+        "name": "visual_evidence",
+        "type": "jsonb"
+      },
+      {
+        "name": "sensor_readings",
+        "type": "jsonb"
+      },
+      {
+        "name": "environmental_context",
+        "type": "jsonb"
+      },
+      {
+        "name": "ai_model_used",
+        "type": "character varying"
+      },
+      {
+        "name": "model_version",
+        "type": "character varying"
+      },
+      {
+        "name": "processing_time_ms",
+        "type": "integer"
+      },
+      {
+        "name": "observation_timestamp",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "detection_window_start",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "detection_window_end",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "status",
+        "type": "character varying"
+      },
+      {
+        "name": "acknowledged_by",
+        "type": "character varying"
+      },
+      {
+        "name": "acknowledged_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "investigation_notes",
+        "type": "text"
+      },
+      {
+        "name": "resolved_by",
+        "type": "character varying"
+      },
+      {
+        "name": "resolved_at",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "resolution_type",
+        "type": "character varying"
+      },
+      {
+        "name": "resolution_notes",
+        "type": "text"
+      },
+      {
+        "name": "recommended_actions",
+        "type": "ARRAY"
+      },
+      {
+        "name": "action_priority",
+        "type": "integer"
+      },
+      {
+        "name": "action_deadline",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "actions_taken",
+        "type": "ARRAY"
+      },
+      {
+        "name": "human_verified",
+        "type": "boolean"
+      },
+      {
+        "name": "human_verification_date",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "accuracy_feedback",
+        "type": "numeric"
+      },
+      {
+        "name": "record_source",
+        "type": "character varying"
+      },
+      {
+        "name": "ai_observation_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "ai_observation_bk",
+        "type": "character varying"
+      },
+      {
+        "name": "tenant_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "load_date",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "record_source",
+        "type": "character varying"
+      },
+      {
+        "name": "link_user_observation_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "user_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "ai_observation_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "tenant_hk",
+        "type": "bytea"
+      },
+      {
+        "name": "load_date",
+        "type": "timestamp with time zone"
+      },
+      {
+        "name": "record_source",
+        "type": "character varying"
+      },
+      {
+        "name": "involvement_type",
+        "type": "character varying"
+      }
+    ],
+    "ai_observation_minimal": false,
+    "token_with_session": false,
+    "token_alternative": false,
+    "working_alternatives": []
+  }
+}

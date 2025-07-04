@@ -1,0 +1,352 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# One_Vault AI Agent Builder - Typography Standards
+
+This document establishes the typography system for One_Vault AI Agent Builder, balancing technical precision with creative innovation to create an interface that makes users feel like neural network architects commanding the future of AI.
+
+## Typography Philosophy
+
+Our typography choices reflect the duality of AI development: computational precision meeting human creativity. Unlike generic workflow builders that rely on system fonts, our typography speaks the language of AI innovators who demand both analytical clarity and inspirational design. The system prioritizes exceptional readability across complex node networks while maintaining the "wow factor" that makes users excited to build.
+
+## Font Families
+
+### Primary Font: IBM Plex Sans
+
+IBM Plex Sans serves as our primary font, embodying the technical precision required for node-based workflows while maintaining human warmth through its carefully crafted curves. Designed specifically for technical interfaces, it excels at small sizes crucial for dense node networks.
+
+```css
+font-family: 'IBM Plex Sans', sans-serif;
+```
+
+**Why IBM Plex Sans:** Created by IBM for their AI and quantum computing interfaces, it represents the intersection of human and machine intelligence. Its extensive weight range provides clear hierarchy in complex workflows while maintaining readability at any zoom level.
+
+### Code Font: JetBrains Mono
+
+JetBrains Mono provides optimal readability for code snippets, data values, and node identifiers. Its ligatures transform common operators into elegant symbols, making complex logic more intuitive.
+
+```css
+font-family: 'JetBrains Mono', monospace;
+```
+
+**Why JetBrains Mono:** Purpose-built for developers, its increased character width and optimized letterforms reduce eye strain during long building sessions. The font makes every piece of data feel important and precise.
+
+### Display Font: Space Grotesk
+
+Space Grotesk adds futuristic personality to headers and special UI elements, channeling the excitement of space exploration and neural discovery.
+
+```css
+font-family: 'Space Grotesk', sans-serif;
+```
+
+**Why Space Grotesk:** Its geometric construction with quirky details perfectly captures the balance between systematic AI logic and creative breakthroughs.
+
+### Accent Font: Cal Sans
+
+Cal Sans provides memorable personality for AI agent names and special callouts, making each agent feel unique and approachable.
+
+```css
+font-family: 'Cal Sans', display;
+```
+
+**Why Cal Sans:** Its friendly curves soften the technical interface, reminding users that AI should be approachable and even fun.
+
+## Font Weights and Usage
+
+### IBM Plex Sans (Primary)
+
+| Weight | Usage | Example Application |
+|--------|-------|---------------------|
+| 300 (Light) | Subtle labels, metadata | Node descriptions, timestamps |
+| 400 (Regular) | Body text, node content | Configuration panels, logs |
+| 500 (Medium) | UI labels, emphasis | Section headers, property names |
+| 600 (SemiBold) | Navigation, buttons | Menu items, CTAs |
+| 700 (Bold) | Headers, agent names | Dashboard titles, alerts |
+
+### JetBrains Mono (Code)
+
+| Weight | Usage | Example Application |
+|--------|-------|---------------------|
+| 400 (Regular) | Code blocks, data values | JSON configs, API responses |
+| 500 (Medium) | Emphasized code | Variable names, key values |
+| 700 (Bold) | Critical values | Error messages, breakpoints |
+
+### Space Grotesk (Display)
+
+| Weight | Usage | Example Application |
+|--------|-------|---------------------|
+| 400 (Regular) | Section headers | Canvas titles |
+| 500 (Medium) | Feature announcements | New agent types |
+| 700 (Bold) | Hero text | Welcome messages |
+
+## Type Scale - Zoom Responsive
+
+Our type scale adapts based on canvas zoom level, ensuring optimal information density at every view:
+
+| Element | Font | Zoom > 150% | Zoom 100% | Zoom 50% | Weight | Line Height |
+|---------|------|-------------|-----------|----------|--------|-------------|
+| Canvas Title | Space Grotesk | 32px | 24px | Hidden | 700 | 1.1 |
+| Node Title | IBM Plex Sans | 16px | 14px | Icons only | 600 | 1.2 |
+| Node Type | IBM Plex Sans | 12px | 11px | Hidden | 500 | 1.3 |
+| Property Label | IBM Plex Sans | 13px | 12px | Hidden | 500 | 1.4 |
+| Property Value | JetBrains Mono | 13px | 12px | Hidden | 400 | 1.5 |
+| Connection Label | IBM Plex Sans | 11px | Hidden | Hidden | 400 | 1.2 |
+| Status Text | IBM Plex Sans | 12px | 11px | Color only | 500 | 1.3 |
+| Code Preview | JetBrains Mono | 14px | 13px | Hidden | 400 | 1.6 |
+| Agent Name | Cal Sans | 18px | 16px | 14px | 400 | 1.2 |
+| Performance Metric | Space Grotesk | 24px | 20px | Number only | 700 | 1.0 |
+
+## Implementation Examples
+
+### AI Node Header
+```jsx
+<div className="ai-node-header">
+  <h3 className="font-cal text-lg leading-tight text-neural-purple mb-1">
+    DataScience Pro
+  </h3>
+  <p className="font-ibm-plex font-medium text-xs text-synaptic-green">
+    GPT-4 Analyzer
+  </p>
+  <code className="font-jetbrains text-xs text-electric-blue opacity-70">
+    node_id: ds_001
+  </code>
+</div>
+```
+
+### Workflow Performance Display
+```jsx
+<div className="performance-widget">
+  <h4 className="font-space font-bold text-2xl text-active-gold">
+    1,247
+  </h4>
+  <p className="font-ibm-plex font-medium text-sm text-neural-gray">
+    tokens/sec
+  </p>
+  <div className="status-indicator">
+    <span className="font-jetbrains font-medium text-xs text-synaptic-green">
+      ● OPTIMAL
+    </span>
+  </div>
+</div>
+```
+
+### Node Configuration Panel
+```jsx
+<div className="config-panel">
+  <label className="font-ibm-plex font-medium text-sm text-pure-white mb-1">
+    Temperature Setting
+  </label>
+  <input 
+    type="number"
+    className="font-jetbrains font-normal text-sm bg-surface-elevated"
+    value="0.7"
+  />
+  <p className="font-ibm-plex font-light text-xs text-neural-gray mt-1">
+    Controls randomness in AI responses
+  </p>
+</div>
+```
+
+## CSS Utility Classes
+
+```css
+/* Font families */
+.font-ibm-plex { font-family: 'IBM Plex Sans', sans-serif; }
+.font-jetbrains { font-family: 'JetBrains Mono', monospace; }
+.font-space { font-family: 'Space Grotesk', sans-serif; }
+.font-cal { font-family: 'Cal Sans', display; }
+
+/* Font weights */
+.font-light { font-weight: 300; }
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+/* Neural-scale font sizes */
+.text-nano { font-size: 10px; }    /* Micro-labels */
+.text-micro { font-size: 11px; }   /* Dense info */
+.text-xs { font-size: 12px; }      /* Node metadata */
+.text-sm { font-size: 13px; }      /* Properties */
+.text-base { font-size: 14px; }    /* Standard */
+.text-lg { font-size: 16px; }      /* Node titles */
+.text-xl { font-size: 18px; }      /* Agent names */
+.text-2xl { font-size: 24px; }     /* Metrics */
+.text-3xl { font-size: 32px; }     /* Headers */
+
+/* Line heights for node interfaces */
+.leading-none { line-height: 1; }      /* Metrics */
+.leading-tight { line-height: 1.1; }   /* Headers */
+.leading-snug { line-height: 1.2; }    /* Node titles */
+.leading-normal { line-height: 1.4; }  /* UI text */
+.leading-relaxed { line-height: 1.5; } /* Properties */
+.leading-loose { line-height: 1.6; }   /* Code blocks */
+
+/* Letter spacing for different contexts */
+.tracking-tight { letter-spacing: -0.025em; }  /* Display text */
+.tracking-normal { letter-spacing: 0; }        /* Body text */
+.tracking-wide { letter-spacing: 0.05em; }     /* Uppercase labels */
+.tracking-wider { letter-spacing: 0.1em; }     /* Status text */
+```
+
+## Typography for AI-Specific Components
+
+### Agent Personality Display
+```jsx
+<div className="agent-card">
+  <div className="agent-avatar">
+    <span className="font-cal text-2xl text-neural-purple">
+      DP
+    </span>
+  </div>
+  <h4 className="font-cal text-lg mt-2 text-pure-white">
+    Data Prophet
+  </h4>
+  <p className="font-ibm-plex font-medium text-sm text-synaptic-green">
+    Predictive Analytics Specialist
+  </p>
+  <code className="font-jetbrains text-xs text-electric-blue opacity-60">
+    accuracy: 94.7%
+  </code>
+</div>
+```
+
+### Real-time Processing Indicator
+```jsx
+<div className="processing-status">
+  <span className="font-space font-bold text-xs uppercase tracking-wider text-active-gold">
+    Processing
+  </span>
+  <span className="font-jetbrains text-sm text-neural-pink ml-2">
+    2.3ms latency
+  </span>
+</div>
+```
+
+### Node Connection Label
+```jsx
+<div className="connection-label">
+  <span className="font-ibm-plex font-medium text-nano text-connection-gray">
+    confidence: 0.92
+  </span>
+</div>
+```
+
+## Font Loading Strategy
+
+Optimize for instant rendering with progressive enhancement:
+
+```html
+<!-- Preconnect for speed -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Critical fonts with display swap -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Enhancement fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Cal Sans via CDN or self-host -->
+<link href="https://fonts.cdnfonts.com/css/cal-sans" rel="stylesheet">
+```
+
+## Accessibility Considerations
+
+Our typography system ensures all users can effectively navigate complex AI workflows:
+
+1. **Minimum sizes**: 11px only at 100% zoom with high contrast
+2. **Zoom scaling**: Automatic text size adjustment based on canvas zoom
+3. **Weight contrast**: Clear 300-700 weight range for hierarchy
+4. **Monospace clarity**: JetBrains Mono for unambiguous data display
+5. **WCAG compliance**: All text meets AA standards on our backgrounds
+
+## React Flow Theme Configuration
+
+```javascript
+const nodeTypeStyles = {
+  aiNode: {
+    '.node-title': {
+      fontFamily: '"Cal Sans", display',
+      fontSize: '16px',
+      fontWeight: 400,
+      color: '#b366ff',
+    },
+    '.node-type': {
+      fontFamily: '"IBM Plex Sans", sans-serif',
+      fontSize: '11px',
+      fontWeight: 500,
+      color: '#00d9ff',
+      textTransform: 'uppercase',
+      letterSpacing: '0.05em',
+    },
+    '.node-value': {
+      fontFamily: '"JetBrains Mono", monospace',
+      fontSize: '12px',
+      fontWeight: 400,
+      color: '#95e559',
+    },
+  },
+};
+```
+
+## Typography Best Practices
+
+### Do:
+- Use JetBrains Mono for ALL data values and identifiers
+- Apply Cal Sans to make AI agents feel personable
+- Leverage zoom-based progressive disclosure
+- Maintain consistent weight hierarchies within node types
+- Use uppercase sparingly (only for micro-labels)
+
+### Don't:
+- Mix more than two fonts within a single node
+- Use light weights on the black canvas
+- Apply display fonts to critical system values
+- Reduce JetBrains Mono below 11px
+- Forget to test at multiple zoom levels
+
+## Competitive Typography Advantage
+
+While competitors rely on:
+- **n8n**: Basic system fonts (Roboto)
+- **Zapier**: Generic sans-serif throughout
+- **Make.com**: Single font family
+
+Our typography system:
+- Creates visual hierarchy in dense node networks
+- Makes each AI agent feel unique and intelligent
+- Optimizes for both overview and detail views
+- Balances technical precision with creative energy
+- Transforms workflows into visual experiences
+
+## Zoom-Level Typography Strategy
+
+### 200%+ (Detail View)
+- Full descriptions visible
+- Rich metadata displayed
+- Connection confidence scores
+- Performance metrics inline
+
+### 100% (Working View)
+- Essential labels only
+- Icon + short text combo
+- Critical values visible
+- Clean, focused interface
+
+### 50% (Overview)
+- Icons dominate
+- Color coding primary
+- Only agent names visible
+- Flow patterns emphasized
+
+### 25% (Bird's Eye)
+- Pure visual flow
+- No text at all
+- Heat map mode
+- Pattern recognition
+
+
+This typography system transforms functional AI workflows into an experience that makes users feel like they're architecting the future of intelligence.

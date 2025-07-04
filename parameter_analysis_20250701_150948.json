@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-07-01T15:09:48.368999",
+  "parameter_fixed_tests": {
+    "function_signatures": {
+      "ai_log_observation": {
+        "args": "p_request jsonb",
+        "return": "jsonb"
+      },
+      "tokens_generate": {
+        "args": "p_request jsonb",
+        "return": "jsonb"
+      },
+      "track_site_event": {
+        "args": "p_ip_address inet, p_user_agent text, p_page_url text, p_event_type character varying DEFAULT 'page_view'::character varying, p_event_data jsonb DEFAULT '{}'::jsonb",
+        "return": "jsonb"
+      }
+    },
+    "site_tracking_jsonb": false,
+    "site_tracking_multi": false,
+    "token_generation": false,
+    "ai_observation": false,
+    "working_functions": []
+  }
+}

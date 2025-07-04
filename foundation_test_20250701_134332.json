@@ -1,0 +1,29 @@
+{
+  "timestamp": "2025-07-01T13:43:32.484957",
+  "tests": {
+    "tenant_count": 12,
+    "existing_functions": [
+      "api.ai_log_observation",
+      "api.ai_get_observations",
+      "api.ai_secure_chat",
+      "api.ai_monitoring_ingest"
+    ],
+    "ai_observation": {
+      "success": false,
+      "error": "Invalid tenant ID"
+    },
+    "raw_schema_exists": true,
+    "raw_tables_sample": [
+      "external_data_h",
+      "external_data_s",
+      "file_data_h",
+      "file_data_s",
+      "login_attempt_h"
+    ],
+    "staging_schema_exists": true,
+    "business_layer_data": {
+      "observations": 0,
+      "alerts": 0
+    }
+  }
+}

@@ -1,0 +1,702 @@
+---
+description: RBAC Component Architecture Guide - This document defines the Role-Based Access Control (RBAC) architecture for One_Vault, implementing reusable components for team collaboration on AI workflows, following DRY and SOLID principles.
+globs: 
+alwaysApply: false
+---
+# One_Vault RBAC Component Architecture Guide
+## AI Workflow Builder - Role-Based Access Control for Teams
+
+### Project Overview
+This document defines the Role-Based Access Control (RBAC) architecture for One_Vault, implementing reusable components for team collaboration on AI workflows, following DRY and SOLID principles.
+
+---
+
+## 🏗️ **RBAC ARCHITECTURE STRATEGY**
+
+### Component Hierarchy
+```
+📱 Role-Specific Dashboards (SRP - Single Role Purpose)
+    ↓
+🛡️ Permission Wrappers (OCP - Open/Closed Principle)  
+    ↓
+🧩 Base Workflow Components (DRY - Don't Repeat Yourself)
+    ↓
+📊 Shared Workflow Hooks (DIP - Dependency Inversion)
+    ↓
+🗄️ Backend Permission Layer (LSP - Liskov Substitution)
+```
+
+---
+
+## 🎭 **ROLE DEFINITIONS**
+
+### Primary Roles
+```typescript
+// src/types/rbac.types.ts
+export type UserRole = "viewer" | "builder" | "admin" | "owner";
+
+export interface IRoleDefinition {
+  role: UserRole;
+  displayName: string;
+  description: string;
+  inheritsFrom?: UserRole[];
+  defaultRoute: string;
+  capabilities: string[];
+  restrictions?: string[];
+}
+
+export const ROLE_DEFINITIONS: Record<UserRole, IRoleDefinition> = {
+  viewer: {
+    role: "viewer",
+    displayName: "Workflow Viewer",
+    description: "Can view and run workflows, access execution results",
+    defaultRoute: "/workflows",
+    capabilities: ["view_workflows", "run_workflows", "view_executions"],
+    restrictions: ["no_editing", "no_api_keys", "no_team_management"]
+  },
+  builder: {
+    role: "builder",
+    displayName: "Workflow Builder",
+    description: "Can create, edit, and manage workflows and integrations",
+    inheritsFrom: ["viewer"],
+    defaultRoute: "/builder",
+    capabilities: ["create_workflows", "edit_workflows", "manage_integrations", "access_templates"],
+    restrictions: ["no_billing", "no_team_management", "no_dangerous_nodes"]
+  },
+  admin: {
+    role: "admin",
+    displayName: "Team Administrator",
+    description: "Full workflow access plus team and resource management",
+    inheritsFrom: ["builder", "viewer"],
+    defaultRoute: "/admin/dashboard",
+    capabilities: ["manage_team", "manage_api_keys", "view_analytics", "manage_resources"],
+    restrictions: ["no_billing", "no_ownership_transfer"]
+  },
+  owner: {
+    role: "owner",
+    displayName: "Organization Owner",
+    description: "Complete control over organization, billing, and all resources",
+    inheritsFrom: ["admin", "builder", "viewer"],
+    defaultRoute: "/admin/dashboard",
+    capabilities: ["*"], // All capabilities
+    restrictions: [] // No restrictions
+  }
+};
+```
+
+### Permission Matrix
+```typescript
+// src/config/permissions.config.ts
+export interface IResourcePermission {
+  resource: string;
+  actions: string[];
+  conditions?: IPermissionCondition[];
+  fields?: string[]; // Visible/editable fields
+}
+
+export interface IPermissionCondition {
+  type: "ownership" | "organization" | "public" | "shared";
+  field?: string;
+  value?: any;
+}
+
+export const ROLE_PERMISSIONS: Record<UserRole, IResourcePermission[]> = {
+  viewer: [
+    {
+      resource: "workflows",
+      actions: ["list", "view", "run"],
+      conditions: [
+        { type: "organization" },
+        { type: "shared", field: "shared_with", value: "CURRENT_USER_ID" }
+      ],
+      fields: ["name", "description", "last_run", "status", "created_by"]
+    },
+    {
+      resource: "executions",
+      actions: ["list", "view"],
+      conditions: [{ type: "organization" }],
+      fields: ["workflow_name", "status", "duration", "cost", "started_at", "output"]
+    },
+    {
+      resource: "templates",
+      actions: ["list", "view", "copy"],
+      conditions: [{ type: "public" }, { type: "organization" }]
+    }
+  ],
+  
+  builder: [
+    {
+      resource: "workflows",
+      actions: ["list", "view", "create", "edit", "delete", "run", "share"],
+      conditions: [
+        { type: "ownership", field: "created_by", value: "CURRENT_USER_ID" },
+        { type: "organization" }
+      ],
+      fields: ["*"] // All fields
+    },
+    {
+      resource: "nodes",
+      actions: ["*"],
+      conditions: [{ type: "organization" }]
+    },
+    {
+      resource: "integrations",
+      actions: ["list", "view", "create", "edit", "delete"],
+      conditions: [{ type: "organization" }]
+    },
+    {
+      resource: "api_keys",
+      actions: ["list", "view", "create", "delete"],
+      conditions: [
+        { type: "ownership", field: "created_by", value: "CURRENT_USER_ID" }
+      ]
+    },
+    {
+      resource: "templates",
+      actions: ["*"],
+      conditions: [{ type: "organization" }]
+    }
+  ],
+  
+  admin: [
+    {
+      resource: "workflows",
+      actions: ["*"],
+      conditions: [{ type: "organization" }]
+    },
+    {
+      resource: "team_members",
+      actions: ["list", "view", "invite", "edit", "remove"],
+      conditions: [{ type: "organization" }]
+    },
+    {
+      resource: "api_keys",
+      actions: ["*"],
+      conditions: [{ type: "organization" }]
+    },
+    {
+      resource: "analytics",
+      actions: ["*"],
+      conditions: [{ type: "organization" }]
+    },
+    {
+      resource: "audit_logs",
+      actions: ["list", "view", "export"],
+      conditions: [{ type: "organization" }]
+    },
+    {
+      resource: "resources",
+      actions: ["view", "manage_limits", "allocate"],
+      conditions: [{ type: "organization" }]
+    }
+  ],
+  
+  owner: [
+    {
+      resource: "*", // All resources
+      actions: ["*"], // All actions
+      conditions: [{ type: "organization" }]
+    },
+    {
+      resource: "billing",
+      actions: ["*"],
+      conditions: []
+    },
+    {
+      resource: "organization",
+      actions: ["*"],
+      conditions: []
+    }
+  ]
+};
+```
+
+---
+
+## 🧩 **BASE COMPONENT ARCHITECTURE**
+
+### Workflow List Component with RBAC
+```typescript
+// src/components/workflows/WorkflowList.tsx
+import React from "react";
+import { BaseList } from "@/components/common/BaseList";
+import { useRoleConfig } from "@/hooks/useRoleConfig";
+import { useGetIdentity } from "@refinedev/core";
+import { Button, Tag, Space, Dropdown } from "antd";
+import { PermissionWrapper } from "@/components/common/PermissionWrapper";
+
+export const WorkflowList: React.FC = () => {
+  const { data: identity } = useGetIdentity();
+  const roleConfig = useRoleConfig("workflows");
+  
+  // Dynamic columns based on role
+  const getColumnsForRole = () => {
+    const baseColumns = [
+      {
+        title: "Name",
+        dataIndex: "name",
+        key: "name",
+        render: (name: string, record: any) => (
+          <Space>
+            <span>{name}</span>
+            {record.is_public && <Tag color="blue">Public</Tag>}
+            {record.shared_with?.length > 0 && <Tag color="green">Shared</Tag>}
+          </Space>
+        )
+      },
+      {
+        title: "Status",
+        dataIndex: "status",
+        key: "status",
+        render: (status: string) => (
+          <Tag color={
+            status === "active" ? "green" : 
+            status === "error" ? "red" : 
+            "orange"
+          }>
+            {status.toUpperCase()}
+          </Tag>
+        )
+      },
+      {
+        title: "Last Run",
+        dataIndex: "last_run",
+        key: "last_run",
+        render: (date: string) => date ? new Date(date).toLocaleString() : "Never"
+      }
+    ];
+    
+    // Add role-specific columns
+    if (["builder", "admin", "owner"].includes(identity?.role)) {
+      baseColumns.push({
+        title: "Executions",
+        dataIndex: "execution_count",
+        key: "executions",
+        render: (count: number) => `${count || 0} runs`
+      });
+    }
+    
+    if (["admin", "owner"].includes(identity?.role)) {
+      baseColumns.push({
+        title: "Created By",
+        dataIndex: ["creator", "name"],
+        key: "creator"
+      });
+      baseColumns.push({
+        title: "API Cost",
+        dataIndex: "total_cost",
+        key: "cost",
+        render: (cost: number) => `$${(cost || 0).toFixed(3)}`
+      });
+    }
+    
+    return baseColumns;
+  };
+  
+  // Role-specific actions
+  const getRoleActions = (record: any) => {
+    const actions = [];
+    
+    // Everyone can run workflows
+    actions.push(
+      <PermissionWrapper resource="workflows" action="run" key="run">
+        <Button size="small" type="primary" ghost>
+          Run
+        </Button>
+      </PermissionWrapper>
+    );
+    
+    // Builders and above can edit
+    if (["builder", "admin", "owner"].includes(identity?.role)) {
+      actions.push(
+        <PermissionWrapper resource="workflows" action="edit" key="edit">
+          <Button size="small" type="link">
+            Edit
+          </Button>
+        </PermissionWrapper>
+      );
+      
+      // Share functionality
+      actions.push(
+        <Dropdown
+          key="share"
+          menu={{
+            items: [
+              { key: "team", label: "Share with Team" },
+              { key: "public", label: "Make Public" },
+              { key: "link", label: "Get Share Link" }
+            ]
+          }}
+        >
+          <Button size="small" type="link">
+            Share
+          </Button>
+        </Dropdown>
+      );
+    }
+    
+    // Admins can transfer ownership
+    if (["admin", "owner"].includes(identity?.role)) {
+      actions.push(
+        <Button size="small" type="link" key="transfer">
+          Transfer
+        </Button>
+      );
+    }
+    
+    return <Space size="small">{actions}</Space>;
+  };
+  
+  return (
+    <BaseList
+      resource="workflows"
+      title="AI Workflows"
+      allowEdit={roleConfig.allowedActions.includes("edit")}
+      allowDelete={roleConfig.allowedActions.includes("delete")}
+      allowCreate={roleConfig.allowedActions.includes("create")}
+      filters={roleConfig.filters}
+      columns={getColumnsForRole()}
+      actions={getRoleActions}
+      searchable={true}
+      exportable={["admin", "owner"].includes(identity?.role)}
+    />
+  );
+};
+```
+
+### Workflow Builder Access Control
+```typescript
+// src/components/builder/WorkflowBuilder.tsx
+import React from "react";
+import { PermissionWrapper } from "@/components/common/PermissionWrapper";
+import { usePermissionCheck } from "@/hooks/usePermissionCheck";
+
+export const WorkflowBuilder: React.FC<{ workflowId?: string }> = ({ workflowId }) => {
+  const { hasPermission, isBuilder, isAdmin } = usePermissionCheck();
+  
+  const canUseAdvancedNodes = isBuilder || isAdmin;
+  const canConfigureIntegrations = hasPermission("integrations", "create");
+  const canAccessAnalytics = hasPermission("analytics", "view");
+  
+  return (
+    <div className="workflow-builder">
+      <div className="node-palette">
+        <NodeCategory title="Input" nodes={inputNodes} />
+        <NodeCategory title="Transform" nodes={transformNodes} />
+        
+        <PermissionWrapper 
+          resource="nodes" 
+          action="use_advanced"
+          fallback={
+            <div className="upgrade-prompt">
+              <p>Advanced AI nodes require Builder role</p>
+              <Button>Request Upgrade</Button>
+            </div>
+          }
+        >
+          <NodeCategory title="AI Models" nodes={aiNodes} />
+          <NodeCategory title="Advanced" nodes={advancedNodes} />
+        </PermissionWrapper>
+      </div>
+      
+      <div className="canvas-area">
+        <WorkflowCanvas workflowId={workflowId} />
+      </div>
+      
+      <div className="properties-panel">
+        {canConfigureIntegrations && (
+          <IntegrationSettings />
+        )}
+        {canAccessAnalytics && (
+          <PerformanceMetrics workflowId={workflowId} />
+        )}
+      </div>
+    </div>
+  );
+};
+```
+
+---
+
+## 🛡️ **PERMISSION WRAPPER SYSTEM**
+
+### Enhanced Permission Wrapper for Workflows
+```typescript
+// src/components/common/WorkflowPermissionWrapper.tsx
+import React from "react";
+import { useGetIdentity } from "@refinedev/core";
+import { useWorkflowAccess } from "@/hooks/useWorkflowAccess";
+
+interface IWorkflowPermissionProps {
+  children: React.ReactNode;
+  workflowId?: string;
+  action: "view" | "edit" | "run" | "delete" | "share";
+  fallback?: React.ReactNode;
+}
+
+export const WorkflowPermissionWrapper: React.FC<IWorkflowPermissionProps> = ({
+  children,
+  workflowId,
+  action,
+  fallback
+}) => {
+  const { data: identity } = useGetIdentity();
+  const { canAccess, isOwner, isSharedWith } = useWorkflowAccess(workflowId);
+  
+  // Determine access based on action and role
+  const hasAccess = (() => {
+    switch (action) {
+      case "view":
+      case "run":
+        return canAccess; // Organization member or shared with
+        
+      case "edit":
+      case "delete":
+        return isOwner || ["admin", "owner"].includes(identity?.role);
+        
+      case "share":
+        return isOwner || ["admin", "owner"].includes(identity?.role);
+        
+      default:
+        return false;
+    }
+  })();
+  
+  if (!hasAccess) {
+    return fallback ? <>{fallback}</> : null;
+  }
+  
+  return <>{children}</>;
+};
+```
+
+---
+
+## 🔧 **HOOKS AND UTILITIES**
+
+### Workflow Access Hook
+```typescript
+// src/hooks/useWorkflowAccess.ts
+import { useGetIdentity } from "@refinedev/core";
+import { useOne } from "@refinedev/core";
+import { useMemo } from "react";
+
+export const useWorkflowAccess = (workflowId?: string) => {
+  const { data: identity } = useGetIdentity();
+  const { data: workflow } = useOne({
+    resource: "workflows",
+    id: workflowId,
+    queryOptions: {
+      enabled: !!workflowId
+    }
+  });
+  
+  return useMemo(() => {
+    if (!identity || !workflow) {
+      return { canAccess: false, isOwner: false, isSharedWith: false };
+    }
+    
+    const isOwner = workflow.data.created_by === identity.id;
+    const isSharedWith = workflow.data.shared_with?.includes(identity.id);
+    const isOrgMember = workflow.data.organization_id === identity.organization_id;
+    const isPublic = workflow.data.is_public;
+    
+    const canAccess = isOwner || isSharedWith || isOrgMember || isPublic ||
+                     ["admin", "owner"].includes(identity.role);
+    
+    return {
+      canAccess,
+      isOwner,
+      isSharedWith,
+      isOrgMember,
+      isPublic
+    };
+  }, [identity, workflow]);
+};
+```
+
+### Team Permission Hook
+```typescript
+// src/hooks/useTeamPermissions.ts
+export const useTeamPermissions = () => {
+  const { data: identity } = useGetIdentity();
+  
+  const canInviteMembers = ["admin", "owner"].includes(identity?.role);
+  const canRemoveMembers = ["admin", "owner"].includes(identity?.role);
+  const canChangeRoles = identity?.role === "owner";
+  const canViewBilling = identity?.role === "owner";
+  const canManageIntegrations = ["builder", "admin", "owner"].includes(identity?.role);
+  
+  return {
+    canInviteMembers,
+    canRemoveMembers,
+    canChangeRoles,
+    canViewBilling,
+    canManageIntegrations,
+    currentRole: identity?.role
+  };
+};
+```
+
+---
+
+## 🚦 **ROUTING AND NAVIGATION**
+
+### Role-Based Navigation
+```typescript
+// src/components/layout/Navigation.tsx
+import React from "react";
+import { useGetIdentity } from "@refinedev/core";
+import { Menu } from "antd";
+import { 
+  DashboardOutlined,
+  ForkOutlined,
+  PlayCircleOutlined,
+  TeamOutlined,
+  SettingOutlined,
+  BarChartOutlined,
+  DollarOutlined
+} from "@ant-design/icons";
+
+export const Navigation: React.FC = () => {
+  const { data: identity } = useGetIdentity();
+  
+  const getMenuItems = () => {
+    const baseItems = [
+      {
+        key: "workflows",
+        icon: <ForkOutlined />,
+        label: "Workflows",
+        path: "/workflows"
+      },
+      {
+        key: "executions",
+        icon: <PlayCircleOutlined />,
+        label: "Executions",
+        path: "/executions"
+      }
+    ];
+    
+    const builderItems = identity?.role !== "viewer" ? [
+      {
+        key: "builder",
+        icon: <DashboardOutlined />,
+        label: "Workflow Builder",
+        path: "/builder"
+      },
+      {
+        key: "templates",
+        icon: <ForkOutlined />,
+        label: "Templates",
+        path: "/templates"
+      },
+      {
+        key: "integrations",
+        icon: <SettingOutlined />,
+        label: "Integrations",
+        path: "/integrations"
+      }
+    ] : [];
+    
+    const adminItems = ["admin", "owner"].includes(identity?.role) ? [
+      {
+        key: "team",
+        icon: <TeamOutlined />,
+        label: "Team",
+        path: "/team"
+      },
+      {
+        key: "analytics",
+        icon: <BarChartOutlined />,
+        label: "Analytics",
+        path: "/analytics"
+      }
+    ] : [];
+    
+    const ownerItems = identity?.role === "owner" ? [
+      {
+        key: "billing",
+        icon: <DollarOutlined />,
+        label: "Billing",
+        path: "/billing"
+      }
+    ] : [];
+    
+    return [...baseItems, ...builderItems, ...adminItems, ...ownerItems];
+  };
+  
+  return <Menu mode="inline" items={getMenuItems()} />;
+};
+```
+
+---
+
+## 📋 **SECURITY CONSIDERATIONS**
+
+### API-Level Security
+```javascript
+// Pseudo-code for backend validation
+class WorkflowSecurityMiddleware {
+  async validateAccess(userId, workflowId, action) {
+    const user = await getUser(userId);
+    const workflow = await getWorkflow(workflowId);
+    
+    // Owner always has access
+    if (workflow.created_by === userId) return true;
+    
+    // Organization admins/owners have access
+    if (["admin", "owner"].includes(user.role) && 
+        workflow.organization_id === user.organization_id) {
+      return true;
+    }
+    
+    // Check specific permissions
+    switch (action) {
+      case "view":
+      case "run":
+        return workflow.is_public || 
+               workflow.shared_with.includes(userId) ||
+               workflow.organization_id === user.organization_id;
+      
+      case "edit":
+      case "delete":
+        return workflow.created_by === userId ||
+               ["admin", "owner"].includes(user.role);
+      
+      default:
+        return false;
+    }
+  }
+}
+```
+
+---
+
+## 🎯 **IMPLEMENTATION CHECKLIST**
+
+### Phase 1: Core RBAC
+- [ ] Implement role definitions
+- [ ] Create permission wrapper components
+- [ ] Set up role-based routing
+- [ ] Build access control hooks
+
+### Phase 2: Workflow Permissions
+- [ ] Workflow ownership system
+- [ ] Sharing functionality
+- [ ] Public workflow support
+- [ ] Team workspace isolation
+
+### Phase 3: Advanced Features
+- [ ] Audit logging
+- [ ] Permission analytics
+- [ ] Role upgrade requests
+- [ ] Custom role creation (Enterprise)
+
+### Phase 4: Testing
+- [ ] Permission unit tests
+- [ ] Role flow integration tests
+- [ ] Security penetration testing
+- [ ] Performance impact analysis
+
+
+This RBAC architecture provides secure, scalable team collaboration for AI workflow building while maintaining clean, reusable components.

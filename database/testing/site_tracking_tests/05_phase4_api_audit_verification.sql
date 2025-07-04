@@ -83,11 +83,11 @@ SELECT
     first_request_time,
     last_request_time,
     EXTRACT(EPOCH FROM (last_request_time - first_request_time)) / 60 as activity_duration_minutes
-FROM auth.ip_tracking_s
-WHERE (suspicious_activity_flag = true OR is_blocked = true)
-  AND last_request_time >= CURRENT_TIMESTAMP - INTERVAL '24 hours'
-  AND load_end_date IS NULL
-ORDER BY request_count DESC;
+  FROM auth.ip_tracking_s
+  WHERE (suspicious_activity_flag = true OR is_blocked = true)
+    AND last_request_time >= CURRENT_TIMESTAMP - INTERVAL '24 hours'
+    AND load_end_date IS NULL
+  ORDER BY request_count DESC;
 
 -- 4.6 Site Tracking Event Audit (using util.log_audit_event results)
 SELECT 
