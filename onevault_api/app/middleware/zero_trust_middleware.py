@@ -8,7 +8,7 @@ import time
 from typing import Optional, Dict, Any, List, Tuple
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
-import asyncpg
+# import asyncpg  # Removed - not compatible with Python 3.13
 import logging
 from datetime import datetime, timezone
 import json
@@ -363,7 +363,7 @@ class ExistingInfrastructureZeroTrustMiddleware:
     
     async def _check_resource_in_business_schema(
         self, 
-        conn: asyncpg.Connection, 
+        conn,  # asyncpg.Connection - removed type hint for Python 3.13 compatibility
         tenant_hk: bytes, 
         resource_id: str
     ) -> bool:

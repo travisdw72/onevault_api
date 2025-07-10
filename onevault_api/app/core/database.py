@@ -4,7 +4,7 @@ from typing import Dict, Optional, AsyncGenerator, Any
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
-import asyncpg
+# import asyncpg  # Removed - not compatible with Python 3.13
 from sqlalchemy import create_engine, text, MetaData
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -96,15 +96,19 @@ class DatabaseManager:
                 if not database_url:
                     raise ValueError(f"No database URL configured for customer: {customer_id}")
                 
-                # Convert sync URL to async URL
-                async_url = database_url.replace("postgresql://", "postgresql+asyncpg://")
+                # DISABLED: asyncpg not compatible with Python 3.13
+                # # Convert sync URL to async URL
+                # async_url = database_url.replace("postgresql://", "postgresql+asyncpg://")
+                # 
+                # self._async_engines[customer_id] = create_async_engine(
+                #     async_url,
+                #     pool_size=settings.database.DB_POOL_SIZE,
+                #     max_overflow=settings.database.DB_MAX_OVERFLOW,
+                #     echo=settings.DEBUG
+                # )
                 
-                self._async_engines[customer_id] = create_async_engine(
-                    async_url,
-                    pool_size=settings.database.DB_POOL_SIZE,
-                    max_overflow=settings.database.DB_MAX_OVERFLOW,
-                    echo=settings.DEBUG
-                )
+                # For now, raise an error since async functionality is disabled
+                raise NotImplementedError("Async database functionality disabled due to Python 3.13 compatibility issues")
                 
                 logger.info(f"Created async database engine for customer: {customer_id}")
                 

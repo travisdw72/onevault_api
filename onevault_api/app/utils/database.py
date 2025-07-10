@@ -6,7 +6,7 @@ Provides database connection utilities for the Zero Trust Gateway Phase 1 integr
 """
 
 import asyncio
-import asyncpg
+# import asyncpg  # Removed - not compatible with Python 3.13
 import psycopg2
 from psycopg2.pool import ThreadedConnectionPool
 import os
@@ -29,26 +29,27 @@ class DatabaseConnection:
         if not self.database_url:
             raise ValueError("SYSTEM_DATABASE_URL environment variable not set")
     
-    async def get_async_connection(self) -> asyncpg.Connection:
-        """Get an async database connection"""
-        try:
-            if not self.async_pool:
-                self.async_pool = await asyncpg.create_pool(
-                    self.database_url,
-                    min_size=1,
-                    max_size=10,
-                    command_timeout=30
-                )
-            
-            return await self.async_pool.acquire()
-        except Exception as e:
-            logger.error(f"❌ Failed to get async database connection: {e}")
-            raise
-    
-    async def release_async_connection(self, connection: asyncpg.Connection):
-        """Release an async database connection"""
-        if self.async_pool and connection:
-            await self.async_pool.release(connection)
+    # DISABLED: asyncpg not compatible with Python 3.13
+    # async def get_async_connection(self) -> asyncpg.Connection:
+    #     """Get an async database connection"""
+    #     try:
+    #         if not self.async_pool:
+    #             self.async_pool = await asyncpg.create_pool(
+    #                 self.database_url,
+    #                 min_size=1,
+    #                 max_size=10,
+    #                 command_timeout=30
+    #             )
+    #         
+    #         return await self.async_pool.acquire()
+    #     except Exception as e:
+    #         logger.error(f"❌ Failed to get async database connection: {e}")
+    #         raise
+    # 
+    # async def release_async_connection(self, connection: asyncpg.Connection):
+    #     """Release an async database connection"""
+    #     if self.async_pool and connection:
+    #         await self.async_pool.release(connection)
     
     def get_sync_connection(self) -> psycopg2.extensions.connection:
         """Get a sync database connection"""
@@ -75,36 +76,37 @@ def get_db_manager() -> DatabaseConnection:
         _db_manager = DatabaseConnection()
     return _db_manager
 
-async def get_db_connection() -> asyncpg.Connection:
-    """
-    Get an async database connection
-    
-    This is the main function used by the middleware
-    """
-    db_manager = get_db_manager()
-    return await db_manager.get_async_connection()
-
-async def release_db_connection(connection: asyncpg.Connection):
-    """Release an async database connection"""
-    db_manager = get_db_manager()
-    await db_manager.release_async_connection(connection)
-
-@asynccontextmanager
-async def get_db_connection_context():
-    """
-    Context manager for database connections
-    
-    Usage:
-        async with get_db_connection_context() as conn:
-            result = await conn.fetch("SELECT * FROM table")
-    """
-    connection = None
-    try:
-        connection = await get_db_connection()
-        yield connection
-    finally:
-        if connection:
-            await release_db_connection(connection)
+# DISABLED: asyncpg not compatible with Python 3.13
+# async def get_db_connection() -> asyncpg.Connection:
+#     """
+#     Get an async database connection
+#     
+#     This is the main function used by the middleware
+#     """
+#     db_manager = get_db_manager()
+#     return await db_manager.get_async_connection()
+# 
+# async def release_db_connection(connection: asyncpg.Connection):
+#     """Release an async database connection"""
+#     db_manager = get_db_manager()
+#     await db_manager.release_async_connection(connection)
+# 
+# @asynccontextmanager
+# async def get_db_connection_context():
+#     """
+#     Context manager for database connections
+#     
+#     Usage:
+#         async with get_db_connection_context() as conn:
+#             result = await conn.fetch("SELECT * FROM table")
+#     """
+#     connection = None
+#     try:
+#         connection = await get_db_connection()
+#         yield connection
+#     finally:
+#         if connection:
+#             await release_db_connection(connection)
 
 def get_sync_db_connection() -> psycopg2.extensions.connection:
     """
@@ -113,86 +115,87 @@ def get_sync_db_connection() -> psycopg2.extensions.connection:
     db_manager = get_db_manager()
     return db_manager.get_sync_connection()
 
-async def test_database_connection() -> bool:
-    """Test if the database connection is working"""
-    try:
-        async with get_db_connection_context() as conn:
-            result = await conn.fetchval("SELECT 1")
-            return result == 1
-    except Exception as e:
-        logger.error(f"❌ Database connection test failed: {e}")
-        return False
-
-async def execute_query(query: str, params: Optional[tuple] = None) -> Optional[Any]:
-    """
-    Execute a query and return the result
-    
-    Args:
-        query: SQL query to execute
-        params: Optional parameters for the query
-        
-    Returns:
-        Query result or None if failed
-    """
-    try:
-        async with get_db_connection_context() as conn:
-            if params:
-                result = await conn.fetch(query, *params)
-            else:
-                result = await conn.fetch(query)
-            return result
-    except Exception as e:
-        logger.error(f"❌ Query execution failed: {e}")
-        return None
-
-async def execute_fetchone(query: str, params: Optional[tuple] = None) -> Optional[Any]:
-    """
-    Execute a query and return the first row
-    
-    Args:
-        query: SQL query to execute
-        params: Optional parameters for the query
-        
-    Returns:
-        First row of query result or None if failed
-    """
-    try:
-        async with get_db_connection_context() as conn:
-            if params:
-                result = await conn.fetchrow(query, *params)
-            else:
-                result = await conn.fetchrow(query)
-            return result
-    except Exception as e:
-        logger.error(f"❌ Query execution failed: {e}")
-        return None
-
-async def execute_fetchval(query: str, params: Optional[tuple] = None) -> Optional[Any]:
-    """
-    Execute a query and return a single value
-    
-    Args:
-        query: SQL query to execute
-        params: Optional parameters for the query
-        
-    Returns:
-        Single value from query result or None if failed
-    """
-    try:
-        async with get_db_connection_context() as conn:
-            if params:
-                result = await conn.fetchval(query, *params)
-            else:
-                result = await conn.fetchval(query)
-            return result
-    except Exception as e:
-        logger.error(f"❌ Query execution failed: {e}")
-        return None
-
-# Cleanup function for graceful shutdown
-async def cleanup_database_connections():
-    """Cleanup database connections on shutdown"""
-    global _db_manager
-    if _db_manager:
-        await _db_manager.close_pools()
-        _db_manager = None 
+# DISABLED: asyncpg not compatible with Python 3.13
+# async def test_database_connection() -> bool:
+#     """Test if the database connection is working"""
+#     try:
+#         async with get_db_connection_context() as conn:
+#             result = await conn.fetchval("SELECT 1")
+#             return result == 1
+#     except Exception as e:
+#         logger.error(f"❌ Database connection test failed: {e}")
+#         return False
+# 
+# async def execute_query(query: str, params: Optional[tuple] = None) -> Optional[Any]:
+#     """
+#     Execute a query and return the result
+#     
+#     Args:
+#         query: SQL query to execute
+#         params: Optional parameters for the query
+#         
+#     Returns:
+#         Query result or None if failed
+#     """
+#     try:
+#         async with get_db_connection_context() as conn:
+#             if params:
+#                 result = await conn.fetch(query, *params)
+#             else:
+#                 result = await conn.fetch(query)
+#             return result
+#     except Exception as e:
+#         logger.error(f"❌ Query execution failed: {e}")
+#         return None
+# 
+# async def execute_fetchone(query: str, params: Optional[tuple] = None) -> Optional[Any]:
+#     """
+#     Execute a query and return the first row
+#     
+#     Args:
+#         query: SQL query to execute
+#         params: Optional parameters for the query
+#         
+#     Returns:
+#         First row of query result or None if failed
+#     """
+#     try:
+#         async with get_db_connection_context() as conn:
+#             if params:
+#                 result = await conn.fetchrow(query, *params)
+#             else:
+#                 result = await conn.fetchrow(query)
+#             return result
+#     except Exception as e:
+#         logger.error(f"❌ Query execution failed: {e}")
+#         return None
+# 
+# async def execute_fetchval(query: str, params: Optional[tuple] = None) -> Optional[Any]:
+#     """
+#     Execute a query and return a single value
+#     
+#     Args:
+#         query: SQL query to execute
+#         params: Optional parameters for the query
+#         
+#     Returns:
+#         Single value from query result or None if failed
+#     """
+#     try:
+#         async with get_db_connection_context() as conn:
+#             if params:
+#                 result = await conn.fetchval(query, *params)
+#             else:
+#                 result = await conn.fetchval(query)
+#             return result
+#     except Exception as e:
+#         logger.error(f"❌ Query execution failed: {e}")
+#         return None
+# 
+# # Cleanup function for graceful shutdown
+# async def cleanup_database_connections():
+#     """Cleanup database connections on shutdown"""
+#     global _db_manager
+#     if _db_manager:
+#         await _db_manager.close_pools()
+#         _db_manager = None 
