@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 # import asyncpg  # Removed - not compatible with Python 3.13
 from sqlalchemy import create_engine, text, MetaData
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+# from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker  # Disabled - requires asyncpg
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.pool import StaticPool
@@ -118,18 +118,19 @@ class DatabaseManager:
         
         return self._async_engines[customer_id]
     
-    async def get_customer_async_session(self, customer_id: str) -> AsyncSession:
-        """Get async database session for specific customer"""
-        if customer_id not in self._async_sessions:
-            engine = await self.get_customer_async_engine(customer_id)
-            AsyncSessionLocal = async_sessionmaker(
-                engine, 
-                class_=AsyncSession, 
-                expire_on_commit=False
-            )
-            self._async_sessions[customer_id] = AsyncSessionLocal
-        
-        return self._async_sessions[customer_id]()
+    # DISABLED: AsyncSession requires asyncpg
+    # async def get_customer_async_session(self, customer_id: str) -> AsyncSession:
+    #     """Get async database session for specific customer"""
+    #     if customer_id not in self._async_sessions:
+    #         engine = await self.get_customer_async_engine(customer_id)
+    #         AsyncSessionLocal = async_sessionmaker(
+    #             engine, 
+    #             class_=AsyncSession, 
+    #             expire_on_commit=False
+    #         )
+    #         self._async_sessions[customer_id] = AsyncSessionLocal
+    #     
+    #     return self._async_sessions[customer_id]()
     
     async def validate_customer_database(self, customer_id: str) -> Dict[str, Any]:
         """Validate customer database has proper Data Vault 2.0 structure"""
@@ -220,28 +221,30 @@ class DatabaseRouter:
     def __init__(self, db_manager: DatabaseManager):
         self.db_manager = db_manager
     
-    @asynccontextmanager
-    async def get_session(self, customer_id: str) -> AsyncGenerator[AsyncSession, None]:
-        """Get database session with automatic cleanup"""
-        session = await self.db_manager.get_customer_async_session(customer_id)
-        try:
-            yield session
-            await session.commit()
-        except Exception:
-            await session.rollback()
-            raise
-        finally:
-            await session.close()
+    # DISABLED: AsyncSession requires asyncpg
+    # @asynccontextmanager
+    # async def get_session(self, customer_id: str) -> AsyncGenerator[AsyncSession, None]:
+    #     """Get database session with automatic cleanup"""
+    #     session = await self.db_manager.get_customer_async_session(customer_id)
+    #     try:
+    #         yield session
+    #         await session.commit()
+    #     except Exception:
+    #         await session.rollback()
+    #         raise
+    #     finally:
+    #         await session.close()
     
     def get_sync_session(self, customer_id: str) -> Session:
         """Get synchronous database session"""
         return self.db_manager.get_customer_session(customer_id)
     
-    async def execute_raw_sql(self, customer_id: str, sql: str, params: Optional[Dict] = None) -> Any:
-        """Execute raw SQL against customer database"""
-        async with self.get_session(customer_id) as session:
-            result = await session.execute(text(sql), params or {})
-            return result
+    # DISABLED: AsyncSession requires asyncpg
+    # async def execute_raw_sql(self, customer_id: str, sql: str, params: Optional[Dict] = None) -> Any:
+    #     """Execute raw SQL against customer database"""
+    #     async with self.get_session(customer_id) as session:
+    #         result = await session.execute(text(sql), params or {})
+    #         return result
 
 # Global database manager instance
 db_manager = DatabaseManager()
@@ -250,10 +253,11 @@ db_manager = DatabaseManager()
 db_router = DatabaseRouter(db_manager)
 
 # Dependency for FastAPI
-async def get_customer_db_session(customer_id: str) -> AsyncGenerator[AsyncSession, None]:
-    """FastAPI dependency for customer database sessions"""
-    async with db_router.get_session(customer_id) as session:
-        yield session
+# DISABLED: AsyncSession requires asyncpg
+# async def get_customer_db_session(customer_id: str) -> AsyncGenerator[AsyncSession, None]:
+#     """FastAPI dependency for customer database sessions"""
+#     async with db_router.get_session(customer_id) as session:
+#         yield session
 
 def get_sync_customer_db_session(customer_id: str) -> Session:
     """Synchronous version for non-async code"""
