@@ -17,8 +17,8 @@ from pydantic import BaseModel
 from typing import List
 
 # Phase 1 Zero Trust Gateway Integration
-from .middleware.phase1_integration import ProductionZeroTrustMiddleware
-from .routers.phase1_monitoring import phase1_router, set_middleware_instance
+from app.middleware.phase1_integration import ProductionZeroTrustMiddleware
+from app.routers.phase1_monitoring import phase1_router, set_middleware_instance
 
 # Pydantic models for authentication
 class LoginRequest(BaseModel):
