@@ -1,0 +1,52 @@
+[
+  {
+    "endpoint": "Health Check",
+    "url": "https://onevault-api.onrender.com/health",
+    "status_code": 200,
+    "response_time_ms": 487.8,
+    "success": true,
+    "timestamp": "2025-07-08T09:13:28.792717",
+    "response_data": {
+      "status": "healthy",
+      "service": "OneVault Platform",
+      "timestamp": "2025-07-08T16:13:29.927793",
+      "version": "1.0.0"
+    }
+  },
+  {
+    "endpoint": "Token Validation",
+    "url": "https://onevault-api.onrender.com/api/v1/auth/validate",
+    "status_code": 405,
+    "response_time_ms": 268.15,
+    "success": false,
+    "timestamp": "2025-07-08T09:13:29.060867",
+    "error_message": "{\"detail\":\"Method Not Allowed\"}"
+  },
+  {
+    "endpoint": "User Profile",
+    "url": "https://onevault-api.onrender.com/api/v1/auth/me",
+    "status_code": 404,
+    "response_time_ms": 253.78,
+    "success": false,
+    "timestamp": "2025-07-08T09:13:29.315654",
+    "endpoint_missing": true
+  },
+  {
+    "endpoint": "Canvas Workflows",
+    "url": "https://onevault-api.onrender.com/api/v1/canvas/workflows",
+    "status_code": 404,
+    "response_time_ms": 339.34,
+    "success": false,
+    "timestamp": "2025-07-08T09:13:29.654992",
+    "endpoint_missing": true
+  },
+  {
+    "endpoint": "AI Agents",
+    "url": "https://onevault-api.onrender.com/api/v1/ai/agents",
+    "status_code": 404,
+    "response_time_ms": 307.07,
+    "success": false,
+    "timestamp": "2025-07-08T09:13:29.962062",
+    "endpoint_missing": true
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "test_session_id": "86d54afcf48cb3ac",
+  "timestamp": "2025-07-08T15:18:34.339610",
+  "total_tests": 0,
+  "passed_tests": 0,
+  "failed_tests": 0,
+  "error_tests": 0,
+  "tenant_isolation_tests": [],
+  "api_key_validation_tests": [],
+  "cross_tenant_blocking_tests": [],
+  "performance_tests": [],
+  "errors": [
+    "Failed to get real tenants: column tps.subscription_tier does not exist\nLINE 7:                         tps.subscription_tier,\n                                ^\n",
+    "No real tenants found for testing"
+  ]
+}

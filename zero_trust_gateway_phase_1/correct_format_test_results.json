@@ -1,0 +1,40 @@
+[
+  {
+    "test": "Token Validation",
+    "url": "https://onevault-api.onrender.com/api/v1/auth/validate",
+    "method": "POST",
+    "payload": {
+      "session_token": "ovt_prod_cf70c68cbc7226d4f6c6517696f6258621be5973e57feb324b148b42a8bb319e"
+    },
+    "status_code": 200,
+    "success": true,
+    "timestamp": "2025-07-08T09:20:31.456508",
+    "response_data": {
+      "data": {
+        "user_id": "validated_user",
+        "tenant_id": "validated_tenant",
+        "expires_at": "2025-07-08T18:20:32.55771+00:00"
+      },
+      "message": "Session is valid",
+      "success": true
+    }
+  },
+  {
+    "test": "Login",
+    "url": "https://onevault-api.onrender.com/api/v1/auth/login",
+    "method": "POST",
+    "payload": {
+      "username": "api@onevault.com",
+      "password": "***",
+      "tenant_id": "one_barn_ai"
+    },
+    "status_code": 200,
+    "success": true,
+    "timestamp": "2025-07-08T09:20:31.939985",
+    "response_data": {
+      "message": "Invalid username or password",
+      "success": false,
+      "error_code": "INVALID_CREDENTIALS"
+    }
+  }
+]

@@ -1,0 +1,177 @@
+# Phase 1 Zero Trust Configuration - Single Source of Truth
+# Used by all Phase 1 components for consistent configuration
+
+phase1:
+  implementation_name: "Silent Enhancement"
+  version: "1.0.0"
+  environment: "localhost"
+  deployment_date: "2025-07-09"
+  
+# Database Configuration
+database:
+  host: "localhost"
+  port: 5432
+  database: "one_vault_site_testing"
+  user: "postgres"
+  # password loaded from environment variable DB_PASSWORD
+  connection_timeout: 5
+  application_name: "phase1_zero_trust"
+  max_connections: 10
+
+# Zero Trust Configuration
+zero_trust:
+  parallel_validation:
+    enabled: true
+    log_all_attempts: true
+    fail_safe_mode: true  # Current validation always serves response
+    timeout_ms: 5000
+    
+  performance_targets:
+    total_middleware_ms: 200
+    tenant_validation_ms: 50
+    api_key_lookup_ms: 25
+    cache_hit_target_pct: 60
+    improvement_target_pct: 20
+    
+  security:
+    tenant_isolation: true
+    cross_tenant_blocking: true
+    auto_token_extension: true
+    risk_scoring: true
+    audit_all_events: true
+
+# Cache Configuration
+cache:
+  enabled: true
+  provider: "memory"  # memory, redis, memcached
+  redis_url: null  # "redis://localhost:6379/0" for Redis
+  
+  validation_cache:
+    ttl_seconds: 300  # 5 minutes
+    max_entries: 1000
+    enabled: true
+    
+  tenant_cache:
+    ttl_seconds: 600  # 10 minutes
+    max_entries: 100
+    enabled: true
+    
+  permission_cache:
+    ttl_seconds: 180  # 3 minutes
+    max_entries: 500
+    enabled: true
+
+# API Configuration
+api:
+  test_server:
+    host: "localhost"
+    port: 8000
+    debug: true
+    reload: true
+    
+  endpoints:
+    - "/api/patients"
+    - "/api/users"
+    - "/api/tenants"
+    - "/api/dashboard"
+    - "/api/reports"
+    
+  authentication:
+    bearer_tokens: true
+    api_keys: true
+    session_cookies: true
+    query_parameters: false  # Disabled for security
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  
+  parallel_validation:
+    enabled: true
+    log_performance: true
+    log_cache_hits: true
+    log_discrepancies: true
+    
+  audit:
+    enabled: true
+    log_all_requests: true
+    log_security_events: true
+    log_performance_metrics: true
+    
+  files:
+    validation_log: "logs/phase1_validation.log"
+    performance_log: "logs/phase1_performance.log"
+    security_log: "logs/phase1_security.log"
+    error_log: "logs/phase1_errors.log"
+
+# Testing Configuration  
+testing:
+  tenants:
+    one_barn_ai: "518a00fd8cb1b99f"
+    one_spa: "faa1b701c65c4625"
+    system_admin: "79f417e738c4c7a7"
+    
+  test_scenarios:
+    legitimate_access: true
+    cross_tenant_access: true
+    token_extension: true
+    performance_comparison: true
+    cache_effectiveness: true
+    
+  performance_benchmarks:
+    baseline_response_ms: 150
+    target_improvement_pct: 20
+    max_acceptable_ms: 200
+    cache_hit_rate_target: 60
+
+# Error Translation
+error_translation:
+  enabled: true
+  user_friendly_messages: true
+  technical_details_hidden: true
+  
+  translations:
+    cross_tenant_access_denied:
+      user_message: "Resource not found"
+      helpful_action: "Try searching for what you're looking for"
+      log_message: "Cross-tenant access attempt blocked"
+      
+    production_token_expired:
+      user_message: "Please log in again"
+      helpful_action: "Click here to refresh your session"
+      log_message: "Token expiry handled gracefully"
+      
+    insufficient_permissions:
+      user_message: "Access not available for your account"
+      helpful_action: "Contact your administrator if you need access"
+      log_message: "Permission-based access control enforced"
+      
+    validation_timeout:
+      user_message: "Service temporarily unavailable"
+      helpful_action: "Please try again in a moment"
+      log_message: "Enhanced validation timeout - fallback used"
+
+# Success Criteria
+success_criteria:
+  zero_user_disruption: 100  # percentage
+  enhanced_validation_success: 95  # percentage
+  performance_improvement: 20  # percentage
+  complete_logging: 100  # percentage
+  cross_tenant_protection: 100  # percentage
+  token_extension_success: 90  # percentage
+  error_translation_coverage: 100  # percentage
+
+# Production Readiness
+production:
+  deployment_ready: false  # Set to true when Phase 1 validated
+  migration_scripts_ready: false
+  monitoring_configured: false
+  alerts_configured: false
+  rollback_plan_tested: false
+  
+  next_phases:
+    phase2: "Enhanced validation becomes primary"
+    phase3: "Remove current validation fallback"
+    phase4: "Deploy to production"
+    phase5: "Optimize and scale" 

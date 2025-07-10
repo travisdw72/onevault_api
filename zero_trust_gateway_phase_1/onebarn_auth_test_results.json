@@ -1,0 +1,99 @@
+[
+  {
+    "test_name": "Token Validation (Short Path)",
+    "method": "GET",
+    "url": "https://onevault-api.onrender.com/validate",
+    "status_code": 404,
+    "success": false,
+    "timestamp": "2025-07-08T09:19:23.055498",
+    "endpoint_missing": true
+  },
+  {
+    "test_name": "Token Validation (Short Path)",
+    "method": "POST",
+    "url": "https://onevault-api.onrender.com/validate",
+    "status_code": 404,
+    "success": false,
+    "timestamp": "2025-07-08T09:19:23.295578",
+    "endpoint_missing": true
+  },
+  {
+    "test_name": "Token Validation (Short Path)",
+    "method": "PUT",
+    "url": "https://onevault-api.onrender.com/validate",
+    "status_code": 404,
+    "success": false,
+    "timestamp": "2025-07-08T09:19:23.574811",
+    "endpoint_missing": true
+  },
+  {
+    "test_name": "Token Validation (API v1)",
+    "method": "GET",
+    "url": "https://onevault-api.onrender.com/api/v1/auth/validate",
+    "status_code": 405,
+    "success": false,
+    "timestamp": "2025-07-08T09:19:23.847084",
+    "wrong_method": true,
+    "allowed_methods": "POST"
+  },
+  {
+    "test_name": "Token Validation (API v1)",
+    "method": "POST",
+    "url": "https://onevault-api.onrender.com/api/v1/auth/validate",
+    "status_code": 422,
+    "success": false,
+    "timestamp": "2025-07-08T09:19:24.122860",
+    "validation_error": true,
+    "validation_details": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "session_token"
+          ],
+          "msg": "Field required",
+          "input": {},
+          "url": "https://errors.pydantic.dev/2.11/v/missing"
+        }
+      ]
+    }
+  },
+  {
+    "test_name": "Token Validation (API v1)",
+    "method": "PUT",
+    "url": "https://onevault-api.onrender.com/api/v1/auth/validate",
+    "status_code": 405,
+    "success": false,
+    "timestamp": "2025-07-08T09:19:24.371173",
+    "wrong_method": true,
+    "allowed_methods": "POST"
+  },
+  {
+    "test_name": "Login Endpoint",
+    "method": "POST",
+    "url": "https://onevault-api.onrender.com/api/v1/auth/login",
+    "status_code": 422,
+    "success": false,
+    "timestamp": "2025-07-08T09:19:24.618426",
+    "validation_error": true,
+    "validation_details": {
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "username"
+          ],
+          "msg": "Field required",
+          "input": {
+            "email": "api@onevault.com",
+            "password": "test123",
+            "tenant_id": "one_barn_ai"
+          },
+          "url": "https://errors.pydantic.dev/2.11/v/missing"
+        }
+      ]
+    }
+  }
+]
